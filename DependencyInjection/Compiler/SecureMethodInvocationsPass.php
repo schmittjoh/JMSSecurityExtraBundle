@@ -3,9 +3,7 @@
 namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
-
 use Symfony\Component\DependencyInjection\Resource\FileResource;
-
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Security\SecurityContext;
 use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
