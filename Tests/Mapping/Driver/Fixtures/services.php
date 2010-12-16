@@ -5,7 +5,7 @@ namespace Bundle\JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 class FooService implements FooInterface
 {
     /**
-     * @SecureMethod(roles="ROLE_USER, ROLE_ADMIN, ROLE_SUPERADMIN")
+     * @Secure(roles="ROLE_USER, ROLE_ADMIN, ROLE_SUPERADMIN")
      * @SecureParam(name="param", permissions="VIEW")
      */
     public function foo($param, $anotherParam) { }

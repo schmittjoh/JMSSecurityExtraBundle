@@ -19,18 +19,18 @@ namespace Bundle\JMS\SecurityExtraBundle\Annotation;
  */
 
 /**
- * Represents a @SecureMethod annotation.
+ * Represents a @Secure annotation.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureMethod implements AnnotationInterface
+class Secure implements AnnotationInterface
 {
     protected $roles;
     
     public function __construct(array $values)
     {
         if (!isset($values['roles'])) {
-            throw new \InvalidArgumentException('You must define a "roles" attribute for each SecureMethod annotation.');
+            throw new \InvalidArgumentException('You must define a "roles" attribute for each Secure annotation.');
         }
 
         $this->roles = array_map('trim', explode(',', $values['roles']));

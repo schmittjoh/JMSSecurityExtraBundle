@@ -2,9 +2,9 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
 
-use Bundle\JMS\SecurityExtraBundle\Annotation\SecureReturn;
+use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
-use Bundle\JMS\SecurityExtraBundle\Annotation\SecureMethod;
+use Bundle\JMS\SecurityExtraBundle\Annotation\SecureReturn;
 use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -76,7 +76,7 @@ class AnnotationDriver implements DriverInterface
 
                 $methodMetadata = new MethodMetadata($method);
                 foreach ($annotations as $annotation) {
-                    if ($annotation instanceof SecureMethod) {
+                    if ($annotation instanceof Secure) {
                         $methodMetadata->setRoles($annotation->getRoles());
                     } else if ($annotation instanceof SecureParam) {
                         $methodMetadata->addParamPermissions($annotation->getName(), $annotation->getPermissions());

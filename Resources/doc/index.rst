@@ -12,16 +12,16 @@ Annotations can also be declared on parent classes, or interfaces. In cases of
 conflicting annotations, the annotation that is declared on a class which ranks
 lower in the inheritance tree has precedence.
 
-@SecureMethod
--------------
-This annotation lets you define who (``Token``) is allowed to invoke a method::
+@Secure
+-------
+This annotation lets you define who is allowed to invoke a method::
 
     <?php
     
     class MyService
     {
         /**
-         * @SecureMethod(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
+         * @Secure(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
          */
         public function secureMethod() 
         {
