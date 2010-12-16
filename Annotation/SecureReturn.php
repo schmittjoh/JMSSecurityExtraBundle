@@ -19,32 +19,21 @@ namespace Bundle\JMS\SecurityExtraBundle\Annotation;
 */
 
 /**
- * Represents a @SecureParam annotation.
+ * Represents a @SecureReturn annotation.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureParam implements AnnotationInterface
+class SecureReturn implements AnnotationInterface
 {
-    protected $name;
     protected $permissions;
 
     public function __construct(array $values)
     {
-        if (!isset($values['name'])) {
-            throw new \InvalidArgumentException('You must define a "name" attribute for each SecureParam annotation.');
-        }
         if (!isset($values['permissions'])) {
-            throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureParam annotation.');
+            throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureReturn annotation.');
         }
-
-        $this->name = $values['name'];
-
+        
         $this->permissions = array_map('trim', explode(',', $values['permissions']));
-    }
-
-    public function getName()
-    {
-        return $this->name;
     }
 
     public function getPermissions()

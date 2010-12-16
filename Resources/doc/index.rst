@@ -1,44 +1,69 @@
-==========================
-Securing Method Invocation
-==========================
+===========================
+Securing Method Invocations
+===========================
 
-This bundle allows you to secure method invocation on your service layer with
-annotations::
+This bundle allows you to secure method invocations on your service layer with
+annotations.
+
+Generally, you can secure all public, or protected methods which are non-static,
+and non-final. Private methods cannot be secured this way.
+
+Annotations can also be declared on parent classes, or interfaces. In cases of
+conflicting annotations, the annotation that is declared on a class which ranks
+lower in the inheritance tree has precedence.
+
+@SecureMethod
+-------------
+This annotation lets you define who (``Token``) is allowed to invoke a method::
 
     <?php
     
     class MyService
     {
         /**
-         * @Secure(roles="ROLE_USER, ROLE_FOO")
-         * @SecureParam(name="comment", permissions="EDIT")
+         * @SecureMethod(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
          */
-        public function secureMethod(Comment $comment)
+        public function secureMethod() 
         {
             // ...
         }
     }
 
-In the above example, the logged-in user must have "EDIT" permission for $comment, and also have either the role "ROLE_USER", or "ROLE_FOO". 
-
-You can also accomplish this without annotations, but it requires a bit more code::
+@SecureParam
+------------
+This annotation lets you define restrictions for parameters which are passed to
+the method. This is only useful if the parameters are domain objects::
 
     <?php
-
+    
     class MyService
     {
-        protected $securityContext;
-
-        public function __construct(SecurityContext $context)
+        /**
+         * @SecureParam(name="comment", permissions="EDIT, DELETE")
+         * @SecureParam(name="post", permissions="OWNER")
+         */
+        public function secureMethod($comment, $post)
         {
-            $this->securityContext = $context;
+            // ...
         }
-        
-        public function secureMethod(Comment $comment)
+    }
+
+@SecureReturn
+-------------
+This annotation lets you define restrictions for the value which is returned by
+the method. This is also only useful if the returned value is a domain object::
+
+    <?php
+    
+    class MyService
+    {
+        /**
+         * @SecureReturn(permissions="VIEW")
+         */
+        public function secureMethod()
         {
-            if (false === $this->securityContext->vote(array('ROLE_USER', 'ROLE_FOO'))
-                || false === $this->securityContext->vote(array('EDIT'), $comment)) {
-                throw new AccessDeniedException();
-            }
+            // ...
+            
+            return $domainObject;
         }
     }

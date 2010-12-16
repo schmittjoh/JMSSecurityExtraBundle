@@ -1,10 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle;
-
-use Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler\SecureMethodInvocationsPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
 
 /*
 * Copyright 2010 Johannes M. Schmitt
@@ -23,20 +19,16 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 */
 
 /**
- * Registers our custom compiler pass
+ * Driver Interface
  * 
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecurityExtraBundle extends Bundle
+interface DriverInterface
 {
-    public function registerExtensions(ContainerBuilder $container)
-    {
-        parent::registerExtensions($container);
-
-        $container->getCompilerPassConfig()->addPass(
-            new SecureMethodInvocationsPass(
-                $container->getParameter('kernel.cache_dir')
-            )
-        );
-    }
+    /**
+     * Loads metadata for a given class
+     * @param string $className
+     * @return ClassMetadata
+     */
+    function loadMetadataForClass($className);
 }

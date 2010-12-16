@@ -19,36 +19,25 @@ namespace Bundle\JMS\SecurityExtraBundle\Annotation;
 */
 
 /**
- * Represents a @SecureParam annotation.
+ * Represents a @SecureMethod annotation.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureParam implements AnnotationInterface
+class SecureMethod implements AnnotationInterface
 {
-    protected $name;
-    protected $permissions;
-
+    protected $roles;
+    
     public function __construct(array $values)
     {
-        if (!isset($values['name'])) {
-            throw new \InvalidArgumentException('You must define a "name" attribute for each SecureParam annotation.');
-        }
-        if (!isset($values['permissions'])) {
-            throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureParam annotation.');
+        if (!isset($values['roles'])) {
+            throw new \InvalidArgumentException('You must define a "roles" attribute for each SecureMethod annotation.');
         }
 
-        $this->name = $values['name'];
-
-        $this->permissions = array_map('trim', explode(',', $values['permissions']));
+        $this->roles = array_map('trim', explode(',', $values['roles']));
     }
 
-    public function getName()
+    public function getRoles()
     {
-        return $this->name;
-    }
-
-    public function getPermissions()
-    {
-        return $this->permissions;
+        return $this->roles;
     }
 }

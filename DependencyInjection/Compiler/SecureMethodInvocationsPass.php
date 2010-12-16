@@ -2,6 +2,10 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
+use Bundle\JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
+
+use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
 use Symfony\Component\DependencyInjection\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Reference;
@@ -15,39 +19,35 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
+/*
+* Copyright 2010 Johannes M. Schmitt
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+/**
+ * Modifies the container, and sets the proxy classes where needed
+ *
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 class SecureMethodInvocationsPass implements CompilerPassInterface
 {
-    protected $reader;
     protected $cacheDir;
-    
+    protected $driverChain;
+    protected $generator;
+
     public function __construct($cacheDir)
     {
-        $this->reader = new AnnotationReader();
-        $this->reader->setDefaultAnnotationNamespace('Bundle\\JMS\\SecurityExtraBundle\\Annotation\\');
-
-        $finder = new Finder;
-        $finder
-            ->name('*.php')
-            ->in(__DIR__.'/../../Annotation/')
-        ;
-        foreach ($finder as $annotationFile) {
-            require_once $annotationFile->getPathName();
-        }
-
-        $this->reader->setAnnotationCreationFunction(function($name, $value) {
-            $reflection = new ReflectionClass($name);
-            if (!$reflection->implementsInterface('Bundle\\JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface')) {
-                return null;
-            }
-
-            $annotation = new $name();
-            foreach ($value as $key => $value) {
-                $annotation->$key = $value;
-            }
-
-            return $annotation;
-        });
-
         $cacheDir .= '/security/';
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
@@ -56,8 +56,14 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             die ('Cannot write to cache folder: '.$cacheDir);
         }
         $this->cacheDir = $cacheDir;
+
+        $this->driverChain = new DriverChain();
+        $this->generator = new ProxyClassGenerator();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public function process(ContainerBuilder $container)
     {
         foreach ($container->getDefinitions() as $definition) {
@@ -71,149 +77,19 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             return;
         }
 
-        $reflection = new ReflectionClass($class);
-        $methods = array();
-        do {
-            $methods = array_merge($methods, $reflection->getMethods(ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_STATIC));
+        if (null === $metadata = $this->driverChain->loadMetadataForClass($class)) {
+            throw new \RuntimeException('An error occurred while extracting metadata for: '.$class);
+        }
+
+        foreach ($metadata->getClassHierarchy() as $reflection) {
             $container->addResource(new FileResource($reflection->getFileName()));
-        } while (false !== $reflection = $reflection->getParentClass());
-
-        $proxy = '';
-        foreach ($methods as $method) {
-            $annotations = $this->reader->getMethodAnnotations($method);
-            
-            if (0 < count($annotations)) {
-                if ('' === $proxy) {
-                    $proxy = $this->getClassDefinition($definition);
-                }
-                $proxy .= $this->getMethodDefinition($method);
-
-                $parameters = array();
-                foreach ($method->getParameters() as $param) {
-                    $parameters[$param->getName()] = true;
-                }
-
-                foreach ($annotations as $annotation) {
-                    if ($annotation instanceof Secure) {
-                        $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext'
-                                 .'->vote('.var_export(explode(',', $annotation->roles), true).')) {
-            throw new Symfony\Component\Security\Exception\AccessDeniedException();
         }
 
-    ';
-                    }
-
-                    if ($annotation instanceof SecureParam) {
-                        if (!isset($parameters[$annotation->name])) {
-                            throw new \InvalidArgumentException('The parameter "'.$annotation->name.'" does not exist.');
-                        }
-
-                        $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext->vote('.var_export(explode(',', $annotation->permissions), true).', $'.$annotation->name.')) {
-            throw new Symfony\Component\Security\Exception\AccessDeniedException();
-        }
-
-    ';
-                    }
-                }
-
-                $proxy .= '    $result = '.$this->getMethodCall($method).';
-
-        return $result;
-    }
-
-    ';
-            }
-        }
-        
-        if ('' !== $proxy) {
-            $proxy = substr($proxy, 0, -5).'}';
-        }
-
-        if (strlen($proxy) > 0) {
-            $reflection = new ReflectionClass($definition->getClass());
-            file_put_contents($this->cacheDir.basename($reflection->getFileName()), $proxy);
-
-            
-            $definition->setClass('Bundle\\JMS\\SecurityExtraBundle\\Proxy\\'.substr($definition->getClass(), strrpos($definition->getClass(), '\\') + 1));
+        if (count($metadata->getMethods()) > 0) {
+            list($newClassName, $content) = $this->generator->generate($definition, $metadata);
+            file_put_contents($this->cacheDir.$newClassName.'.php', $content);
+            $definition->setClass('Bundle\\JMS\\SecurityExtraBundle\\Proxy\\'.$newClassName);
             $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
         }
-    }
-
-    protected function getClassDefinition(Definition $definition)
-    {
-        return sprintf('<?php
-
-namespace Bundle\JMS\SecurityExtraBundle\Proxy;
-
-class %s extends %s
-{
-    protected $jmsSecurityExtraBundle__securityContext;
-
-    public function jmsSecurityExtraBundle__setSecurityContext(Symfony\Component\Security\SecurityContext $context)
-    {
-        $this->jmsSecurityExtraBundle__securityContext = $context;
-    }
-
-    ', substr($definition->getClass(), strrpos($definition->getClass(), '\\') +1), $definition->getClass());
-    }
-
-    protected function getMethodCall(ReflectionMethod $method)
-    {
-        $def = '';
-
-        if ($method->returnsReference()) {
-            $def .= '&';
-        }
-
-        $def .= 'parent::'.$method->getName().'(';
-        foreach ($method->getParameters() as $param) {
-            $def .= '$'.$param->getName().', ';
-        }
-        
-        return substr($def, 0, -2). ')';
-    }
-
-    protected function getMethodDefinition(ReflectionMethod $method)
-    {
-        $def = '';
-        if ($method->isProtected()) {
-            $def .= 'protected ';
-        } else {
-            $def .= 'public ';
-        }
-
-        if ($method->isStatic()) {
-            $def .= 'static ';
-        }
-
-        if ($method->returnsReference()) {
-            $def .= '&';
-        }
-
-        $def .= 'function '.$method->getName().'(';
-        foreach ($method->getParameters() as $param) {
-            if (null !== $class = $param->getClass()) {
-                $def .= $class->getName().' ';
-            } else if ($param->isArray()) {
-                $def .= 'array ';
-            }
-
-            if ($param->isPassedByReference()) {
-                $def .= '&';
-            }
-
-            $def .= '$'.$param->getName();
-
-            if ($param->isOptional()) {
-                $def .= ' = '.var_export($param->getDefaultValue(), true);
-            }
-
-            $def .= ', ';
-        }
-        $def = substr($def, 0, -2).')
-    {
-    ';
-
-        return $def;
     }
 }
