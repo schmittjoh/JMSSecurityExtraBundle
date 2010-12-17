@@ -24,8 +24,7 @@ use \ReflectionMethod;
  */
 
 /**
- * This loads all metadata that is applicable for a class be it defined on a 
- * parent class, or in interface.
+ * This loads all metadata that is applicable for a class, or interface.
  * 
  * It also allows to add other metadata sources apart from annotations.
  *
@@ -42,36 +41,14 @@ class DriverChain implements DriverInterface
         );
     }
 
-    public function loadMetadataForClass($className)
+    public function loadMetadataForClass(ReflectionClass $className)
     {
-        $reflection = new ReflectionClass($className);
-        $metadata = new ClassMetadata($reflection);
-
-        $hierarchy = array_reverse($this->buildHierarchy($reflection));
-        $metadata->setClassHierarchy($hierarchy);
-
-        foreach ($hierarchy as $class) {
-            foreach ($this->drivers as $driver) {
-                if (null !== $newMetadata = $driver->loadMetadataForClass($class->getName())) {
-                    $metadata->merge($newMetadata);
-
-                    continue 2;
-                }
+        foreach ($this->drivers as $driver) {
+            if (null !== $metadata = $driver->loadMetadataForClass($className)) {
+                return $metadata;
             }
         }
 
-        return $metadata;
-    }
-
-    protected function buildHierarchy(ReflectionClass $reflection)
-    {
-        $result = array($reflection);
-        $result = array_merge($result, array_values($reflection->getInterfaces()));
-
-        if (false !== $parent = $reflection->getParentClass()) {
-            $result = array_merge($result, $this->buildHierarchy($parent));
-        }
-        
-        return $result;
+        return null;
     }
 }

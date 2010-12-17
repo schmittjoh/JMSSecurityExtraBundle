@@ -27,8 +27,9 @@ interface DriverInterface
 {
     /**
      * Loads metadata for a given class
-     * @param string $className
-     * @return ClassMetadata
+     * 
+     * @param ReflectionClass $class
+     * @return ClassMetadata|null
      */
-    function loadMetadataForClass($className);
+    function loadMetadataForClass(\ReflectionClass $class);
 }

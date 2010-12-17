@@ -27,7 +27,6 @@ class ClassMetadata
 {
     protected $reflection;
     protected $methods;
-    protected $classHierarchy;
 
     public function __construct(\ReflectionClass $class)
     {
@@ -38,11 +37,6 @@ class ClassMetadata
     public function addMethod($name, MethodMetadata $method)
     {
         $this->methods[$name] = $method;
-    }
-
-    public function getClassHierarchy()
-    {
-        return $this->classHierarchy;
     }
 
     public function getMethods()
@@ -64,21 +58,29 @@ class ClassMetadata
     {
         return isset($this->methods[$name]);
     }
+    
+    public function hasMethods()
+    {
+        return count($this->methods) > 0;
+    }
 
     public function merge(ClassMetadata $metadata)
     {
+        $reflection = $metadata->getReflection();
+
+        if (false === $reflection->isInterface()) {
+            throw new \InvalidArgumentException('You can only merge metadata from interfaces.');
+        }
+        if (false === $this->reflection->implementsInterface($reflection->getName())) {
+            throw new \InvalidArgumentException(sprintf('"%s" does not implement "%s".', $this->reflection->getName(), $reflection->getName()));
+        }
+
         foreach ($metadata->getMethods() as $name => $method) {
             if (!isset($this->methods[$name])) {
-                $this->methods[$name] = $method;
-                continue;
+                $this->methods[$name] = new MethodMetadata($this->reflection->getMethod($name));
             }
 
             $this->methods[$name]->merge($method);
         }
-    }
-
-    public function setClassHierarchy(array $hierarchy)
-    {
-        $this->classHierarchy = $hierarchy;
     }
 }

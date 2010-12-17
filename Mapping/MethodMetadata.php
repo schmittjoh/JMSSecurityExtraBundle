@@ -29,6 +29,7 @@ class MethodMetadata
     protected $reflection;
     protected $paramPermissions;
     protected $returnPermissions;
+    protected $satisfiesParentSecurityPolicy;
 
     public function __construct(\ReflectionMethod $method)
     {
@@ -36,23 +37,35 @@ class MethodMetadata
         $this->roles = array();
         $this->paramPermissions = array();
         $this->returnPermissions = array();
+        $this->satisfiesParentSecurityPolicy = false;
     }
 
-    public function addParamPermissions($name, array $permissions)
+    /**
+     * Adds a parameter restriction
+     * 
+     * @param integer $index 0-based
+     * @param array $permissions
+     */
+    public function addParamPermissions($index, array $permissions)
     {
-        $this->paramPermissions[$name] = $permissions;
+        $this->paramPermissions[$index] = $permissions;
     }
 
     public function addReturnPermissions(array $permissions)
     {
         $this->returnPermissions = $permissions;
     }
+    
+    public function satisfiesParentSecurityPolicy()
+    {
+        return $this->satisfiesParentSecurityPolicy;
+    }
 
     public function getParamPermissions()
     {
         return $this->paramPermissions;
     }
-
+    
     public function getReturnPermissions()
     {
         return $this->returnPermissions;
@@ -67,29 +80,54 @@ class MethodMetadata
     {
         return $this->roles;
     }
+    
+    public function isDeclaredOnInterface()
+    {
+        $name = $this->reflection->getName();
+        foreach ($this->reflection->getDeclaringClass()->getInterfaces() as $interface) {
+            if ($interface->hasMethod($name)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     public function setReturnPermissions(array $permissions)
     {
         $this->returnPermissions = $permissions;
     }
-
+    
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
     }
-
-    public function merge(MethodMetadata $metadata)
+    
+    public function setSatisfiesParentSecurityPolicy()
     {
-        if (count($roles = $metadata->getRoles()) > 0) {
-            $this->roles = $roles;
+        $this->satisfiesParentSecurityPolicy;
+    }
+    
+    /**
+     * This allows to merge in metadata from an interface
+     * 
+     * @param MethodMetadata $method
+     * @return void
+     */
+    public function merge(MethodMetadata $method)
+    {
+        if (0 === count($this->roles)) {
+            $this->roles = $method->getRoles();
         }
-
-        if (count($permissions = $metadata->getReturnPermissions()) > 0) {
-            $this->returnPermissions = $permissions;
+        
+        if (0 === count($this->returnPermissions)) {
+            $this->returnPermissions = $method->getReturnPermissions();
         }
-
-        foreach ($metadata->getParamPermissions() as $name => $permissions) {
-            $this->paramPermissions[$name] = $permissions;
+        
+        foreach ($method->getParamPermissions() as $index => $permissions) {
+            if (!isset($this->paramPermissions[$index])) {
+                $this->paramPermissions[$index] = $permissions;
+            }
         }
     }
 }

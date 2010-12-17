@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
 
+use Bundle\JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
+
 use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureReturn;
@@ -61,9 +63,8 @@ class AnnotationDriver implements DriverInterface
         }
     }
     
-    public function loadMetadataForClass($className)
+    public function loadMetadataForClass(ReflectionClass $reflection)
     {
-        $reflection = new ReflectionClass($className);
         $metadata = new ClassMetadata($reflection);
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
@@ -73,21 +74,32 @@ class AnnotationDriver implements DriverInterface
                 if ($method->isStatic() || $method->isFinal()) {
                     throw new \RuntimeException('Annotations cannot be defined on final, or static methods.');
                 }
+                
+                $parameters = array();
+                foreach ($method->getParameters() as $index => $parameter) {
+                    $parameters[$parameter->getName()] = $index;
+                }
 
                 $methodMetadata = new MethodMetadata($method);
                 foreach ($annotations as $annotation) {
                     if ($annotation instanceof Secure) {
                         $methodMetadata->setRoles($annotation->getRoles());
                     } else if ($annotation instanceof SecureParam) {
-                        $methodMetadata->addParamPermissions($annotation->getName(), $annotation->getPermissions());
+                        if (!isset($parameters[$annotation->getName()])) {
+                            throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->getName(), $method->getName()));
+                        }
+                        
+                        $methodMetadata->addParamPermissions($parameters[$annotation->getName()], $annotation->getPermissions());
                     } else if ($annotation instanceof SecureReturn) {
                         $methodMetadata->addReturnPermissions($annotation->getPermissions());
+                    } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
+                        $methodMetadata->setSatisfiesParentSecurityPolicy();
                     }
                 }
                 $metadata->addMethod($method->getName(), $methodMetadata);
             }
         }
-
+        
         return $metadata;
     }
 }

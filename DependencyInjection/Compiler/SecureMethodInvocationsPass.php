@@ -2,8 +2,13 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
+use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+
+use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use Bundle\JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
 use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use \PHP_Depend;
+use \PHP_Depend_Util_Configuration;
 use \ReflectionClass;
 use \ReflectionMethod;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -37,7 +42,6 @@ use Symfony\Component\Security\SecurityContext;
 class SecureMethodInvocationsPass implements CompilerPassInterface
 {
     protected $cacheDir;
-    protected $driverChain;
     protected $generator;
 
     public function __construct($cacheDir)
@@ -51,7 +55,6 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         }
         $this->cacheDir = $cacheDir;
 
-        $this->driverChain = new DriverChain();
         $this->generator = new ProxyClassGenerator();
     }
 
@@ -71,19 +74,35 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             return;
         }
 
-        if (null === $metadata = $this->driverChain->loadMetadataForClass($class)) {
-            throw new \RuntimeException('An error occurred while extracting metadata for: '.$class);
-        }
-
-        foreach ($metadata->getClassHierarchy() as $reflection) {
-            $container->addResource(new FileResource($reflection->getFileName()));
-        }
-
-        if (count($metadata->getMethods()) > 0) {
+        $reflection = new ReflectionClass($class);
+        $metadata = $this->collectServiceMetadata($container, $this->buildHierarchy($reflection));
+        
+        if (true === $metadata->isProxyRequired()) {
+            $this->analyzeControlFlow($metadata);            
+            
             list($newClassName, $content) = $this->generator->generate($definition, $metadata);
             file_put_contents($this->cacheDir.$newClassName.'.php', $content);
             $definition->setClass('Bundle\\JMS\\SecurityExtraBundle\\Proxy\\'.$newClassName);
             $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
         }
+    }
+    
+    /**
+     * This method analyzes the control flow of the service to check whether
+     * the metadata of the different classes is compatible, and whether the
+     * service can be secured.
+     *
+     * @param ServiceMetadata $metadata
+     * @return void
+     */
+    protected function analyzeCodeFlow(ServiceMetadata $metadata)
+    {
+        $pdepend = new PHP_Depend(new PHP_Depend_Util_Configuration(new \stdClass()));
+        
+        foreach ($metadata->getClassHierarchy() as $reflection) {
+            $pdepend->addFile($reflection->getFileName());
+        }
+        
+        var_dump($pdepend->analyze());
     }
 }
