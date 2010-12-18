@@ -32,7 +32,7 @@ use \ReflectionClass;
 /**
  * Analyzes a service class including parent classes. The gathered information
  * is then used to built a proxy class if necessary.
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class ServiceAnalyzer
@@ -77,7 +77,7 @@ class ServiceAnalyzer
 
     public function getFiles()
     {
-        if (!$this->ananlyzed) {
+        if (!$this->analyzed) {
             throw new \LogicException('Data not yet available, run analyze() first.');
         }
 
@@ -155,12 +155,16 @@ class ServiceAnalyzer
         $this->files[] = $this->reflection->getFileName();
 
         foreach ($this->reflection->getInterfaces() as $interface) {
-            $this->files[] = $interface->getFileName();
+            if (false !== $filename = $interface->getFileName()) {
+                $this->files[] = $filename;
+            }
         }
 
         $parent = $this->reflection;
         while (false !== $parent = $parent->getParentClass()) {
-            $this->files[] = $parent->getFileName();
+            if (false !== $filename = $parent->getFileName()) {
+                $this->files[] = $filename;
+            }
         }
     }
 
@@ -182,7 +186,7 @@ class ServiceAnalyzer
                     $secureMethods[$name] = $method;
                 } else if ($method->getReflection()->isAbstract()) {
                     $secureMethods[$name]->merge($method);
-                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy()) { 
+                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy()) {
                     throw new \RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(), $name, $secureMethods[$name]->getReflection()->getDeclaringClass()->getFileName()));
                 }
             }
@@ -201,7 +205,7 @@ class ServiceAnalyzer
 
                         continue 2;
                     }
-                    
+
                     if ($class instanceof PHP_Depend_Code_Class) {
                         $previous = $fqcn;
                     }
@@ -233,7 +237,7 @@ class ServiceAnalyzer
                     throw new \RuntimeException(sprintf(
                         'You have overridden a secured method "%s::%s" in "%s". '
                        .'Please copy over the applicable security metadata, and '
-                       .'also add @SatisfiesParentSecurityPolicy.', 
+                       .'also add @SatisfiesParentSecurityPolicy.',
                         $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(),
                         $name,
                         $rootClass->getPackageName().'\\'.$rootClass->getName()

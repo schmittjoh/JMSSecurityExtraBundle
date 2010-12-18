@@ -17,8 +17,43 @@ to copy over the annotations to your overridden method. In addition, you also
 need to add @SatisfiesParentSecurityPolicy, otherwise there will be an exception
 when the container is built.
 
+How does it work?
+-----------------
+The bundle will first collect all available security metadata for your service
+(right now only from annotations). The metadata will then be used to build proxy
+classes which have the requested security checks built-in. These proxy classes
+will replace your original service classes.
+
+Performance
+-----------
+After registering the bundle and reloading your page for the first time, the page
+load will take very long (20 seconds upward) depending on how many services you
+have. 
+
+Subsequent page loads will be very fast, but you will suffer a small performance
+penalty in your development environment due to higher IO accesses (more files
+need to be checked for changes). In your production environment, there will be
+no difference.
+
+
 Installation
 ------------
+SecurityExtraBundle
+~~~~~~~~~~~~~~~~~~~
+Checkout a copy of the code::
+
+    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git src/Bundle/JMS/SecurityExtraBundle
+    
+Then register the bundle with your kernel::
+
+    // in AppKernel::registerBundles()
+    $bundles[] = new Bundle\JMS\SecurityExtraBundle\SecurityExtraBundle();
+    $loader = new Symfony\Component\HttpFoundation\UniversalClassLoader();
+    $loader->registerNamespace('SecurityProxies', $this->getCacheDir().'/security');
+    $loader->register();
+
+Dependencies
+~~~~~~~~~~~~
 This bundle requires the pdepend library which is used for some code analysis.
 
 You can simply add it as a submodule::

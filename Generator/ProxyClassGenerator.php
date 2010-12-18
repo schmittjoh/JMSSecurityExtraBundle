@@ -105,11 +105,11 @@ class ProxyClassGenerator
 
         return array($className, sprintf('<?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Proxy;
+namespace SecurityProxies;
 
 /**
  * This class has been auto-generated. Manual changes will be lost.
- *
+ * Last updated at '.date('r').'
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class %s extends \%s

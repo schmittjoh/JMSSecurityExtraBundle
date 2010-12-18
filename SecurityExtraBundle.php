@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle;
 
+use Symfony\Component\HttpFoundation\UniversalClassLoader;
+
 use Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler\SecureMethodInvocationsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Registers our custom compiler pass
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class SecurityExtraBundle extends Bundle

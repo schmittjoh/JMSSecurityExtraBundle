@@ -45,6 +45,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 {
     protected $cacheDir;
     protected $generator;
+    protected $cacheMetadata;
 
     public function __construct($cacheDir)
     {
@@ -53,11 +54,19 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             mkdir($cacheDir, 0777, true);
         }
         if (false === is_writable($cacheDir)) {
-            die ('Cannot write to cache folder: '.$cacheDir);
+            throw new \RuntimeException('Cannot write to cache folder: '.$cacheDir);
         }
         $this->cacheDir = $cacheDir;
 
+        if (!file_exists($cacheDir.'SecurityProxies/')) {
+            mkdir($cacheDir.'SecurityProxies/', 0777, true);
+        }
+        if (false === is_writeable($cacheDir.'SecurityProxies/')) {
+            throw new \RuntimeException('Cannot write to cache folder: '.$cacheDir.'SecurityProxies/');
+        }
+
         $this->generator = new ProxyClassGenerator();
+        $this->createOrLoadCacheMetadata();
     }
 
     /**
@@ -65,26 +74,93 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        foreach ($container->getDefinitions() as $definition) {
-            $this->processDefinition($container, $definition);
+        foreach ($container->getDefinitions() as $id => $definition) {
+            $this->processDefinition($container, $id, $definition);
         }
+
+        $this->writeCacheMetadata();
     }
 
-    protected function processDefinition(ContainerBuilder $container, Definition $definition)
+    protected function processDefinition(ContainerBuilder $container, $id, Definition $definition)
     {
         if (null === $class = $definition->getClass()) {
             return;
         }
 
-        $analyzer = new ServiceAnalyzer($definition->getClass(), $this->cacheDir.'meta/');
-        $analyzer->analyze();
-        $metadata = $analyzer->getMetadata();
+        if ($this->needsReAssessment($id, $definition)) {
+            $analyzer = new ServiceAnalyzer($definition->getClass());
+            $analyzer->analyze();
 
-        if (true === $metadata->isProxyRequired()) {
-            list($newClassName, $content) = $this->generator->generate($definition, $metadata);
-            file_put_contents($this->cacheDir.$newClassName.'.php', $content);
-            $definition->setClass('Bundle\\JMS\\SecurityExtraBundle\\Proxy\\'.$newClassName);
-            $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
+            $files = array();
+            foreach ($analyzer->getFiles() as $file) {
+                $container->addResource($file = new FileResource($file));
+                $files[] = $file;
+            }
+
+            $metadata = $analyzer->getMetadata();
+            $proxyClass = null;
+            if (true === $metadata->isProxyRequired()) {
+                list($newClassName, $content) = $this->generator->generate($definition, $metadata);
+                file_put_contents($this->cacheDir.'SecurityProxies/'.$newClassName.'.php', $content);
+                $definition->setClass($proxyClass = 'SecurityProxies\\'.$newClassName);
+                $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
+            }
+
+            $this->cacheMetadata[$id] = array(
+                'class' => $definition->getClass(),
+                'proxy_class' => $proxyClass,
+            		'analyze_time' => time(),
+                'files' => $files,
+            );
+        } else {
+            foreach ($this->cacheMetadata[$id]['files'] as $file) {
+                $container->addResource($file);
+            }
+
+            if (null !== $proxyClass = $this->cacheMetadata[$id]['proxy_class']) {
+                $definition->setClass($proxyClass);
+            }
+        }
+    }
+
+    protected function needsReAssessment($id, Definition $definition)
+    {
+        if (!isset($this->cacheMetadata[$id])) {
+            return true;
+        }
+
+        $metadata = $this->cacheMetadata[$id];
+        if ($metadata['class'] !== $definition->getClass()) {
+            return true;
+        }
+
+        $lastAnalyzed = $metadata['analyze_time'];
+        foreach ($metadata['files'] as $file) {
+            if (false === $file->isUptodate($lastAnalyzed)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function createOrLoadCacheMetadata()
+    {
+        if (file_exists($this->cacheDir.'cache.meta')) {
+            if (!is_readable($this->cacheDir.'cache.meta')) {
+                throw new \RuntimeException('Cannot load security cache meta data from: '.$this->cacheDir.'cache.meta');
+            }
+
+            $this->cacheMetadata = unserialize(file_get_contents($this->cacheDir.'cache.meta'));
+        } else {
+            $this->cacheMetadata = array();
+        }
+    }
+
+    protected function writeCacheMetadata()
+    {
+        if (false === file_put_contents($this->cacheDir.'cache.meta', serialize($this->cacheMetadata))) {
+            throw new \RuntimeException('Could not write to cache file: '.$this->cacheDir.'cache.meta');
         }
     }
 }
