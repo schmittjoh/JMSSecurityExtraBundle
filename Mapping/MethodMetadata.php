@@ -105,7 +105,7 @@ class MethodMetadata
     
     public function setSatisfiesParentSecurityPolicy()
     {
-        $this->satisfiesParentSecurityPolicy;
+        $this->satisfiesParentSecurityPolicy = true;
     }
     
     /**

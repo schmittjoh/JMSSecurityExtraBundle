@@ -41,10 +41,10 @@ class DriverChain implements DriverInterface
         );
     }
 
-    public function loadMetadataForClass(ReflectionClass $className)
+    public function loadMetadataForClass(ReflectionClass $class)
     {
         foreach ($this->drivers as $driver) {
-            if (null !== $metadata = $driver->loadMetadataForClass($className)) {
+            if (null !== $metadata = $driver->loadMetadataForClass($class)) {
                 return $metadata;
             }
         }

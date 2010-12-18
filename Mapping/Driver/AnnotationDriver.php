@@ -3,7 +3,6 @@
 namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
 
 use Bundle\JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
-
 use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureReturn;
@@ -32,16 +31,16 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * Loads security annotations and converts them to metadata
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class AnnotationDriver implements DriverInterface
 {
     protected $reader;
-    
+
     public function __construct()
     {
-        $this->reader = new AnnotationReader();
+        $this->reader = new AnnotationReader(null, new AnnotationParser());
         $this->reader->setAutoloadAnnotations(false);
         $this->reader->setDefaultAnnotationNamespace('Bundle\\JMS\\SecurityExtraBundle\\Annotation\\');
         $this->reader->setAnnotationCreationFunction(function($name, $values) {
@@ -62,7 +61,7 @@ class AnnotationDriver implements DriverInterface
             require_once $annotationFile->getPathName();
         }
     }
-    
+
     public function loadMetadataForClass(ReflectionClass $reflection)
     {
         $metadata = new ClassMetadata($reflection);
@@ -71,10 +70,6 @@ class AnnotationDriver implements DriverInterface
             $annotations = $this->reader->getMethodAnnotations($method);
 
             if (count($annotations) > 0) {
-                if ($method->isStatic() || $method->isFinal()) {
-                    throw new \RuntimeException('Annotations cannot be defined on final, or static methods.');
-                }
-                
                 $parameters = array();
                 foreach ($method->getParameters() as $index => $parameter) {
                     $parameters[$parameter->getName()] = $index;
@@ -88,7 +83,7 @@ class AnnotationDriver implements DriverInterface
                         if (!isset($parameters[$annotation->getName()])) {
                             throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->getName(), $method->getName()));
                         }
-                        
+
                         $methodMetadata->addParamPermissions($parameters[$annotation->getName()], $annotation->getPermissions());
                     } else if ($annotation instanceof SecureReturn) {
                         $methodMetadata->addReturnPermissions($annotation->getPermissions());
@@ -99,7 +94,7 @@ class AnnotationDriver implements DriverInterface
                 $metadata->addMethod($method->getName(), $methodMetadata);
             }
         }
-        
+
         return $metadata;
     }
 }
