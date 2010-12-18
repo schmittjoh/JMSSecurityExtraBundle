@@ -119,6 +119,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 
             if (null !== $proxyClass = $this->cacheMetadata[$id]['proxy_class']) {
                 $definition->setClass($proxyClass);
+                $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
             }
         }
     }
