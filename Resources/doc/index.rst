@@ -13,7 +13,7 @@ Annotations can also be declared on parent classes, or interfaces. There is a
 restriction however:
 
 If you override a method which has security metadata, right now you always need
-to copy over the annotations to your overriden method. In addition, you also
+to copy over the annotations to your overridden method. In addition, you also
 need to add @SatisfiesParentSecurityPolicy, otherwise there will be an exception
 when the container is built.
 
@@ -21,7 +21,7 @@ Installation
 ------------
 This bundle requires the pdepend library which is used for some code analysis.
 
-You can simple add it as a submodule::
+You can simply add it as a submodule::
 
     git submodule add https://github.com/manuelpichler/pdepend.git src/vendor/pdepend
     
@@ -95,6 +95,6 @@ the method. This is also only useful if the returned value is a domain object::
 @SatisfiesParentSecurityPolicy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This must be defined on a method that overrides a method which has security metadata.
-It is there to ensure that you are aware the security of the overriden method cannot
+It is there to ensure that you are aware the security of the overridden method cannot
 be enforced anymore, and that you must copy over all annotations if you want to keep
 them.
