@@ -2,7 +2,7 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Generator;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use Symfony\Component\DependencyInjection\Definition;
 use \ReflectionClass;
 use \ReflectionMethod;
@@ -26,7 +26,7 @@ use \ReflectionMethod;
 /**
  * Generates the proxy class which has security checks built-in according to
  * the given metadata information.
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  */
@@ -38,10 +38,10 @@ class ProxyClassGenerator
      * Generates the proxy class
      *
      * @param Definition $definition
-     * @param ClassMetadata $metadata
+     * @param ServiceMetadata $metadata
      * @return array<string, string>
      */
-    public function generate(Definition $definition, ClassMetadata $metadata)
+    public function generate(Definition $definition, ServiceMetadata $metadata)
     {
         list($className, $proxy) = $this->getClassDefinition($definition);
         foreach ($metadata->getMethods() as $method) {
@@ -56,9 +56,10 @@ class ProxyClassGenerator
     ';
             }
 
-            foreach ($method->getParamPermissions() as $name => $permissions) {
+            $parameters = $method->getReflection()->getParameters();
+            foreach ($method->getParamPermissions() as $index => $permissions) {
                 $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext->vote('
-                          .var_export($permissions, true).', $'.$name.')) {
+                          .var_export($permissions, true).', $'.$parameters[$index]->getName().')) {
             throw new \Symfony\Component\Security\Exception\AccessDeniedException();
         }
 
@@ -135,7 +136,7 @@ class %s extends \%s
         foreach ($method->getParameters() as $param) {
             $def .= '$'.$param->getName().', ';
         }
-        
+
         return substr($def, 0, -2). ')';
     }
 

@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
+use Bundle\JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
+
 use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 
 use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
@@ -74,35 +76,15 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             return;
         }
 
-        $reflection = new ReflectionClass($class);
-        $metadata = $this->collectServiceMetadata($container, $this->buildHierarchy($reflection));
-        
+        $analyzer = new ServiceAnalyzer($definition->getClass(), $this->cacheDir.'meta/');
+        $analyzer->analyze();
+        $metadata = $analyzer->getMetadata();
+
         if (true === $metadata->isProxyRequired()) {
-            $this->analyzeControlFlow($metadata);            
-            
             list($newClassName, $content) = $this->generator->generate($definition, $metadata);
             file_put_contents($this->cacheDir.$newClassName.'.php', $content);
             $definition->setClass('Bundle\\JMS\\SecurityExtraBundle\\Proxy\\'.$newClassName);
             $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
         }
-    }
-    
-    /**
-     * This method analyzes the control flow of the service to check whether
-     * the metadata of the different classes is compatible, and whether the
-     * service can be secured.
-     *
-     * @param ServiceMetadata $metadata
-     * @return void
-     */
-    protected function analyzeCodeFlow(ServiceMetadata $metadata)
-    {
-        $pdepend = new PHP_Depend(new PHP_Depend_Util_Configuration(new \stdClass()));
-        
-        foreach ($metadata->getClassHierarchy() as $reflection) {
-            $pdepend->addFile($reflection->getFileName());
-        }
-        
-        var_dump($pdepend->analyze());
     }
 }
