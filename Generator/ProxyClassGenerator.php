@@ -44,45 +44,50 @@ class ProxyClassGenerator
     public function generate(Definition $definition, ServiceMetadata $metadata)
     {
         list($className, $proxy) = $this->getClassDefinition($definition);
-        foreach ($metadata->getMethods() as $method) {
-            $proxy .= $this->getMethodDefinition($method->getReflection());
+        foreach ($metadata->getMethods() as $name => $method) {
+            $reflection = $method->getReflection();
+            $proxy .= $this->getMethodDefinition($reflection);
 
-            if (count($roles = $method->getRoles()) > 0) {
-                    $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext'
-                             .'->vote('.var_export($roles, true).')) {
-            throw new \Symfony\Component\Security\Exception\AccessDeniedException();
-        }
-
-    ';
+            $proxy .= '    $methodInvocation = new \Bundle\JMS\SecurityExtraBundle\Security\Authorization\SecureMethodInvocation($this, '.var_export($name, true).', array(';
+            for ($i=1,$c=$reflection->getNumberOfParameters(); $i<=$c; $i++) {
+                $proxy .= '$param_'.$i.', ';
             }
-
-            $parameters = $method->getReflection()->getParameters();
-            foreach ($method->getParamPermissions() as $index => $permissions) {
-                $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext->vote('
-                          .var_export($permissions, true).', $'.$parameters[$index]->getName().')) {
-            throw new \Symfony\Component\Security\Exception\AccessDeniedException();
-        }
-
-    ';
+            if ($c > 0) {
+                $proxy = substr($proxy, 0, -2);
             }
+            $proxy .= '));
+    ';
 
-            $proxy .= '    $result = '.$this->getMethodCall($method->getReflection()).';
+            $proxy .= '    $runAsToken = $this->jmsSecurityExtraBundle__methodSecurityInterceptor->beforeInvocation($methodInvocation, ';
+
+            $proxy .= var_export($method->getRoles(), true).', ';
+            $proxy .= var_export($method->getParamPermissions(), true).', ';
+            $proxy .= var_export($runAsRoles = $method->getRunAsRoles(), true).');
 
     ';
 
-            if (count($permissions = $method->getReturnPermissions()) > 0) {
-                $proxy .= '    if (!$this->jmsSecurityExtraBundle__securityContext->vote('
-                         .var_export($permissions, true).', $result)) {
-            throw new \Symfony\Component\Security\Exception\AccessDeniedException();
-        }
-
-    ';
-            }
-
-            $proxy .= '    return $result;
+            if (count($runAsRoles) === 0 && count($returnPermissions = $method->getReturnPermissions()) === 0 && false === $method->returnsReference()) {
+                $proxy .= '    return '.$this->getMethodCall($reflection).';
     }
 
     ';
+            } else {
+                $proxy .= '    $returnValue = '.$this->getMethodCall($reflection).';
+
+    ';
+
+                if (count($runAsRoles) === 0 && count($returnPermissions) === 0) {
+                    $proxy .= '    return $returnValue;
+    ';
+                } else {
+                    $proxy .= '    return $this->jmsSecurityExtraBundle__methodSecurityInterceptor->afterInvocation($methodInvocation, $returnValue, $runAsToken);
+    ';
+                }
+
+                $proxy .= '}
+
+    ';
+            }
         }
 
         return array($className, substr($proxy, 0, -5).'}');
@@ -114,11 +119,11 @@ namespace SecurityProxies;
  */
 class %s extends \%s
 {
-    protected $jmsSecurityExtraBundle__securityContext;
+    private $jmsSecurityExtraBundle__methodSecurityInterceptor;
 
-    public function jmsSecurityExtraBundle__setSecurityContext(\Symfony\Component\Security\SecurityContext $context)
+    public function jmsSecurityExtraBundle__setMethodSecurityInterceptor(\Bundle\JMS\SecurityExtraBundle\Security\Authorization\MethodSecurityInterceptor $interceptor)
     {
-        $this->jmsSecurityExtraBundle__securityContext = $context;
+        $this->jmsSecurityExtraBundle__methodSecurityInterceptor = $interceptor;
     }
 
     ', $className, $baseClass));
@@ -133,8 +138,8 @@ class %s extends \%s
         }
 
         $def .= 'parent::'.$method->getName().'(';
-        foreach ($method->getParameters() as $param) {
-            $def .= '$'.$param->getName().', ';
+        foreach ($method->getParameters() as $index => $param) {
+            $def .= '$param_'.($index+1).', ';
         }
 
         return substr($def, 0, -2). ')';
@@ -158,7 +163,7 @@ class %s extends \%s
         }
 
         $def .= 'function '.$method->getName().'(';
-        foreach ($method->getParameters() as $param) {
+        foreach ($method->getParameters() as $index => $param) {
             if (null !== $class = $param->getClass()) {
                 $def .= '\\'.$class->getName().' ';
             } else if ($param->isArray()) {
@@ -169,7 +174,7 @@ class %s extends \%s
                 $def .= '&';
             }
 
-            $def .= '$'.$param->getName();
+            $def .= '$param_'.($index+1);
 
             if ($param->isOptional()) {
                 $def .= ' = '.var_export($param->getDefaultValue(), true);

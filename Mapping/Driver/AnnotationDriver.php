@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
 
+use Bundle\JMS\SecurityExtraBundle\Annotation\RunAs;
+
 use Bundle\JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
 use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
@@ -89,6 +91,8 @@ class AnnotationDriver implements DriverInterface
                         $methodMetadata->addReturnPermissions($annotation->getPermissions());
                     } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
                         $methodMetadata->setSatisfiesParentSecurityPolicy();
+                    } else if ($annotation instanceof RunAs) {
+                        $methodMetadata->setRunAsRoles($annotation->getRoles());
                     }
                 }
                 $metadata->addMethod($method->getName(), $methodMetadata);

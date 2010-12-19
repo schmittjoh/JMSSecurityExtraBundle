@@ -20,7 +20,7 @@ namespace Bundle\JMS\SecurityExtraBundle\Mapping;
 
 /**
  * Contains method metadata information
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class MethodMetadata
@@ -29,6 +29,7 @@ class MethodMetadata
     protected $reflection;
     protected $paramPermissions;
     protected $returnPermissions;
+    protected $runAsRoles;
     protected $satisfiesParentSecurityPolicy;
 
     public function __construct(\ReflectionMethod $method)
@@ -37,12 +38,13 @@ class MethodMetadata
         $this->roles = array();
         $this->paramPermissions = array();
         $this->returnPermissions = array();
+        $this->runAsRoles = array();
         $this->satisfiesParentSecurityPolicy = false;
     }
 
     /**
      * Adds a parameter restriction
-     * 
+     *
      * @param integer $index 0-based
      * @param array $permissions
      */
@@ -55,7 +57,7 @@ class MethodMetadata
     {
         $this->returnPermissions = $permissions;
     }
-    
+
     public function satisfiesParentSecurityPolicy()
     {
         return $this->satisfiesParentSecurityPolicy;
@@ -65,7 +67,7 @@ class MethodMetadata
     {
         return $this->paramPermissions;
     }
-    
+
     public function getReturnPermissions()
     {
         return $this->returnPermissions;
@@ -80,7 +82,12 @@ class MethodMetadata
     {
         return $this->roles;
     }
-    
+
+    public function getRunAsRoles()
+    {
+        return $this->runAsRoles;
+    }
+
     public function isDeclaredOnInterface()
     {
         $name = $this->reflection->getName();
@@ -89,7 +96,7 @@ class MethodMetadata
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -97,20 +104,25 @@ class MethodMetadata
     {
         $this->returnPermissions = $permissions;
     }
-    
+
     public function setRoles(array $roles)
     {
         $this->roles = $roles;
     }
-    
+
+    public function setRunAsRoles(array $roles)
+    {
+        $this->runAsRoles = $roles;
+    }
+
     public function setSatisfiesParentSecurityPolicy()
     {
         $this->satisfiesParentSecurityPolicy = true;
     }
-    
+
     /**
      * This allows to merge in metadata from an interface
-     * 
+     *
      * @param MethodMetadata $method
      * @return void
      */
@@ -119,11 +131,15 @@ class MethodMetadata
         if (0 === count($this->roles)) {
             $this->roles = $method->getRoles();
         }
-        
+
         if (0 === count($this->returnPermissions)) {
             $this->returnPermissions = $method->getReturnPermissions();
         }
-        
+
+        if (0 === count($this->runAsRoles)) {
+            $this->runAsRoles = $method->getRunAsRoles();
+        }
+
         foreach ($method->getParamPermissions() as $index => $permissions) {
             if (!isset($this->paramPermissions[$index])) {
                 $this->paramPermissions[$index] = $permissions;

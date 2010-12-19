@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://www.symfony-project.org/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="security.access.method_interceptor.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\MethodSecurityInterceptor</parameter>
+        
+        <parameter key="security.access.run_as_manager.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManager</parameter>
+        <parameter key="security.authentication.provider.run_as.class">Bundle\JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider</parameter>
+        <parameter key="security.run_as.key">RunAsToken</parameter>
+        <parameter key="security.run_as.role_prefix">ROLE_</parameter>
+    
+        <parameter key="security.access.after_invocation_manager.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager</parameter>
+        <parameter key="security.access.after_invocation.acl_provider.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider</parameter>
+    </parameters>
+
+    <services>
+        <service id="security.access.run_as_manager" class="%security.access.run_as_manager.class%">
+            <argument>%security.run_as.key%</argument>
+            <argument>%security.run_as.role_prefix%</argument>
+        </service>
+    
+        <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%">
+            <argument type="service" id="security.context" />
+            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="security.access.decision_manager" />
+            <argument type="service" id="security.access.after_invocation_manager" />
+            <argument type="service" id="security.access.run_as_manager" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+            
+        <service id="security.access.after_invocation_manager" class="%security.access.after_invocation_manager.class%">
+            <argument type="collection"></argument>
+        </service>
+        
+        <service id="security.access.after_invocation.acl_provider.class" class="%security.authorization.after_invocation.acl_provider.class%">
+            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="security.acl.object_identity_retrieval_strategy" />
+            <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
+            <argument type="service" id="security.acl.permission.map" />
+            <tag name="security.after_invocation.provider" />
+        </service>
+    </services>
+
+</container>
