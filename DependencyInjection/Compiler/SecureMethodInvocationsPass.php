@@ -3,9 +3,7 @@
 namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
 use Bundle\JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
-
 use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-
 use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use Bundle\JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
 use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
@@ -103,7 +101,9 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
                 list($newClassName, $content) = $this->generator->generate($definition, $metadata);
                 file_put_contents($this->cacheDir.'SecurityProxies/'.$newClassName.'.php', $content);
                 $definition->setClass($proxyClass = 'SecurityProxies\\'.$newClassName);
-                $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
+                $definition->addMethodCall('jmsSecurityExtraBundle__setMethodSecurityInterceptor', array(new Reference('security.access.method_interceptor')));
+            } else if (isset($this->cacheMetadata[$id]['proxy_class'])) {
+                @unlink($this->cacheDir.$this->cacheMetadata[$id]['proxy_class'].'.php');
             }
 
             $this->cacheMetadata[$id] = array(
@@ -119,7 +119,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 
             if (null !== $proxyClass = $this->cacheMetadata[$id]['proxy_class']) {
                 $definition->setClass($proxyClass);
-                $definition->addMethodCall('jmsSecurityExtraBundle__setSecurityContext', array(new Reference('security.context')));
+                $definition->addMethodCall('jmsSecurityExtraBundle__setMethodSecurityInterceptor', array(new Reference('security.access.method_interceptor')));
             }
         }
     }

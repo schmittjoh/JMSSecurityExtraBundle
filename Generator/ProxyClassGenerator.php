@@ -2,6 +2,7 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Generator;
 
+use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
 use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use Symfony\Component\DependencyInjection\Definition;
 use \ReflectionClass;
@@ -46,51 +47,80 @@ class ProxyClassGenerator
         list($className, $proxy) = $this->getClassDefinition($definition);
         foreach ($metadata->getMethods() as $name => $method) {
             $reflection = $method->getReflection();
+
             $proxy .= $this->getMethodDefinition($reflection);
 
-            $proxy .= '    $methodInvocation = new \Bundle\JMS\SecurityExtraBundle\Security\Authorization\SecureMethodInvocation($this, '.var_export($name, true).', array(';
-            for ($i=1,$c=$reflection->getNumberOfParameters(); $i<=$c; $i++) {
-                $proxy .= '$param_'.$i.', ';
-            }
-            if ($c > 0) {
-                $proxy = substr($proxy, 0, -2);
-            }
-            $proxy .= '));
-    ';
-
-            $proxy .= '    $runAsToken = $this->jmsSecurityExtraBundle__methodSecurityInterceptor->beforeInvocation($methodInvocation, ';
-
-            $proxy .= var_export($method->getRoles(), true).', ';
-            $proxy .= var_export($method->getParamPermissions(), true).', ';
-            $proxy .= var_export($runAsRoles = $method->getRunAsRoles(), true).');
+            $proxy .= '    static $metadata = '.$this->getMethodSecurityMetadata($method).';
 
     ';
 
-            if (count($runAsRoles) === 0 && count($returnPermissions = $method->getReturnPermissions()) === 0 && false === $method->returnsReference()) {
-                $proxy .= '    return '.$this->getMethodCall($reflection).';
+            if ($reflection->returnsReference()) {
+                $proxy .= '    $returnValue =& ';
+            } else {
+                $proxy .= '    return ';
+            }
+
+            $proxy .= '$this->jmsSecurityExtraBundle__methodSecurityInterceptor->invoke(
+    ';
+            $proxy .= '        '.$this->getSecureMethodInvocation($method).',
+    ';
+            $proxy .= '        $metadata
+    ';
+            $proxy .= '    );';
+
+            if ($reflection->returnsReference()) {
+                $proxy .= '
+
+    ';
+                $proxy .= '    $returnValue[0];';
+            }
+
+            $proxy .= '
     }
 
     ';
-            } else {
-                $proxy .= '    $returnValue = '.$this->getMethodCall($reflection).';
-
-    ';
-
-                if (count($runAsRoles) === 0 && count($returnPermissions) === 0) {
-                    $proxy .= '    return $returnValue;
-    ';
-                } else {
-                    $proxy .= '    return $this->jmsSecurityExtraBundle__methodSecurityInterceptor->afterInvocation($methodInvocation, $returnValue, $runAsToken);
-    ';
-                }
-
-                $proxy .= '}
-
-    ';
-            }
         }
 
-        return array($className, substr($proxy, 0, -5).'}');
+        return array($className, substr($proxy, 0, -6).'}');
+    }
+
+    protected function getMethodSecurityMetadata(MethodMetadata $method)
+    {
+        $metadata = var_export(array(
+            'roles' => $method->getRoles(),
+            'run_as_roles' => $method->getRunAsRoles(),
+            'param_permissions' => $method->getParamPermissions(),
+            'return_permissions' => $method->getReturnPermissions(),
+        ), true);
+
+        $staticReplaces = array(
+            "\n" => '',
+            'array (' => 'array(',
+        );
+        $metadata = strtr($metadata, $staticReplaces);
+
+        $regexReplaces = array(
+            '/\s+/' => ' ',
+        		'/\(\s+/' => '(',
+            '/[0-9]+\s+=>\s+/' => '',
+            '/,\s*\)/' => ')',
+        );
+        $metadata = preg_replace(array_keys($regexReplaces), array_values($regexReplaces), $metadata);
+
+        return $metadata;
+    }
+
+    protected function getSecureMethodInvocation(MethodMetadata $method)
+    {
+        $code = 'new SecureMethodInvocation($this, '.var_export($method->getReflection()->getName(), true).', array(';
+
+        $arguments = array();
+        foreach ($method->getReflection()->getParameters() as $param) {
+            $arguments[] = '$p_'.$param->getName();
+        }
+        $code .= implode(', ', $arguments).'))';
+
+        return $code;
     }
 
     protected function getClassDefinition(Definition $definition)
@@ -112,6 +142,9 @@ class ProxyClassGenerator
 
 namespace SecurityProxies;
 
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\SecureMethodInvocation;
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
+
 /**
  * This class has been auto-generated. Manual changes will be lost.
  * Last updated at '.date('r').'
@@ -121,28 +154,12 @@ class %s extends \%s
 {
     private $jmsSecurityExtraBundle__methodSecurityInterceptor;
 
-    public function jmsSecurityExtraBundle__setMethodSecurityInterceptor(\Bundle\JMS\SecurityExtraBundle\Security\Authorization\MethodSecurityInterceptor $interceptor)
+    public function jmsSecurityExtraBundle__setMethodSecurityInterceptor(MethodSecurityInterceptor $interceptor)
     {
         $this->jmsSecurityExtraBundle__methodSecurityInterceptor = $interceptor;
     }
 
     ', $className, $baseClass));
-    }
-
-    protected function getMethodCall(ReflectionMethod $method)
-    {
-        $def = '';
-
-        if ($method->returnsReference()) {
-            $def .= '&';
-        }
-
-        $def .= 'parent::'.$method->getName().'(';
-        foreach ($method->getParameters() as $index => $param) {
-            $def .= '$param_'.($index+1).', ';
-        }
-
-        return substr($def, 0, -2). ')';
     }
 
     protected function getMethodDefinition(ReflectionMethod $method)
@@ -163,7 +180,7 @@ class %s extends \%s
         }
 
         $def .= 'function '.$method->getName().'(';
-        foreach ($method->getParameters() as $index => $param) {
+        foreach ($method->getParameters() as $param) {
             if (null !== $class = $param->getClass()) {
                 $def .= '\\'.$class->getName().' ';
             } else if ($param->isArray()) {
@@ -174,7 +191,7 @@ class %s extends \%s
                 $def .= '&';
             }
 
-            $def .= '$param_'.($index+1);
+            $def .= '$p_'.$param->getName();
 
             if ($param->isOptional()) {
                 $def .= ' = '.var_export($param->getDefaultValue(), true);

@@ -126,6 +126,42 @@ the method. This is also only useful if the returned value is a domain object::
         }
     }
     
+@RunAs
+~~~~~~
+This annotation lets you specifiy roles which are added only for the duration 
+of the method invocation. These roles will not be taken into consideration 
+for before, or after invocation access decisions. 
+
+This is typically used to implement a two-tier service layer where you have 
+public and private services, and private services are only to be invoked 
+through a specific public service::
+
+    <?php
+    
+    class MyPrivateService
+    {
+        /**
+         * @Secure(roles="ROLE_PRIVATE_SERVICE")
+         */
+        public function aMethodOnlyToBeInvokedThroughASpecificChannel()
+        {
+            // ...
+        }
+    }
+    
+    class MyPublicService
+    {
+        protected $myPrivateService;
+    
+        /**
+         * @Secure(roles="ROLE_USER")
+         * @RunAs(roles="ROLE_PRIVATE_SERVICE")
+         */
+        public function canBeInvokedFromOtherServices()
+        {
+            return $this->myPrivateService->aMethodOnlyToBeInvokedThroughASpecificChannel();
+        }
+    }
 
 @SatisfiesParentSecurityPolicy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
