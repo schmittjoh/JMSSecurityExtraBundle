@@ -34,11 +34,10 @@ class SecurityExtraBundle extends Bundle
     {
         parent::registerExtensions($container);
 
-        $passConfig = $container->getCompilerPassConfig();
-        $passConfig->addPass(
+        $container->addCompilerPass(
             new AddAfterInvocationProvidersPass()
         );
-        $passConfig->addPass(
+        $container->addCompilerPass(
             new SecureMethodInvocationsPass(
                 $container->getParameter('kernel.cache_dir')
             )
