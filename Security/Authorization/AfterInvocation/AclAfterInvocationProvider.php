@@ -57,25 +57,30 @@ class AclAfterInvocationProvider implements AfterInvocationProviderInterface
             }
         }
 
-        if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($returnedObject)) {
-            if (null !== $this->logger) {
-                $this->logger->debug('Returned object was no domain object, skipping security check.');
-            }
-
-            return $returnObject;
-        }
-
-        $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);
-
-        try {
-            $acl = $this->aclProvider->findAcl($oid, $sids);
-        } catch (AclNotFoundException $noAcl) {
-            throw new AccessDeniedException('No applicable ACL found for domain object.');
-        }
-
+        $firstAttribute = true;
         foreach ($attributes as $attribute) {
             if (!$this->supportsAttribute($attribute)) {
                 continue;
+            }
+
+            if ($firstAttribute) {
+                $firstAttribute = false;
+
+                if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($returnedObject)) {
+                    if (null !== $this->logger) {
+                        $this->logger->debug('Returned object was no domain object, skipping security check.');
+                    }
+
+                    return $returnObject;
+                }
+
+                $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);
+
+                try {
+                    $acl = $this->aclProvider->findAcl($oid, $sids);
+                } catch (AclNotFoundException $noAcl) {
+                    throw new AccessDeniedException('No applicable ACL found for domain object.');
+                }
             }
 
             try {
