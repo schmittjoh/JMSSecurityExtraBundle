@@ -9,6 +9,7 @@ use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
 use \PHP_Depend;
 use \PHP_Depend_Code_Class;
+use \PHP_Depend_Code_AbstractClassOrInterface;
 use \PHP_Depend_Code_Interface;
 use \PHP_Depend_Util_Configuration;
 use \ReflectionClass;
@@ -100,7 +101,7 @@ class ServiceAnalyzer
 
         foreach ($this->pdepend->getPackages() as $package) {
             foreach ($package->getClasses() as $class) {
-                if ($rootClassName === $class->getPackageName().'\\'.$class->getName()) {
+                if ($rootClassName === $this->getFullyQualifiedClassname($class)) {
                     $rootClass = $class;
                     break 2;
                 }
@@ -197,7 +198,7 @@ class ServiceAnalyzer
                 $previous = null;
                 $abstractClass = $method->getReflection()->getDeclaringClass()->getName();
                 foreach ($this->hierarchy as $class) {
-                    if ($abstractClass === $fqcn = $class->getPackageName().'\\'.$class->getName()) {
+                    if ($abstractClass === $fqcn = $this->getFullyQualifiedClassname($class)) {
                         $reflectionClass = new ReflectionClass($previous);
                         $methodMetadata = new MethodMetadata($reflectionClass->getMethod($name));
                         $methodMetadata->merge($method);
@@ -233,14 +234,14 @@ class ServiceAnalyzer
                     continue;
                 }
 
-                if ($secureMethods[$name]->getReflection()->getDeclaringClass()->getName() !== $rootClass->getPackageName().'\\'.$rootClass->getName()) {
+                if ($secureMethods[$name]->getReflection()->getDeclaringClass()->getName() !== $this->getFullyQualifiedClassname($rootClass)) {
                     throw new \RuntimeException(sprintf(
                         'You have overridden a secured method "%s::%s" in "%s". '
                        .'Please copy over the applicable security metadata, and '
                        .'also add @SatisfiesParentSecurityPolicy.',
                         $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(),
                         $name,
-                        $rootClass->getPackageName().'\\'.$rootClass->getName()
+                        $this->getFullyQualifiedClassname($rootClass)
                     ));
                 }
 
@@ -257,12 +258,22 @@ class ServiceAnalyzer
         }
     }
 
+    protected function getFullyQualifiedClassname(PHP_Depend_Code_AbstractClassOrInterface $class)
+    {
+        $name = $class->getPackageName().'\\'.$class->getName();
+        if (false === class_exists($name, false)) {
+            return $class->getName();
+        } else {
+            return $name;
+        }
+    }
+
     protected function collectServiceMetadata()
     {
         $this->metadata = new ServiceMetadata();
         $classMetadata = null;
         foreach ($this->hierarchy as $class) {
-            $reflectionClass = new \ReflectionClass($class->getPackageName().'\\'.$class->getName());
+            $reflectionClass = new \ReflectionClass($this->getFullyQualifiedClassname($class));
 
             if (null === $classMetadata) {
                 $classMetadata = new ClassMetadata($reflectionClass);
