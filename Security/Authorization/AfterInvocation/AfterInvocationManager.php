@@ -21,7 +21,7 @@ use Symfony\Component\Security\Authentication\Token\TokenInterface;
  */
 
 /**
- * This is the pendent to the AccessDecisionManager which is used to make
+ * This is the pendant to the AccessDecisionManager which is used to make
  * access decisions after a method has been executed.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>

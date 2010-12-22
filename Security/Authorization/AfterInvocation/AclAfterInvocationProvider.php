@@ -4,6 +4,7 @@ namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface;
 use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
@@ -55,6 +56,8 @@ class AclAfterInvocationProvider implements AfterInvocationProviderInterface
             if (null !== $this->logger) {
                 $this->logger->debug('Returned object was null, skipping security check.');
             }
+
+            return null;
         }
 
         $firstAttribute = true;
@@ -71,7 +74,7 @@ class AclAfterInvocationProvider implements AfterInvocationProviderInterface
                         $this->logger->debug('Returned object was no domain object, skipping security check.');
                     }
 
-                    return $returnObject;
+                    return $returnedObject;
                 }
 
                 $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);

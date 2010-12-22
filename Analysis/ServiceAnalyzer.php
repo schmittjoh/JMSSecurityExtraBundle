@@ -261,7 +261,7 @@ class ServiceAnalyzer
     protected function getFullyQualifiedClassname(PHP_Depend_Code_AbstractClassOrInterface $class)
     {
         $name = $class->getPackageName().'\\'.$class->getName();
-        if (false === class_exists($name, false)) {
+        if (false === class_exists($name, false) && false === interface_exists($name, false)) {
             return $class->getName();
         } else {
             return $name;
