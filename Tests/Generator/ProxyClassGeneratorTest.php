@@ -12,8 +12,6 @@ class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerate()
     {
-        $this->markTestSkipped('not working for now');
-
         $generator = new ProxyClassGenerator();
         $metadata = new ServiceMetadata();
         $reflection = new \ReflectionClass('Bundle\JMS\SecurityExtraBundle\Tests\Generator\FooService');

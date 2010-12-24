@@ -16,7 +16,7 @@ use \ReflectionMethod;
 use Symfony\Component\Finder\Finder;
 
 /*
- * Copyright 2010 Johannes M. Schmitt
+ * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

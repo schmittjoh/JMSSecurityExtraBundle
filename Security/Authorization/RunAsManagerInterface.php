@@ -5,7 +5,7 @@ namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization;
 use Symfony\Component\Security\Authentication\Token\TokenInterface;
 
 /*
- * Copyright 2010 Johannes M. Schmitt
+ * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

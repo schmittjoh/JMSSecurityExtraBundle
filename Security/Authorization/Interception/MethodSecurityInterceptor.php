@@ -4,6 +4,7 @@ namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
 use Symfony\Component\Security\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\SecurityContext;
@@ -12,7 +13,7 @@ use Symfony\Component\Security\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Exception\AuthenticationCredentialsNotFoundException;
 
 /*
- * Copyright 2010 Johannes M. Schmitt
+ * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,13 +98,13 @@ class MethodSecurityInterceptor
 
         $token = $this->authenticateIfRequired($token);
 
-        if (count($metadata['roles']) > 0 && false === $this->accessDecisionManager->decide($token, $method, $metadata['roles'])) {
+        if (count($metadata['roles']) > 0 && false === $this->accessDecisionManager->decide($token, $metadata['roles'], $method)) {
             throw new AccessDeniedException('Token does not have the required roles.');
         }
 
         if (count($metadata['param_permissions']) > 0) {
             foreach ($method->getArguments() as $index => $argument) {
-                if (null !== $argument && isset($metadata['param_permissions'][$index]) && false === $this->accessDecisionManager->decide($token, $argument, $metadata['param_permissions'][$index])) {
+                if (null !== $argument && isset($metadata['param_permissions'][$index]) && false === $this->accessDecisionManager->decide($token, $metadata['param_permissions'][$index], $argument)) {
                     throw new AccessDeniedException(sprintf('Token has not required permissions for method "%s::%s".', $method->getDeclaringClass()->getParentClass()->getName(), $method->getName()));
                 }
             }
