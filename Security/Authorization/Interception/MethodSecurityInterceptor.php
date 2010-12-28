@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
+use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
@@ -69,23 +71,39 @@ class MethodSecurityInterceptor
             $toInvoke->setAccessible(true);
         }
 
-        // special processing of methods that return references
-        if (true === $toInvoke->returnsReference()) {
-            $returnValue = array();
-            $returnValue[0] = &$toInvoke->invokeArgs($method->getThis(), $method->getArguments());
-        } else {
-            $returnValue = $toInvoke->invokeArgs($method->getThis(), $method->getArguments());
-        }
+        try {
+            // special processing of methods that return references
+            if (true === $toInvoke->returnsReference()) {
+                $returnValue = array();
+                $returnValue[0] = &$toInvoke->invokeArgs($method->getThis(), $method->getArguments());
+            } else {
+                $returnValue = $toInvoke->invokeArgs($method->getThis(), $method->getArguments());
+            }
 
-        if ($nonPublic) {
-            $toInvoke->setAccessible(false);
-        }
+            if ($nonPublic) {
+                $toInvoke->setAccessible(false);
+            }
 
-        if (null === $runAsToken && 0 === count($metadata['return_permissions'])) {
-            return $returnValue;
-        }
+            if (null !== $runAsToken) {
+                $this->restoreOriginalToken($runAsToken);
+            }
 
-        return $this->afterInvocation($method, $metadata, $runAsToken, $returnValue);
+            if (0 === count($metadata['return_permissions'])) {
+                return $returnValue;
+            }
+
+            return $this->afterInvocation($method, $metadata, $runAsToken, $returnValue);
+        } catch (\Exception $failed) {
+            if ($nonPublic) {
+                $toInvoke->setAccessible(false);
+            }
+
+            if (null !== $runAsToken) {
+                $this->restoreOriginalToken($runAsToken);
+            }
+
+            throw $failed;
+        }
     }
 
     protected function beforeInvocation(SecureMethodInvocation $method, array $metadata)
@@ -110,6 +128,7 @@ class MethodSecurityInterceptor
             }
         }
 
+        $runAsToken = null;
         if (count($metadata['run_as_roles']) > 0) {
             $runAsToken = $this->runAsManager->buildRunAs($token, $method, $metadata['run_as_roles']);
 
@@ -117,9 +136,11 @@ class MethodSecurityInterceptor
                 $this->logger->debug('Populating security context with RunAsToken');
             }
 
+            if (null === $runAsToken) {
+                throw new \RuntimeException('RunAsManager must not return null from buildRunAs().');
+            }
+
             $this->securityContext->setToken($runAsToken);
-        } else {
-            $runAsToken = null;
         }
 
         return $runAsToken;
@@ -127,21 +148,20 @@ class MethodSecurityInterceptor
 
     protected function afterInvocation(SecureMethodInvocation $method, array $metadata, $runAsToken, $returnValue)
     {
-        if (null !== $runAsToken) {
-            if (null !== $this->logger) {
-                $this->logger->debug('Populating security context with original Token.');
-            }
-
-            $this->securityContext->setToken($token = $runAsToken->getOriginalToken());
-        } else {
-            $token = $this->securityContext->getToken();
-        }
-
         if (0 === count($metadata['return_permissions'])) {
             return $returnValue;
         }
 
-        return $this->afterInvocationManager->decide($token, $method, $metadata['return_permissions'], $returnValue);
+        return $this->afterInvocationManager->decide($this->securityContext->getToken(), $method, $metadata['return_permissions'], $returnValue);
+    }
+
+    protected function restoreOriginalToken(RunAsUserToken $runAsToken)
+    {
+        if (null !== $this->logger) {
+            $this->logger->debug('Populating security context with original Token.');
+        }
+
+        $this->securityContext->setToken($runAsToken->getOriginalToken());
     }
 
     protected function authenticateIfRequired(TokenInterface $token)

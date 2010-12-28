@@ -2,6 +2,8 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
 
+use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+
 use Symfony\Component\Security\Exception\AuthenticationException;
 
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
@@ -162,6 +164,38 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
         $interceptor->invoke($method, $metadata);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testInvokehandlesExceptionsFromWithintheInvokedMethodGracefully()
+    {
+        $method = $this->getInvocation('throwException');
+        list($interceptor, $context,,,, $runAsManager) = $this->getInterceptor();
+
+        $token = $this->getToken();
+        $context
+            ->expects($this->once())
+            ->method('getToken')
+            ->will($this->returnValue($token))
+        ;
+
+        $metadata = $this->getMetadata();
+        $metadata['run_as_roles'] = array('ROLE_FOO');
+        $runAsToken = new RunAsUserToken('asdf', 'user', 'foo', array('ROLE_FOO'), $token);
+        $runAsManager
+            ->expects($this->once())
+            ->method('buildRunAs')
+            ->will($this->returnValue($runAsToken))
+        ;
+
+        $context
+            ->expects($this->exactly(2))
+            ->method('setToken')
+        ;
+
+        $interceptor->invoke($method, $metadata);
+    }
+
     protected function getToken($isAuthenticated = true)
     {
         $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
@@ -206,9 +240,13 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function getInvocation()
+    protected function getInvocation($method = 'foo', $arguments = array())
     {
-        return new SecureMethodInvocation(new SecurityProxy(), 'foo', array(new \stdClass(), new \stdClass()));
+        if ('foo' === $method && 0 === count($arguments)) {
+            $arguments = array(new \stdClass(), new \stdClass());
+        }
+
+        return new SecureMethodInvocation(new SecurityProxy(), $method, $arguments);
     }
 }
 
@@ -218,6 +256,11 @@ class SecureService
     {
         return $param;
     }
+
+    public function throwException()
+    {
+        throw new \RuntimeException;
+    }
 }
 
 class SecurityProxy extends SecureService
@@ -225,5 +268,10 @@ class SecurityProxy extends SecureService
     public function foo($p1, $p2)
     {
         return parent::foo($p1, $p2);
+    }
+
+    public function throwException()
+    {
+        parent::throwException();
     }
 }
