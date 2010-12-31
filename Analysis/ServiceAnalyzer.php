@@ -187,7 +187,8 @@ class ServiceAnalyzer
                     $secureMethods[$name] = $method;
                 } else if ($method->getReflection()->isAbstract()) {
                     $secureMethods[$name]->merge($method);
-                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy()) {
+                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy()
+                           && $method->getReflection()->getDeclaringClass()->getName() !== $secureMethods[$name]->getReflection()->getDeclaringClass()->getName()) {
                     throw new \RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(), $name, $secureMethods[$name]->getReflection()->getDeclaringClass()->getFileName()));
                 }
             }
@@ -207,7 +208,7 @@ class ServiceAnalyzer
                         continue 2;
                     }
 
-                    if ($class instanceof PHP_Depend_Code_Class) {
+                    if ($class instanceof PHP_Depend_Code_Class && $this->hasMethod($class, $name)) {
                         $previous = $fqcn;
                     }
                 }
@@ -292,5 +293,16 @@ class ServiceAnalyzer
             }
         }
         $this->metadata->addMetadata($classMetadata);
+    }
+
+    private function hasMethod(PHP_Depend_Code_Class $class, $name)
+    {
+        foreach ($class->getMethods() as $mName => $method) {
+            if ($name === $mName) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

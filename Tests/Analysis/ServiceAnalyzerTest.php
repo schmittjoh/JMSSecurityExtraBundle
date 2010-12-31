@@ -16,6 +16,18 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $service->analyze();
     }
 
+    public function testAnalyzeThrowsNoExceptionWhenAbstractMethodIsNotOverridenInDirectChildClass()
+    {
+        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService');
+        $service->analyze();
+
+        $methods = $service->getMetadata()->getMethods();
+        $this->assertTrue(isset($methods['abstractMethod']));
+
+        $metadata = $methods['abstractMethod'];
+        $this->assertEquals(array('VIEW'), $metadata->getReturnPermissions());
+    }
+
     public function testAnalyzeThrowsNoExceptionWhenSatisfiesParentSecurityPolicyIsDefined()
     {
         $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService');
