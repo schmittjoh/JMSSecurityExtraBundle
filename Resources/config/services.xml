@@ -17,25 +17,29 @@
     </parameters>
 
     <services>
-        <service id="security.access.run_as_manager" class="%security.access.run_as_manager.class%">
+        <service id="security.access.run_as_manager" class="%security.access.run_as_manager.class%" public="false">
             <argument>%security.run_as.key%</argument>
             <argument>%security.run_as.role_prefix%</argument>
         </service>
-
-        <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%">
+    
+        <service id="security.authentication.extra_manager" class="Bundle\JMS\SecurityExtraBundle\Security\Authentication\AuthenticationManager" public="false">
+            <argument type="collection" />
+        </service>
+    
+        <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%" public="false">
             <argument type="service" id="security.context" />
-            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="security.authentication.extra_manager" />
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="security.access.after_invocation_manager" />
             <argument type="service" id="security.access.run_as_manager" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
-
-        <service id="security.access.after_invocation_manager" class="%security.access.after_invocation_manager.class%">
+            
+        <service id="security.access.after_invocation_manager" class="%security.access.after_invocation_manager.class%" public="false">
             <argument type="collection"></argument>
         </service>
-
-        <service id="security.access.after_invocation.acl_provider.class" class="%security.access.after_invocation.acl_provider.class%">
+        
+        <service id="security.access.after_invocation.acl_provider.class" class="%security.access.after_invocation.acl_provider.class%" public="false">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="security.acl.object_identity_retrieval_strategy" />
             <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
