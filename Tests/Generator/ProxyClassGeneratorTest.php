@@ -10,17 +10,19 @@ use Symfony\Component\Security\Exception\AccessDeniedException;
 
 class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGenerate()
+    /**
+     * @dataProvider getTestData
+     */
+    public function testGenerate($class, $method, array $arguments)
     {
         $generator = new ProxyClassGenerator();
         $metadata = new ServiceMetadata();
-        $reflection = new \ReflectionClass('Bundle\JMS\SecurityExtraBundle\Tests\Generator\FooService');
+        $reflection = new \ReflectionClass($class);
 
-        $methodMetadata = new MethodMetadata($reflection->getMethod('foo'));
+        $methodMetadata = new MethodMetadata($reflection->getMethod($method));
         $methodMetadata->setRoles(array('ROLE_FOO'));
-        $methodMetadata->addParamPermissions('fooParam', array('PERMISSION_FOO'));
         $methodMetadata->setReturnPermissions(array('PERMISSION_RETURN'));
-        $metadata->addMethod('foo', $methodMetadata);
+        $metadata->addMethod($method, $methodMetadata);
 
         $definition = new Definition();
         $definition->setClass($reflection->getName());
@@ -44,7 +46,22 @@ class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
         ;
         $proxyClass->jmsSecurityExtraBundle__setMethodSecurityInterceptor($mock);
 
-        $this->assertSame($return, $proxyClass->foo('foo'));
+        $this->assertSame($return, call_user_func_array(array($proxyClass, $method), $arguments));
+    }
+
+    public function getTestData()
+    {
+        return array(
+            array('Bundle\JMS\SecurityExtraBundle\Tests\Generator\FooService', 'foo', array('foo')),
+            array('Bundle\JMS\SecurityExtraBundle\Tests\Generator\AnotherService', 'foo', array()),
+        );
+    }
+}
+
+class AnotherService
+{
+    public function foo()
+    {
     }
 }
 

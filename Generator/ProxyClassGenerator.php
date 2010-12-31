@@ -180,7 +180,8 @@ class %s extends \%s
         }
 
         $def .= 'function '.$method->getName().'(';
-        foreach ($method->getParameters() as $param) {
+        $parameters = $method->getParameters();
+        foreach ($parameters as $param) {
             if (null !== $class = $param->getClass()) {
                 $def .= '\\'.$class->getName().' ';
             } else if ($param->isArray()) {
@@ -199,7 +200,12 @@ class %s extends \%s
 
             $def .= ', ';
         }
-        $def = substr($def, 0, -2).')
+
+        if (count($parameters) > 0) {
+            $def = substr($def, 0, -2);
+        }
+
+        $def .= ')
     {
     ';
 
