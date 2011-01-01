@@ -74,7 +74,10 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
     {
         $parameterBag = $container->getParameterBag();
         foreach ($container->getDefinitions() as $id => $definition) {
-            $definition->setClass($parameterBag->resolveValue($definition->getClass()));
+            if (null !== $definition->getFactoryMethod()) {
+                continue;
+            }
+
             $this->processDefinition($container, $id, $definition);
         }
 
