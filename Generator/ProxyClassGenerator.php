@@ -33,7 +33,7 @@ use \ReflectionMethod;
  */
 class ProxyClassGenerator
 {
-    protected $classCount;
+    protected $classCount = array();
 
     /**
      * Generates the proxy class
@@ -55,7 +55,7 @@ class ProxyClassGenerator
     ';
 
             if ($reflection->returnsReference()) {
-                $proxy .= '    $returnValue =& ';
+                $proxy .= '    $returnValue = ';
             } else {
                 $proxy .= '    return ';
             }
@@ -72,7 +72,7 @@ class ProxyClassGenerator
                 $proxy .= '
 
     ';
-                $proxy .= '    $returnValue[0];';
+                $proxy .= '    return $returnValue[0];';
             }
 
             $proxy .= '
@@ -148,6 +148,7 @@ use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSec
 /**
  * This class has been auto-generated. Manual changes will be lost.
  * Last updated at '.date('r').'
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class %s extends \%s

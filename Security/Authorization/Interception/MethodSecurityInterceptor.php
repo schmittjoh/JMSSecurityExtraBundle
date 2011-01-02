@@ -123,7 +123,7 @@ class MethodSecurityInterceptor
         if (count($metadata['param_permissions']) > 0) {
             foreach ($method->getArguments() as $index => $argument) {
                 if (null !== $argument && isset($metadata['param_permissions'][$index]) && false === $this->accessDecisionManager->decide($token, $metadata['param_permissions'][$index], $argument)) {
-                    throw new AccessDeniedException(sprintf('Token has not required permissions for method "%s::%s".', $method->getDeclaringClass()->getParentClass()->getName(), $method->getName()));
+                    throw new AccessDeniedException(sprintf('Token does not have the required permissions for method "%s::%s".', $method->getDeclaringClass()->getParentClass()->getName(), $method->getName()));
                 }
             }
         }

@@ -40,7 +40,7 @@ class AfterInvocationManager implements AfterInvocationManagerInterface
      */
     public function decide(TokenInterface $token, $secureInvocation, array $attributes, $returnedObject)
     {
-        foreach ($providers as $provider) {
+        foreach ($this->providers as $provider) {
             $returnedObject = $provider->decide($token, $secureInvocation, $attributes, $returnedObject);
         }
 
