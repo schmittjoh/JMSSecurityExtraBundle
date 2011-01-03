@@ -101,10 +101,11 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             }
 
             $metadata = $analyzer->getMetadata();
-            $proxyClass = null;
+            $proxyClass = $path = null;
             if (true === $metadata->isProxyRequired()) {
                 list($newClassName, $content) = $this->generator->generate($definition, $metadata);
-                file_put_contents($this->cacheDir.'SecurityProxies/'.$newClassName.'.php', $content);
+                file_put_contents($path = $this->cacheDir.'SecurityProxies/'.$newClassName.'.php', $content);
+                $definition->setFile($path);
                 $definition->setClass($proxyClass = 'SecurityProxies\\'.$newClassName);
                 $definition->addMethodCall('jmsSecurityExtraBundle__setMethodSecurityInterceptor', array(new Reference('security.access.method_interceptor')));
             } else if (isset($this->cacheMetadata[$id]['proxy_class'])) {
@@ -114,6 +115,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             $this->cacheMetadata[$id] = array(
                 'class' => $definition->getClass(),
                 'proxy_class' => $proxyClass,
+                'proxy_file'  => $path,
             		'analyze_time' => time(),
                 'files' => $files,
             );
@@ -123,6 +125,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             }
 
             if (null !== $proxyClass = $this->cacheMetadata[$id]['proxy_class']) {
+                $definition->setFile($this->cacheMetadata[$id]['proxy_file']);
                 $definition->setClass($proxyClass);
                 $definition->addMethodCall('jmsSecurityExtraBundle__setMethodSecurityInterceptor', array(new Reference('security.access.method_interceptor')));
             }

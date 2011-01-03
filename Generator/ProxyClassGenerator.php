@@ -138,13 +138,21 @@ class ProxyClassGenerator
             $this->classCount[$className] = 1;
         }
 
+        $requiredFiles = '';
+        if (null !== $file = $definition->getFile()) {
+            $requiredFiles .= sprintf("\nrequire_once %s;", var_export($definition->getFile(), true));
+        }
+        if ('' !== $requiredFiles) {
+            $requiredFiles .= "\n";
+        }
+
         return array($className, sprintf('<?php
 
 namespace SecurityProxies;
 
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\SecureMethodInvocation;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
-
+%s
 /**
  * This class has been auto-generated. Manual changes will be lost.
  * Last updated at '.date('r').'
@@ -160,7 +168,7 @@ class %s extends \%s
         $this->jmsSecurityExtraBundle__methodSecurityInterceptor = $interceptor;
     }
 
-    ', $className, $baseClass));
+    ', $requiredFiles, $className, $baseClass));
     }
 
     protected function getMethodDefinition(ReflectionMethod $method)

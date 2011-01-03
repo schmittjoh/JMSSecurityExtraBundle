@@ -47,10 +47,11 @@ Checkout a copy of the code::
 Then register the bundle with your kernel::
 
     // in AppKernel::registerBundles()
-    $bundles[] = new Bundle\JMS\SecurityExtraBundle\SecurityExtraBundle();
-    $loader = new Symfony\Component\HttpFoundation\UniversalClassLoader();
-    $loader->registerNamespace('SecurityProxies', $this->getCacheDir().'/security');
-    $loader->register();
+    $bundles = array(
+        // ...
+        new Bundle\JMS\SecurityExtraBundle\SecurityExtraBundle(),
+        // ...
+    );
 
 Dependencies
 ~~~~~~~~~~~~
