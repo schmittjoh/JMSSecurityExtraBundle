@@ -11,7 +11,7 @@ class AddAfterInvocationProvidersPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('security.access.after_invocation_manager')) {
-            throw new \RuntimeException('Please import the services.xml file into your config.');
+            return;
         }
 
         $providers = array_map(function($id) {

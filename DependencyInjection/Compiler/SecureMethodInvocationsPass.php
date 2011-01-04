@@ -72,9 +72,20 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition('security.access.method_interceptor')) {
+            return;
+        }
+
+        $services = $container->getParameter('security.secured_services');
+        $secureAll = 0 === count($services);
+
         $parameterBag = $container->getParameterBag();
         foreach ($container->getDefinitions() as $id => $definition) {
             if (null !== $definition->getFactoryMethod()) {
+                continue;
+            }
+
+            if (!$secureAll && !isset($services[$id])) {
                 continue;
             }
 

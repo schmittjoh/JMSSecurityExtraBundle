@@ -26,14 +26,14 @@ will replace your original service classes.
 
 Performance
 -----------
-After registering the bundle and reloading your page for the first time, the page
-load will take very long (20 seconds upward) depending on how many services you
-have. 
+While there will be virtually no performance difference in your production 
+environment, the performance in the development environment significantly
+depends on your configuration (see the configuration section).
 
-Subsequent page loads will be very fast, but you will suffer a small performance
-penalty in your development environment due to higher IO accesses (more files
-need to be checked for changes). In your production environment, there will be
-no difference.
+Generally, you will find that when you change the files of a secure service
+the first page load after changing the file will increase. This is because
+the cache for this service will need to be rebuilt, and a proxy class possibly
+needs to be generated. Subsequent page loads will be very fast.
 
 
 Installation
@@ -67,6 +67,29 @@ You also need to add the following to your autoload.php::
     $loader = new PHP_Depend_Autoload();
     $loader->register();
     ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.__DIR__.'/vendor/pdepend');
+
+
+Configuration
+-------------
+
+At the minimum, you need to place the following in your application config, 
+e.g. in config.yml::
+
+    security_extra.config: ~
+    
+This configuration will enable security for all your services. Thus, the first
+page load will be very slow (20 seconds upward) depending on how many services
+you have. 
+
+You can reduce the overhead by only enabling security for certain services::
+
+    security_extra.config:
+        services: [my_secure_service_id, another_secure_service_id]
+        
+This way only these services will need to be analyzed, and monitored for
+changes which will greatly improve the performance in your development
+environment.
+
 
 Annotations
 -----------
