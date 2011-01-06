@@ -59,7 +59,7 @@ This bundle requires the pdepend library which is used for some code analysis.
 
 You can simply add it as a submodule::
 
-    git submodule add https://github.com/manuelpichler/pdepend.git src/vendor/pdepend
+    git submodule add https://github.com/pdepend/pdepend.git src/vendor/pdepend
     
 You also need to add the following to your autoload.php::
 
