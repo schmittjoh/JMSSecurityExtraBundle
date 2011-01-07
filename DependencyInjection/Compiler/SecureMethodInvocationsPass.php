@@ -89,6 +89,14 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
                 continue;
             }
 
+            if ((null === $class = $definition->getClass()) || !class_exists($class)) {
+                if (!$secureAll) {
+                    throw new \RuntimeException(sprintf('Could not find class "%s" for "%s".', $class, $id));
+                }
+
+                continue;
+            }
+
             $this->processDefinition($container, $id, $definition);
         }
 
@@ -97,10 +105,6 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 
     protected function processDefinition(ContainerBuilder $container, $id, Definition $definition)
     {
-        if (null === $class = $definition->getClass()) {
-            return;
-        }
-
         if ($this->needsReAssessment($id, $definition)) {
             $analyzer = new ServiceAnalyzer($definition->getClass());
             $analyzer->analyze();

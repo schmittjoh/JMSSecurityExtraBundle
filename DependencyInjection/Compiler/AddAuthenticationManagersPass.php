@@ -16,7 +16,7 @@ class AddAuthenticationManagersPass implements CompilerPassInterface
 
         $managers = array();
         foreach ($container->getDefinitions() as $id => $definition) {
-            if (null === $class = $definition->getClass()) {
+            if ((null === $class = $definition->getClass()) || !class_exists($class)) {
                 continue;
             }
 
