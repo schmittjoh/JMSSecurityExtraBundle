@@ -112,7 +112,11 @@ class ProxyClassGenerator
 
     protected function getSecureMethodInvocation(MethodMetadata $method)
     {
-        $code = 'new SecureMethodInvocation($this, '.var_export($method->getReflection()->getName(), true).', array(';
+        $code = 'new MethodInvocation('
+                .var_export($method->getReflection()->getDeclaringClass()->getName(), true)
+                .', '.var_export($method->getReflection()->getName(), true)
+                .', $this'
+                .', array(';
 
         $arguments = array();
         foreach ($method->getReflection()->getParameters() as $param) {
@@ -150,7 +154,7 @@ class ProxyClassGenerator
 
 namespace SecurityProxies;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\SecureMethodInvocation;
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
 %s
 /**

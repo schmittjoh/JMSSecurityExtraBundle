@@ -62,7 +62,7 @@ class MethodSecurityInterceptor
         $this->alwaysAuthenticate = !!$boolean;
     }
 
-    public function invoke(SecureMethodInvocation $method, array $metadata)
+    public function invoke(MethodInvocation $method, array $metadata)
     {
         $runAsToken = $this->beforeInvocation($method, $metadata);
 
@@ -106,7 +106,7 @@ class MethodSecurityInterceptor
         }
     }
 
-    protected function beforeInvocation(SecureMethodInvocation $method, array $metadata)
+    protected function beforeInvocation(MethodInvocation $method, array $metadata)
     {
         if (null === $token = $this->securityContext->getToken()) {
             throw new AuthenticationCredentialsNotFoundException(
@@ -146,7 +146,7 @@ class MethodSecurityInterceptor
         return $runAsToken;
     }
 
-    protected function afterInvocation(SecureMethodInvocation $method, array $metadata, $runAsToken, $returnValue)
+    protected function afterInvocation(MethodInvocation $method, array $metadata, $runAsToken, $returnValue)
     {
         if (0 === count($metadata['return_permissions'])) {
             return $returnValue;

@@ -3,12 +3,9 @@
 namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
 
 use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-
 use Symfony\Component\Security\Exception\AuthenticationException;
-
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
-
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\SecureMethodInvocation;
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
 
 class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 {
@@ -246,7 +243,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             $arguments = array(new \stdClass(), new \stdClass());
         }
 
-        return new SecureMethodInvocation(new SecurityProxy(), $method, $arguments);
+        return new MethodInvocation($object = new SecurityProxy(), $method, $object, $arguments);
     }
 }
 

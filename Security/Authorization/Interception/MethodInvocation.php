@@ -20,21 +20,22 @@ namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
 /**
  * This class holds all data which is associated with the invocation of a
- * secure method.
+ * method.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureMethodInvocation extends \ReflectionMethod
+class MethodInvocation extends \ReflectionMethod
 {
     protected $arguments;
     protected $object;
 
-    public function __construct($object, $name, array $arguments = array())
+    public function __construct($class, $name, $object, array $arguments = array())
     {
+        parent::__construct($class, $name);
+
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object.');
         }
-        parent::__construct($object, $name);
 
         $this->arguments = $arguments;
         $this->object = $object;

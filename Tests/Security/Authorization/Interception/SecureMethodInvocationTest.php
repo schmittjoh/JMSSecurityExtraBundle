@@ -2,14 +2,14 @@
 
 namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\SecureMethodInvocation;
+use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
 
-class SecureMethodInvocationTest extends \PHPUnit_Framework_TestCase
+class MethodInvocationTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $service = new SubService();
-        $reflection = new SecureMethodInvocation($service, 'foo', array('foo'));
+        $service = new Service();
+        $reflection = new MethodInvocation('Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\Service', 'foo', $service, array('foo'));
 
         $this->assertInstanceOf('\ReflectionMethod', $reflection);
         $this->assertSame($service, $reflection->getThis());
@@ -19,9 +19,4 @@ class SecureMethodInvocationTest extends \PHPUnit_Framework_TestCase
 
 class Service {
     public function foo($param) { }
-}
-
-class SubService extends Service
-{
-
 }
