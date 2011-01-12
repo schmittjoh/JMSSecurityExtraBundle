@@ -243,7 +243,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             $arguments = array(new \stdClass(), new \stdClass());
         }
 
-        return new MethodInvocation($object = new SecurityProxy(), $method, $object, $arguments);
+        return new MethodInvocation($object = new SecureService(), $method, $object, $arguments);
     }
 }
 
@@ -257,18 +257,5 @@ class SecureService
     public function throwException()
     {
         throw new \RuntimeException;
-    }
-}
-
-class SecurityProxy extends SecureService
-{
-    public function foo($p1, $p2)
-    {
-        return parent::foo($p1, $p2);
-    }
-
-    public function throwException()
-    {
-        parent::throwException();
     }
 }

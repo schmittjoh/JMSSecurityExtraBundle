@@ -3,7 +3,6 @@
 namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
 use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
 use Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
@@ -66,22 +65,21 @@ class MethodSecurityInterceptor
     {
         $runAsToken = $this->beforeInvocation($method, $metadata);
 
-        $toInvoke = $method->getDeclaringClass()->getParentClass()->getMethod($method->getName());
-        if (true === $nonPublic = !$toInvoke->isPublic()) {
-            $toInvoke->setAccessible(true);
+        if (true === $nonPublic = !$method->isPublic()) {
+            $method->setAccessible(true);
         }
 
         try {
             // special processing of methods that return references
-            if (true === $toInvoke->returnsReference()) {
+            if (true === $method->returnsReference()) {
                 $returnValue = array();
-                $returnValue[0] = &$toInvoke->invokeArgs($method->getThis(), $method->getArguments());
+                $returnValue[0] = &$method->invokeArgs($method->getThis(), $method->getArguments());
             } else {
-                $returnValue = $toInvoke->invokeArgs($method->getThis(), $method->getArguments());
+                $returnValue = $method->invokeArgs($method->getThis(), $method->getArguments());
             }
 
             if ($nonPublic) {
-                $toInvoke->setAccessible(false);
+                $method->setAccessible(false);
             }
 
             if (null !== $runAsToken) {
@@ -95,7 +93,7 @@ class MethodSecurityInterceptor
             return $this->afterInvocation($method, $metadata, $runAsToken, $returnValue);
         } catch (\Exception $failed) {
             if ($nonPublic) {
-                $toInvoke->setAccessible(false);
+                $method->setAccessible(false);
             }
 
             if (null !== $runAsToken) {
@@ -123,7 +121,7 @@ class MethodSecurityInterceptor
         if (count($metadata['param_permissions']) > 0) {
             foreach ($method->getArguments() as $index => $argument) {
                 if (null !== $argument && isset($metadata['param_permissions'][$index]) && false === $this->accessDecisionManager->decide($token, $metadata['param_permissions'][$index], $argument)) {
-                    throw new AccessDeniedException(sprintf('Token does not have the required permissions for method "%s::%s".', $method->getDeclaringClass()->getParentClass()->getName(), $method->getName()));
+                    throw new AccessDeniedException(sprintf('Token does not have the required permissions for method "%s::%s".', $method->getName(), $method->getName()));
                 }
             }
         }
