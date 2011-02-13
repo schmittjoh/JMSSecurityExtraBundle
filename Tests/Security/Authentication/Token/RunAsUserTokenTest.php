@@ -1,16 +1,16 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authentication\Token;
+namespace JMS\SecurityExtraBundle\Tests\Security\Authentication\Token;
 
-use Symfony\Component\Security\Role\Role;
-use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use Symfony\Component\Security\Core\Role\Role;
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 
 class RunAsUserTokenTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $user = $this->getMock('Symfony\Component\Security\User\AccountInterface');
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        $user = $this->getMock('Symfony\Component\Security\Core\User\AccountInterface');
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $runAsToken = new RunAsUserToken('foo', $user, 'secret', array('ROLE_FOO'), $token);
         $this->assertSame($user, $runAsToken->getUser());

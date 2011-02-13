@@ -1,12 +1,12 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Generator;
+namespace JMS\SecurityExtraBundle\Tests\Generator;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use Bundle\JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\Security\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
         $className = 'SecurityProxies\\'.$className;
         $proxyClass = new $className;
 
-        $mock = $this->getMockBuilder('Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor')
+        $mock = $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor')
                    ->disableOriginalConstructor()
                    ->getMock();
         $mock
@@ -52,8 +52,8 @@ class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
     public function getTestData()
     {
         return array(
-            array('Bundle\JMS\SecurityExtraBundle\Tests\Generator\FooService', 'foo', array('foo')),
-            array('Bundle\JMS\SecurityExtraBundle\Tests\Generator\AnotherService', 'foo', array()),
+            array('JMS\SecurityExtraBundle\Tests\Generator\FooService', 'foo', array('foo')),
+            array('JMS\SecurityExtraBundle\Tests\Generator\AnotherService', 'foo', array()),
         );
     }
 }

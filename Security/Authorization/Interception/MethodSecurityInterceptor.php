@@ -1,17 +1,17 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
+namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
-use Symfony\Component\Security\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\SecurityContext;
-use Symfony\Component\Security\Exception\AccessDeniedException;
-use Symfony\Component\Security\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Exception\AuthenticationCredentialsNotFoundException;
+use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
+use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -70,13 +70,7 @@ class MethodSecurityInterceptor
         }
 
         try {
-            // special processing of methods that return references
-            if (true === $method->returnsReference()) {
-                $returnValue = array();
-                $returnValue[0] = &$method->invokeArgs($method->getThis(), $method->getArguments());
-            } else {
-                $returnValue = $method->invokeArgs($method->getThis(), $method->getArguments());
-            }
+            $returnValue = $method->invokeArgs($method->getThis(), $method->getArguments());
 
             if ($nonPublic) {
                 $method->setAccessible(false);
@@ -86,7 +80,7 @@ class MethodSecurityInterceptor
                 $this->restoreOriginalToken($runAsToken);
             }
 
-            if (0 === count($metadata['return_permissions'])) {
+            if (!$metadata['return_permissions']) {
                 return $returnValue;
             }
 
@@ -112,13 +106,16 @@ class MethodSecurityInterceptor
             );
         }
 
-        $token = $this->authenticateIfRequired($token);
+        if ($this->alwaysAuthenticate || !$token->isAuthenticated()) {
+            $token = $this->authenticationManager->authenticate($token);
+            $this->securityContext->setToken($token);
+        }
 
-        if (count($metadata['roles']) > 0 && false === $this->accessDecisionManager->decide($token, $metadata['roles'], $method)) {
+        if ($metadata['roles'] && false === $this->accessDecisionManager->decide($token, $metadata['roles'], $method)) {
             throw new AccessDeniedException('Token does not have the required roles.');
         }
 
-        if (count($metadata['param_permissions']) > 0) {
+        if ($metadata['param_permissions']) {
             foreach ($method->getArguments() as $index => $argument) {
                 if (null !== $argument && isset($metadata['param_permissions'][$index]) && false === $this->accessDecisionManager->decide($token, $metadata['param_permissions'][$index], $argument)) {
                     throw new AccessDeniedException(sprintf('Token does not have the required permissions for method "%s::%s".', $method->getName(), $method->getName()));
@@ -127,7 +124,7 @@ class MethodSecurityInterceptor
         }
 
         $runAsToken = null;
-        if (count($metadata['run_as_roles']) > 0) {
+        if ($metadata['run_as_roles']) {
             $runAsToken = $this->runAsManager->buildRunAs($token, $method, $metadata['run_as_roles']);
 
             if (null !== $this->logger) {
@@ -146,7 +143,7 @@ class MethodSecurityInterceptor
 
     protected function afterInvocation(MethodInvocation $method, array $metadata, $runAsToken, $returnValue)
     {
-        if (0 === count($metadata['return_permissions'])) {
+        if (!$metadata['return_permissions']) {
             return $returnValue;
         }
 
@@ -160,17 +157,5 @@ class MethodSecurityInterceptor
         }
 
         $this->securityContext->setToken($runAsToken->getOriginalToken());
-    }
-
-    protected function authenticateIfRequired(TokenInterface $token)
-    {
-        if ($token->isAuthenticated() && !$this->alwaysAuthenticate) {
-            return $token;
-        }
-
-        $token = $this->authenticationManager->authenticate($token);
-        $this->securityContext->setToken($token);
-
-        return $token;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
+namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
 
-use Symfony\Component\Security\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

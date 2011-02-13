@@ -1,15 +1,15 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
-use Bundle\JMS\SecurityExtraBundle\Annotation\RunAs;
+use JMS\SecurityExtraBundle\Annotation\RunAs;
 
-use Bundle\JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
-use Bundle\JMS\SecurityExtraBundle\Annotation\Secure;
-use Bundle\JMS\SecurityExtraBundle\Annotation\SecureParam;
-use Bundle\JMS\SecurityExtraBundle\Annotation\SecureReturn;
-use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Annotation\SecureReturn;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
 use Doctrine\Common\Annotations\AnnotationReader;
 use \ReflectionClass;
 use \ReflectionMethod;
@@ -44,10 +44,10 @@ class AnnotationDriver implements DriverInterface
     {
         $this->reader = new AnnotationReader(null, new AnnotationParser());
         $this->reader->setAutoloadAnnotations(false);
-        $this->reader->setDefaultAnnotationNamespace('Bundle\\JMS\\SecurityExtraBundle\\Annotation\\');
+        $this->reader->setDefaultAnnotationNamespace('JMS\\SecurityExtraBundle\\Annotation\\');
         $this->reader->setAnnotationCreationFunction(function($name, $values) {
             $reflection = new ReflectionClass($name);
-            if (!$reflection->implementsInterface('Bundle\\JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface')) {
+            if (!$reflection->implementsInterface('JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface')) {
                 return null;
             }
 

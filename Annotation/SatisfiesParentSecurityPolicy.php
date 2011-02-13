@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Annotation;
+namespace JMS\SecurityExtraBundle\Annotation;
 
 /**
  * This must be declared on classes which inherit from classes that have

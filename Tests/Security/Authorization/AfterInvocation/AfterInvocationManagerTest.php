@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\AfterInvocation;
+namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\AfterInvocation;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager;
+use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager;
 
 class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('decide')
             ->with(
-                $this->isInstanceOf('Symfony\Component\Security\Authentication\Token\TokenInterface'),
+                $this->isInstanceOf('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'),
                 $this->anything(),
                 $this->equalTo($attributes),
                 $this->equalTo('foo')
@@ -28,7 +28,7 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('decide')
             ->with(
-                $this->isInstanceOf('Symfony\Component\Security\Authentication\Token\TokenInterface'),
+                $this->isInstanceOf('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'),
                 $this->anything(),
                 $this->equalTo($attributes),
                 $this->equalTo('bar')
@@ -36,7 +36,7 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('moo'))
         ;
 
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $manager = new AfterInvocationManager(array($provider1, $provider2));
         $this->assertEquals('moo', $manager->decide($token, 'sth', $attributes, 'foo'));
@@ -86,6 +86,6 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function getProvider()
     {
-        return $this->getMock('Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationProviderInterface');
+        return $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationProviderInterface');
     }
 }

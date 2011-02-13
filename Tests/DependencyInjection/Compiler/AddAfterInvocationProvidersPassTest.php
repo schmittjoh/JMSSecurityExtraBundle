@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\DependencyInjection\Compiler;
+namespace JMS\SecurityExtraBundle\Tests\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Definition;
 
-use Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

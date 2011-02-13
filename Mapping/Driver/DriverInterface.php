@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

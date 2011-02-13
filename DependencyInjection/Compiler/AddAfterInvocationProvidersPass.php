@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
+namespace JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 
 class FooService implements FooInterface
 {

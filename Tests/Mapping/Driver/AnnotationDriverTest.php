@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\AnnotationDriver;
+use JMS\SecurityExtraBundle\Mapping\Driver\AnnotationDriver;
 
 require_once __DIR__.'/Fixtures/services.php';
 
@@ -12,14 +12,14 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new AnnotationDriver();
 
-        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('Bundle\JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooService'));
+        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooService'));
         $this->assertTrue($metadata->hasMethod('foo'));
         $method = $metadata->getMethod('foo');
         $this->assertEquals(array('ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPERADMIN'), $method->getRoles());
         $this->assertEquals(array(), $method->getReturnPermissions());
         $this->assertEquals(array(0 => array('VIEW')), $method->getParamPermissions());
 
-        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('Bundle\JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooInterface'));
+        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooInterface'));
         $this->assertTrue($metadata->hasMethod('foo'));
         $method = $metadata->getMethod('foo');
         $this->assertEquals(array(), $method->getRoles());

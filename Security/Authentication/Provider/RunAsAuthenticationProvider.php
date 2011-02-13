@@ -1,14 +1,14 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authentication\Provider;
+namespace JMS\SecurityExtraBundle\Security\Authentication\Provider;
 
-use Symfony\Component\Security\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 
-use Symfony\Component\Security\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Symfony\Component\Security\Authentication\Provider\AuthenticationProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

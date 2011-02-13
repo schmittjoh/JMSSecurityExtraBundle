@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token;
+namespace JMS\SecurityExtraBundle\Security\Authentication\Token;
 
-use Symfony\Component\Security\Authentication\Token\Token;
+use Symfony\Component\Security\Core\Authentication\Token\Token;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

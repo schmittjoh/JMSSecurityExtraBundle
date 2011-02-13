@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Fixtures;
+namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 
 class CorrectSubService extends MainService
 {

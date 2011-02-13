@@ -1,47 +1,48 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection;
+namespace JMS\SecurityExtraBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\FileLocator;
+use Symfony\Component\DependencyInjection\Configuration\Processor;
+use Symfony\Component\DependencyInjection\Configuration\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 
 class SecurityExtraExtension extends Extension
 {
-    public function configLoad($config, ContainerBuilder $container)
+    public function configLoad(array $configs, $container)
     {
-        if (!$container->hasDefinition('security.access.method_interceptor')) {
-            $loader = new XmlFileLoader($container, array(__DIR__.'/../Resources/config/'));
-            $loader->load('services.xml');
-        }
+        $tb = new TreeBuilder();
+        $configTree = $tb->root('security_extra:config', 'array')
+                        ->fixXmlConfig('service')
+                        ->arrayNode('services')
+                            ->beforeNormalization()
+                                ->ifTrue(function($v) {
+                                    return is_array($v) && is_int(key($v)) && is_string(reset($v));
+                                })
+                                ->then(function($v) {
+                                    return array_flip($v);
+                                })
+                            ->end()
+                            ->useAttributeAsKey('id')
+                            ->prototype('array')
+                                ->beforeNormalization()
+                                    ->ifTrue(function($v) { return true; })
+                                    ->then(function($v) { return array(); })
+                                ->end()
+                            ->end()
+                        ->end()
+                      ->end()
+                      ->buildTree();
 
-        if (isset($config['services'])) {
-            if (!is_array($config['services'])) {
-                throw new \RuntimeException('"services" expects an array of service ids.');
-            }
+        $processor = new Processor();
+        $config = $processor->process($configTree, $configs);
 
-            $this->configureServices($config['services'], $container);
-        }
-    }
+        $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
+        $loader->load('services.xml');
 
-    protected function configureServices(array $services, ContainerBuilder $container)
-    {
-        $normalized = array();
-        foreach ($services as $name => $config) {
-            if (is_int($name)) {
-                $normalized[$config] = array();
-            } else {
-                if (null === $config) {
-                    $config = array();
-                } else if (!is_array($config)) {
-                    throw new \RuntimeException(sprintf('Invalid configuration; expected array for service "%s", but got %s.', $name, var_export($config, true)));
-                }
-
-                $normalized[$name] = $config;
-            }
-        }
-
-        $container->setParameter('security.secured_services', $normalized);
+        $container->setParameter('security.secured_services', $config['services']);
     }
 
     public function getAlias()

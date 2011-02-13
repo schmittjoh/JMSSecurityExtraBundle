@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
+namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
@@ -9,8 +9,8 @@ use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterf
 use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Permission\PermissionMapInterface;
-use Symfony\Component\Security\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

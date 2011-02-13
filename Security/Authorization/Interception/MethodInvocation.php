@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception;
+namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

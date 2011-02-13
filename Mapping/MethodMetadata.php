@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping;
+namespace JMS\SecurityExtraBundle\Mapping;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

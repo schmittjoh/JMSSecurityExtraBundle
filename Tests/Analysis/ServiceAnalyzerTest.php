@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Analysis;
+namespace JMS\SecurityExtraBundle\Tests\Analysis;
 
-use Bundle\JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
+use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
 
 class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,13 +12,13 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAnalyzeThrowsExceptionWhenSecureMethodIsOverridden()
     {
-        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\SubService');
+        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\SubService');
         $service->analyze();
     }
 
     public function testAnalyzeThrowsNoExceptionWhenAbstractMethodIsNotOverridenInDirectChildClass()
     {
-        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService');
+        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService');
         $service->analyze();
 
         $methods = $service->getMetadata()->getMethods();
@@ -30,7 +30,7 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function testAnalyzeThrowsNoExceptionWhenSatisfiesParentSecurityPolicyIsDefined()
     {
-        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService');
+        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService');
         $service->analyze();
 
         $methods = $service->getMetadata()->getMethods();
@@ -44,7 +44,7 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function testAnalyzeWithComplexHierarchy()
     {
-        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService');
+        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService');
         $service->analyze();
 
         $methods = $service->getMetadata()->getMethods();
@@ -68,7 +68,7 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function testAnalyze()
     {
-        $service = new ServiceAnalyzer('Bundle\JMS\SecurityExtraBundle\Tests\Fixtures\MainService');
+        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\MainService');
         $service->analyze();
 
         $methods = $service->getMetadata()->getMethods();

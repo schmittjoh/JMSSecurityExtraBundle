@@ -1,12 +1,12 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\DependencyInjection\Compiler;
+namespace JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
-use Bundle\JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
-use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use Bundle\JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
-use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
+use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
 use \PHP_Depend;
 use \PHP_Depend_Util_Configuration;
 use \ReflectionClass;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Resource\FileResource;
-use Symfony\Component\Security\SecurityContext;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -77,21 +77,25 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         }
 
         $services = $container->getParameter('security.secured_services');
-        $secureAll = 0 === count($services);
+        $secureNotAll = !!$services;
 
         $parameterBag = $container->getParameterBag();
         foreach ($container->getDefinitions() as $id => $definition) {
-            if (null !== $definition->getFactoryMethod()) {
-                continue;
-            }
-
-            if (!$secureAll && !isset($services[$id])) {
+            if ($secureNotAll && !isset($services[$id])) {
                 continue;
             }
 
             if ((null === $class = $definition->getClass()) || !class_exists($class)) {
-                if (!$secureAll) {
+                if ($secureNotAll) {
                     throw new \RuntimeException(sprintf('Could not find class "%s" for "%s".', $class, $id));
+                }
+
+                continue;
+            }
+
+            if (null !== $definition->getFactoryMethod() || $definition->isAbstract() || $definition->isSynthetic()) {
+                if ($secureNotAll) {
+                    throw new \RuntimeException(sprintf('You cannot secure service "%s", because it is either created by a factory, or an abstract/synthetic service.', $id));
                 }
 
                 continue;

@@ -1,12 +1,12 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\AfterInvocation;
+namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\AfterInvocation;
 
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider;
+use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider;
 
 class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +47,7 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AccessDeniedException
+     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function testDecideThrowsAccessDeniedExceptionWhenNoAclIsFound()
     {
@@ -84,7 +84,7 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AccessDeniedException
+     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function testDecideThrowsAccessDeniedExceptionWhenNoAceIsFound()
     {
@@ -207,7 +207,7 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function getToken()
     {
-        return $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        return $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
     }
 
     protected function getPermissionMap()

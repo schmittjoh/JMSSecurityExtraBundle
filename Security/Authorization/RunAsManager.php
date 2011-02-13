@@ -1,10 +1,10 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Security\Authorization;
+namespace JMS\SecurityExtraBundle\Security\Authorization;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-use Symfony\Component\Security\Role\Role;
-use Symfony\Component\Security\Authentication\Token\TokenInterface;
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

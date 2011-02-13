@@ -1,9 +1,9 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\DependencyInjection;
+namespace JMS\SecurityExtraBundle\Tests\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Bundle\JMS\SecurityExtraBundle\DependencyInjection\SecurityExtraExtension;
+use JMS\SecurityExtraBundle\DependencyInjection\SecurityExtraExtension;
 
 class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new SecurityExtraExtension();
 
         $config = array();
-        $extension->configLoad($config, $container = new ContainerBuilder());
+        $extension->configLoad(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
         $this->assertEquals(array(), $container->getParameter('security.secured_services'));
@@ -24,7 +24,7 @@ class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoad(array $config)
     {
         $extension = new SecurityExtraExtension();
-        $extension->configLoad($config, $container = new ContainerBuilder());
+        $extension->configLoad(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
         $this->assertEquals(array(
@@ -36,6 +36,7 @@ class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     public function getEquivalentConfigData()
     {
         return array(
+            array(array('service' => array(array('id' => 'foo'), array('id' => 'bar')))),
             array(array('services' => array('foo', 'bar'))),
             array(array('services' => array('foo' => null, 'bar' => null))),
         );

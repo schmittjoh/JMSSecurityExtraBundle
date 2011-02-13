@@ -7,15 +7,15 @@
     <parameters>
         <parameter key="security.secured_services" type="collection"></parameter>
     
-        <parameter key="security.access.method_interceptor.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor</parameter>
+        <parameter key="security.access.method_interceptor.class">JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor</parameter>
 
-        <parameter key="security.access.run_as_manager.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManager</parameter>
-        <parameter key="security.authentication.provider.run_as.class">Bundle\JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider</parameter>
+        <parameter key="security.access.run_as_manager.class">JMS\SecurityExtraBundle\Security\Authorization\RunAsManager</parameter>
+        <parameter key="security.authentication.provider.run_as.class">JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider</parameter>
         <parameter key="security.run_as.key">RunAsToken</parameter>
         <parameter key="security.run_as.role_prefix">ROLE_</parameter>
 
-        <parameter key="security.access.after_invocation_manager.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager</parameter>
-        <parameter key="security.access.after_invocation.acl_provider.class">Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider</parameter>
+        <parameter key="security.access.after_invocation_manager.class">JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager</parameter>
+        <parameter key="security.access.after_invocation.acl_provider.class">JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider</parameter>
     </parameters>
 
     <services>
@@ -24,13 +24,9 @@
             <argument>%security.run_as.role_prefix%</argument>
         </service>
     
-        <service id="security.authentication.extra_manager" class="Bundle\JMS\SecurityExtraBundle\Security\Authentication\AuthenticationManager" public="false">
-            <argument type="collection" />
-        </service>
-    
         <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%" public="false">
             <argument type="service" id="security.context" />
-            <argument type="service" id="security.authentication.extra_manager" />
+            <argument type="service" id="security.authentication.manager" />
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="security.access.after_invocation_manager" />
             <argument type="service" id="security.access.run_as_manager" />

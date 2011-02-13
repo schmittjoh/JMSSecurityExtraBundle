@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
 use Doctrine\Common\Annotations\Lexer;
 use Doctrine\Common\Annotations\Parser;

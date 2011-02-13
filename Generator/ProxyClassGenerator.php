@@ -1,9 +1,9 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Generator;
+namespace JMS\SecurityExtraBundle\Generator;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use Symfony\Component\DependencyInjection\Definition;
 use \ReflectionClass;
 use \ReflectionMethod;
@@ -154,8 +154,8 @@ class ProxyClassGenerator
 
 namespace SecurityProxies;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
+use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
+use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
 %s
 /**
  * This class has been auto-generated. Manual changes will be lost.

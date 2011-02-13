@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Annotation;
+namespace JMS\SecurityExtraBundle\Annotation;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>

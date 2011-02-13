@@ -1,8 +1,8 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 
 use \ReflectionClass;
 use \ReflectionMethod;

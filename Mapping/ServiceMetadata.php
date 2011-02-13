@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping;
+namespace JMS\SecurityExtraBundle\Mapping;
 
 /**
  * This class contains metadata for the entire service

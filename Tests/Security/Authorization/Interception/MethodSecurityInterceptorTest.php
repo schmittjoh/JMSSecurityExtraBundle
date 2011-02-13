@@ -1,16 +1,16 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
+namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
 
-use Bundle\JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-use Symfony\Component\Security\Exception\AuthenticationException;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
-use Bundle\JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
+use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
 
 class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Symfony\Component\Security\Exception\AuthenticationCredentialsNotFoundException
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException
      */
     public function testInvokeThrowsExceptionWhenSecurityContextHasNoToken()
     {
@@ -26,13 +26,13 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AuthenticationException
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testInvokeAuthenticatesTokenIfItIsNotYetAuthenticated()
     {
         list($interceptor, $securityContext, $authManager,,,) = $this->getInterceptor();
 
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -55,18 +55,13 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AuthenticationException
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationException
      */
     public function testInvokeAuthenticatesTokenIfAlwaysAuthenticateIsTrue()
     {
         list($interceptor, $securityContext, $authManager,,,) = $this->getInterceptor();
 
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
-        $token
-            ->expects($this->once())
-            ->method('isAuthenticated')
-            ->will($this->returnValue(true))
-        ;
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $securityContext
             ->expects($this->once())
@@ -85,13 +80,13 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AccessDeniedException
+     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function testInvokeCallsADMForRolesAndThrowsExceptionWhenInsufficientPriviledges()
     {
         list($interceptor, $context, $authManager, $adm,,) = $this->getInterceptor();
 
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -127,7 +122,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Exception\AccessDeniedException
+     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function testInvokeCallsADMForEachParamPermissionsAndThrowsExceptionOnInsufficientPermissions()
     {
@@ -195,7 +190,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 
     protected function getToken($isAuthenticated = true)
     {
-        $token = $this->getMock('Symfony\Component\Security\Authentication\Token\TokenInterface');
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -218,14 +213,14 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 
     protected function getInterceptor()
     {
-        $securityContext = $this->getMockBuilder('Symfony\Component\Security\SecurityContext')
+        $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
                             ->disableOriginalConstructor()
                             ->getMock();
 
-        $authenticationManager = $this->getMock('Symfony\Component\Security\Authentication\AuthenticationManagerInterface');
-        $accessDecisionManager = $this->getMock('Symfony\Component\Security\Authorization\AccessDecisionManagerInterface');
-        $afterInvocationManager = $this->getMock('Bundle\JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface');
-        $runAsManager = $this->getMock('Bundle\JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface');
+        $authenticationManager = $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface');
+        $accessDecisionManager = $this->getMock('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface');
+        $afterInvocationManager = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface');
+        $runAsManager = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface');
 
         return array(
             new MethodSecurityInterceptor($securityContext, $authenticationManager, $accessDecisionManager, $afterInvocationManager, $runAsManager),

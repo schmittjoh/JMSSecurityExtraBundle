@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Annotation;
+namespace JMS\SecurityExtraBundle\Annotation;
 
 class RunAs implements AnnotationInterface
 {

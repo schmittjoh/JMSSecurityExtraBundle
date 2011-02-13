@@ -1,12 +1,12 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Analysis;
+namespace JMS\SecurityExtraBundle\Analysis;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
 
-use Bundle\JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use Bundle\JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
 use \PHP_Depend;
 use \PHP_Depend_Code_Class;
 use \PHP_Depend_Code_AbstractClassOrInterface;

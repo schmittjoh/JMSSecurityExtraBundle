@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\JMS\SecurityExtraBundle\Mapping;
+namespace JMS\SecurityExtraBundle\Mapping;
 
 use \PHP_Depend_Code_Class;
 
