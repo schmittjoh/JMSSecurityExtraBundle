@@ -2,7 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Loader\FileLocator;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Configuration\Processor;
 use Symfony\Component\DependencyInjection\Configuration\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
