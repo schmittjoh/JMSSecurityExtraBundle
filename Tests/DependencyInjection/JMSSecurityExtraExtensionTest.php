@@ -3,16 +3,16 @@
 namespace JMS\SecurityExtraBundle\Tests\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use JMS\SecurityExtraBundle\DependencyInjection\SecurityExtraExtension;
+use JMS\SecurityExtraBundle\DependencyInjection\JMSSecurityExtraExtension;
 
-class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
+class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
 {
     public function testConfigLoadWithEmptyConfig()
     {
-        $extension = new SecurityExtraExtension();
+        $extension = new JMSSecurityExtraExtension();
 
         $config = array();
-        $extension->configLoad(array($config), $container = new ContainerBuilder());
+        $extension->load(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
         $this->assertEquals(array(), $container->getParameter('security.secured_services'));
@@ -23,8 +23,8 @@ class SecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConfigLoad(array $config)
     {
-        $extension = new SecurityExtraExtension();
-        $extension->configLoad(array($config), $container = new ContainerBuilder());
+        $extension = new JMSSecurityExtraExtension();
+        $extension->load(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
         $this->assertEquals(array(

@@ -32,9 +32,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class JMSSecurityExtraBundle extends Bundle
 {
-    public function registerExtensions(ContainerBuilder $container)
+    public function build(ContainerBuilder $container)
     {
-        parent::registerExtensions($container);
+        parent::build($container);
 
         $passConfig = $container->getCompilerPassConfig();
         $passConfig->addPass(new AddAfterInvocationProvidersPass());
