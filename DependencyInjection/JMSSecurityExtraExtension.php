@@ -9,9 +9,9 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 
-class SecurityExtraExtension extends Extension
+class JMSSecurityExtraExtension extends Extension
 {
-    public function configLoad(array $configs, $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
         $tb = new TreeBuilder();
         $configTree = $tb->root('security_extra:config', 'array')
@@ -47,7 +47,7 @@ class SecurityExtraExtension extends Extension
 
     public function getAlias()
     {
-        return 'security_extra';
+        return 'jms_security_extra';
     }
 
     public function getXsdValidationBasePath()
