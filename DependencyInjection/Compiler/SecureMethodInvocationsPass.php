@@ -162,7 +162,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 
         $lastAnalyzed = $metadata['analyze_time'];
         foreach ($metadata['files'] as $file) {
-            if (false === $file->isUptodate($lastAnalyzed)) {
+            if (false === $file->isFresh($lastAnalyzed)) {
                 return true;
             }
         }

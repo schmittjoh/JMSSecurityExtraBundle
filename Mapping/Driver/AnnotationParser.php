@@ -7,6 +7,30 @@ use Doctrine\Common\Annotations\Parser;
 
 class AnnotationParser extends Parser
 {
+    private static $strippedTags = array(
+        "{@internal", "{@inheritdoc", "{@link"
+    );
+
+    /**
+     * Parses the given docblock string for annotations.
+     *
+     * @param string $docBlockString The docblock string to parse.
+     * @param string $context The parsing context.
+     * @return array Array of annotations. If no annotations are found, an empty array is returned.
+     */
+    public function parse($docBlockString, $context='')
+    {
+        // Strip out some known inline tags.
+        $input = str_replace(self::$strippedTags, '', $docBlockString);
+
+        // Cut of the beginning of the input until the first '@'.
+        if (!preg_match('/^\s*\*\s*(@.*)/ms', $input, $match)) {
+            return array();
+        }
+
+        return parent::parse($match[1], $context);
+    }
+
     /**
      * Annotations ::= Annotation {[ "*" ]* [Annotation]}*
      *
