@@ -69,6 +69,11 @@ class AnnotationDriver implements DriverInterface
         $metadata = new ClassMetadata($reflection);
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
+            // check if the method was defined on this class
+            if ($method->getDeclaringClass()->getName() !== $reflection->getName()) {
+                continue;
+            }
+
             $annotations = $this->reader->getMethodAnnotations($method);
 
             if (count($annotations) > 0) {

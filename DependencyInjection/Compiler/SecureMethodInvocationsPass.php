@@ -7,15 +7,13 @@ use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
 use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
-use \PHP_Depend;
-use \PHP_Depend_Util_Configuration;
 use \ReflectionClass;
 use \ReflectionMethod;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\Resource\FileResource;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /*

@@ -53,22 +53,6 @@ Then register the bundle with your kernel::
         // ...
     );
 
-Dependencies
-~~~~~~~~~~~~
-This bundle requires the pdepend library which is used for some code analysis.
-
-You can simply add it as a submodule::
-
-    git submodule add https://github.com/pdepend/pdepend.git src/vendor/pdepend
-    
-You also need to add the following to your autoload.php::
-
-    require_once __DIR__.'/vendor/pdepend/PHP/Depend/Autoload.php';
-    $loader = new PHP_Depend_Autoload();
-    $loader->register();
-    ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.__DIR__.'/vendor/pdepend');
-
-
 Configuration
 -------------
 

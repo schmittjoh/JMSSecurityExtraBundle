@@ -2,8 +2,6 @@
 
 namespace JMS\SecurityExtraBundle\Mapping;
 
-use \PHP_Depend_Code_Class;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -22,13 +20,12 @@ use \PHP_Depend_Code_Class;
 
 /**
  * Contains class metadata information
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class ClassMetadata
 {
     protected $reflection;
-    protected $pdependClass;
     protected $methods;
 
     public function __construct(\ReflectionClass $class)
@@ -52,11 +49,6 @@ class ClassMetadata
         return $this->methods[$name];
     }
 
-    public function getPdependClass()
-    {
-        return $this->pdependClass;
-    }
-
     public function getReflection()
     {
         return $this->reflection;
@@ -66,7 +58,7 @@ class ClassMetadata
     {
         return isset($this->methods[$name]);
     }
-    
+
     public function hasMethods()
     {
         return count($this->methods) > 0;
@@ -90,10 +82,5 @@ class ClassMetadata
 
             $this->methods[$name]->merge($method);
         }
-    }
-
-    public function setPdependClass(PHP_Depend_Code_Class $class)
-    {
-        $this->pdependClass = $class;
     }
 }

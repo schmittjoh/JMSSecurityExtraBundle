@@ -2,12 +2,12 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 
 class JMSSecurityExtraExtension extends Extension
 {
@@ -43,20 +43,5 @@ class JMSSecurityExtraExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('security.secured_services', $config['services']);
-    }
-
-    public function getAlias()
-    {
-        return 'jms_security_extra';
-    }
-
-    public function getXsdValidationBasePath()
-    {
-        return __DIR__.'/../Resources/config/schema';
-    }
-
-    public function getNamespace()
-    {
-        return 'http://www.symfony-project.org/schema/dic/security_extra';
     }
 }

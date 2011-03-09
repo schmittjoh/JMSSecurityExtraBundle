@@ -3,15 +3,9 @@
 namespace JMS\SecurityExtraBundle\Analysis;
 
 use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-
 use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
 use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
-use \PHP_Depend;
-use \PHP_Depend_Code_Class;
-use \PHP_Depend_Code_AbstractClassOrInterface;
-use \PHP_Depend_Code_Interface;
-use \PHP_Depend_Util_Configuration;
 use \ReflectionClass;
 
 /*
@@ -38,14 +32,14 @@ use \ReflectionClass;
  */
 class ServiceAnalyzer
 {
-    protected $reflection;
-    protected $files;
-    protected $driver;
-    protected $pdepend;
-    protected $analyzed;
-    protected $hierarchy;
-    protected $metadata;
-    protected $cacheDir;
+    private $reflection;
+    private $files;
+    private $driver;
+    private $pdepend;
+    private $analyzed;
+    private $hierarchy;
+    private $metadata;
+    private $cacheDir;
 
     public function __construct($class, $cacheDir = null)
     {
@@ -64,7 +58,6 @@ class ServiceAnalyzer
         }
 
         $this->collectFiles();
-        $this->analyzeCode();
         $this->buildClassHierarchy();
         $this->collectServiceMetadata();
 
@@ -94,64 +87,38 @@ class ServiceAnalyzer
         return $this->metadata;
     }
 
-    protected function buildClassHierarchy()
+    private function buildClassHierarchy()
     {
-        $rootClassName = $this->reflection->getName();
-        $rootClass = null;
+        $hierarchy = array();
+        $class = $this->reflection;
 
-        foreach ($this->pdepend->getPackages() as $package) {
-            foreach ($package->getClasses() as $class) {
-                if ($rootClassName === $this->getFullyQualifiedClassname($class)) {
-                    $rootClass = $class;
-                    break 2;
-                }
-            }
+        // add classes
+        while (false !== $class) {
+            $hierarchy[] = $class;
+            $class = $class->getParentClass();
         }
 
-        if (null === $rootClass) {
-            throw new \RuntimeException('Could not locate root class: '.$rootClassName);
-        }
-
+        // add interfaces
         $addedInterfaces = array();
-        do {
-            $this->hierarchy[] = $rootClass;
+        $newHierarchy = array();
 
-            foreach ($rootClass->getDependencies() as $interface) {
-                if (!$interface instanceof PHP_Depend_Code_Interface) {
+        foreach (array_reverse($hierarchy) as $class) {
+            foreach ($class->getInterfaces() as $interface) {
+                if (isset($addedInterfaces[$interface->getName()])) {
                     continue;
                 }
+                $addedInterfaces[$interface->getName()] = true;
 
-                if (!isset($addedInterfaces[$interface->getUUID()])) {
-                    $this->hierarchy[] = $interface;
-                    $addedInterfaces[$interface->getUUID()] = true;
-                }
+                $newHierarchy[] = $interface;
             }
-        } while (null !== $rootClass = $rootClass->getParentClass());
-    }
 
-    protected function analyzeCode()
-    {
-        $config = new \stdClass;
-        $config->cache = new \stdClass;
-
-        if (null === $this->cacheDir) {
-            $config->cache->driver = 'memory';
-        } else {
-            $config->cache->driver = 'file';
-            $config->cache->location = $this->cacheDir;
+            $newHierarchy[] = $class;
         }
 
-        $this->pdepend = new PHP_Depend(new PHP_Depend_Util_Configuration($config));
-        $this->pdepend->setWithoutAnnotations();
-
-        foreach ($this->files as $file) {
-            $this->pdepend->addFile($file);
-        }
-
-        $this->pdepend->analyze();
+        $this->hierarchy = array_reverse($newHierarchy);
     }
 
-    protected function collectFiles()
+    private function collectFiles()
     {
         $this->files[] = $this->reflection->getFileName();
 
@@ -169,7 +136,7 @@ class ServiceAnalyzer
         }
     }
 
-    protected function normalizeMetadata()
+    private function normalizeMetadata()
     {
         $secureMethods = array();
         foreach ($this->metadata->getClasses() as $class) {
@@ -198,18 +165,17 @@ class ServiceAnalyzer
             if ($method->getReflection()->isAbstract()) {
                 $previous = null;
                 $abstractClass = $method->getReflection()->getDeclaringClass()->getName();
-                foreach ($this->hierarchy as $class) {
-                    if ($abstractClass === $fqcn = $this->getFullyQualifiedClassname($class)) {
-                        $reflectionClass = new ReflectionClass($previous);
-                        $methodMetadata = new MethodMetadata($reflectionClass->getMethod($name));
+                foreach ($this->hierarchy as $refClass) {
+                    if ($abstractClass === $fqcn = $refClass->getName()) {
+                        $methodMetadata = new MethodMetadata($previous->getMethod($name));
                         $methodMetadata->merge($method);
                         $this->metadata->addMethod($name, $methodMetadata);
 
                         continue 2;
                     }
 
-                    if ($class instanceof PHP_Depend_Code_Class && $this->hasMethod($class, $name)) {
-                        $previous = $fqcn;
+                    if (!$refClass->isInterface() && $this->hasMethod($refClass, $name)) {
+                        $previous = $refClass;
                     }
                 }
             }
@@ -224,25 +190,29 @@ class ServiceAnalyzer
      * @throws \RuntimeException
      * @return void
      */
-    protected function analyzeControlFlow()
+    private function analyzeControlFlow()
     {
         $secureMethods = $this->metadata->getMethods();
         $rootClass = $this->hierarchy[0];
 
         while (true) {
             foreach ($rootClass->getMethods() as $method) {
+                if (!$this->hasMethod($rootClass, $method->getName())) {
+                    continue;
+                }
+
                 if (!isset($secureMethods[$name = $method->getName()])) {
                     continue;
                 }
 
-                if ($secureMethods[$name]->getReflection()->getDeclaringClass()->getName() !== $this->getFullyQualifiedClassname($rootClass)) {
+                if ($secureMethods[$name]->getReflection()->getDeclaringClass()->getName() !== $rootClass->getName()) {
                     throw new \RuntimeException(sprintf(
                         'You have overridden a secured method "%s::%s" in "%s". '
                        .'Please copy over the applicable security metadata, and '
                        .'also add @SatisfiesParentSecurityPolicy.',
                         $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(),
                         $name,
-                        $this->getFullyQualifiedClassname($rootClass)
+                        $rootClass->getName()
                     ));
                 }
 
@@ -259,26 +229,13 @@ class ServiceAnalyzer
         }
     }
 
-    protected function getFullyQualifiedClassname(PHP_Depend_Code_AbstractClassOrInterface $class)
-    {
-        $name = $class->getPackageName().'\\'.$class->getName();
-        if (false === class_exists($name, false) && false === interface_exists($name, false)) {
-            return $class->getName();
-        } else {
-            return $name;
-        }
-    }
-
-    protected function collectServiceMetadata()
+    private function collectServiceMetadata()
     {
         $this->metadata = new ServiceMetadata();
         $classMetadata = null;
-        foreach ($this->hierarchy as $class) {
-            $reflectionClass = new \ReflectionClass($this->getFullyQualifiedClassname($class));
-
+        foreach ($this->hierarchy as $reflectionClass) {
             if (null === $classMetadata) {
                 $classMetadata = new ClassMetadata($reflectionClass);
-                $classMetadata->setPdependClass($class);
             }
 
             if (null !== $aMetadata = $this->driver->loadMetadataForClass($reflectionClass)) {
@@ -288,21 +245,18 @@ class ServiceAnalyzer
                     $this->metadata->addMetadata($classMetadata);
 
                     $classMetadata = $aMetadata;
-                    $classMetadata->setPdependClass($class);
                 }
             }
         }
         $this->metadata->addMetadata($classMetadata);
     }
 
-    private function hasMethod(PHP_Depend_Code_Class $class, $name)
+    private function hasMethod(\ReflectionClass $class, $name)
     {
-        foreach ($class->getMethods() as $mName => $method) {
-            if ($name === $mName) {
-                return true;
-            }
+        if (!$class->hasMethod($name)) {
+            return false;
         }
 
-        return false;
+        return $class->getName() === $class->getMethod($name)->getDeclaringClass()->getName();
     }
 }
