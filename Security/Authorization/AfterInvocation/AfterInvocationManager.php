@@ -28,7 +28,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class AfterInvocationManager implements AfterInvocationManagerInterface
 {
-    protected $providers;
+    private $providers;
 
     public function __construct(array $providers)
     {

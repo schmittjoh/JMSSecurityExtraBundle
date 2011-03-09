@@ -25,8 +25,8 @@ namespace JMS\SecurityExtraBundle\Annotation;
  */
 class SecureParam implements AnnotationInterface
 {
-    protected $name;
-    protected $permissions;
+    private $name;
+    private $permissions;
 
     public function __construct(array $values)
     {

@@ -38,7 +38,7 @@ use Symfony\Component\Finder\Finder;
  */
 class AnnotationDriver implements DriverInterface
 {
-    protected $reader;
+    private $reader;
 
     public function __construct()
     {

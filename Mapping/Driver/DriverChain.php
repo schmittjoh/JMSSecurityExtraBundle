@@ -25,14 +25,14 @@ use \ReflectionMethod;
 
 /**
  * This loads all metadata that is applicable for a class, or interface.
- * 
+ *
  * It also allows to add other metadata sources apart from annotations.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class DriverChain implements DriverInterface
 {
-    protected $drivers;
+    private $drivers;
 
     public function __construct()
     {

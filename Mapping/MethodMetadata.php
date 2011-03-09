@@ -25,12 +25,12 @@ namespace JMS\SecurityExtraBundle\Mapping;
  */
 class MethodMetadata
 {
-    protected $roles;
-    protected $reflection;
-    protected $paramPermissions;
-    protected $returnPermissions;
-    protected $runAsRoles;
-    protected $satisfiesParentSecurityPolicy;
+    private $roles;
+    private $reflection;
+    private $paramPermissions;
+    private $returnPermissions;
+    private $runAsRoles;
+    private $satisfiesParentSecurityPolicy;
 
     public function __construct(\ReflectionMethod $method)
     {

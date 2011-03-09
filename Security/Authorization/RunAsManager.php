@@ -30,8 +30,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class RunAsManager implements RunAsManagerInterface
 {
-    protected $key;
-    protected $rolePrefix;
+    private $key;
+    private $rolePrefix;
 
     public function __construct($key, $rolePrefix = 'ROLE_')
     {

@@ -33,7 +33,7 @@ use \ReflectionMethod;
  */
 class ProxyClassGenerator
 {
-    protected $classCount = array();
+    private $classCount = array();
 
     /**
      * Generates the proxy class
@@ -84,7 +84,7 @@ class ProxyClassGenerator
         return array($className, substr($proxy, 0, -6).'}');
     }
 
-    protected function getMethodSecurityMetadata(MethodMetadata $method)
+    private function getMethodSecurityMetadata(MethodMetadata $method)
     {
         $metadata = var_export(array(
             'roles' => $method->getRoles(),
@@ -110,7 +110,7 @@ class ProxyClassGenerator
         return $metadata;
     }
 
-    protected function getSecureMethodInvocation(MethodMetadata $method)
+    private function getSecureMethodInvocation(MethodMetadata $method)
     {
         $code = 'new MethodInvocation('
                 .var_export($method->getReflection()->getDeclaringClass()->getName(), true)
@@ -127,7 +127,7 @@ class ProxyClassGenerator
         return $code;
     }
 
-    protected function getClassDefinition(Definition $definition)
+    private function getClassDefinition(Definition $definition)
     {
         $baseClass = $definition->getClass();
         if (false !== $pos = strrpos($baseClass, '\\')) {
@@ -175,7 +175,7 @@ class %s extends \%s
     ', $requiredFiles, $className, $baseClass));
     }
 
-    protected function getMethodDefinition(ReflectionMethod $method)
+    private function getMethodDefinition(ReflectionMethod $method)
     {
         $def = '';
         if ($method->isProtected()) {

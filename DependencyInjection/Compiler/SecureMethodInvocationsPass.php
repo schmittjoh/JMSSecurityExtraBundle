@@ -39,9 +39,9 @@ use Symfony\Component\Security\Core\SecurityContext;
  */
 class SecureMethodInvocationsPass implements CompilerPassInterface
 {
-    protected $cacheDir;
-    protected $generator;
-    protected $cacheMetadata;
+    private $cacheDir;
+    private $generator;
+    private $cacheMetadata;
 
     public function __construct($cacheDir)
     {
@@ -105,7 +105,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         $this->writeCacheMetadata();
     }
 
-    protected function processDefinition(ContainerBuilder $container, $id, Definition $definition)
+    private function processDefinition(ContainerBuilder $container, $id, Definition $definition)
     {
         if ($this->needsReAssessment($id, $definition)) {
             $analyzer = new ServiceAnalyzer($definition->getClass());
@@ -149,7 +149,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         }
     }
 
-    protected function needsReAssessment($id, Definition $definition)
+    private function needsReAssessment($id, Definition $definition)
     {
         if (!isset($this->cacheMetadata[$id])) {
             return true;
@@ -170,7 +170,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         return false;
     }
 
-    protected function createOrLoadCacheMetadata()
+    private function createOrLoadCacheMetadata()
     {
         if (file_exists($this->cacheDir.'cache.meta')) {
             if (!is_readable($this->cacheDir.'cache.meta')) {
@@ -184,7 +184,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         }
     }
 
-    protected function writeCacheMetadata()
+    private function writeCacheMetadata()
     {
         if (false === file_put_contents($this->cacheDir.'cache.meta', serialize($this->cacheMetadata))) {
             throw new \RuntimeException('Could not write to cache file: '.$this->cacheDir.'cache.meta');

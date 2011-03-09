@@ -33,7 +33,7 @@ use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProvid
  */
 class RunAsAuthenticationProvider implements AuthenticationProviderInterface
 {
-    protected $key;
+    private $key;
 
     public function __construct($key)
     {

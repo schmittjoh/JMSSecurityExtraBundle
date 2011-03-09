@@ -25,8 +25,8 @@ namespace JMS\SecurityExtraBundle\Mapping;
  */
 class ClassMetadata
 {
-    protected $reflection;
-    protected $methods;
+    private $reflection;
+    private $methods;
 
     public function __construct(\ReflectionClass $class)
     {

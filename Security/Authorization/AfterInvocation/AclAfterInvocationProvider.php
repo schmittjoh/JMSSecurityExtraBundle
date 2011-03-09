@@ -35,11 +35,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class AclAfterInvocationProvider implements AfterInvocationProviderInterface
 {
-    protected $aclProvider;
-    protected $oidRetrievalStrategy;
-    protected $sidRetrievalStrategy;
-    protected $permissionMap;
-    protected $logger;
+    private $aclProvider;
+    private $oidRetrievalStrategy;
+    private $sidRetrievalStrategy;
+    private $permissionMap;
+    private $logger;
 
     public function __construct(AclProviderInterface $aclProvider, ObjectIdentityRetrievalStrategyInterface $oidRetrievalStrategy, SecurityIdentityRetrievalStrategyInterface $sidRetrievalStrategy, PermissionMapInterface $permissionMap, LoggerInterface $logger = null)
     {

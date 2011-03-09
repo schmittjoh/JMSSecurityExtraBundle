@@ -25,7 +25,7 @@ namespace JMS\SecurityExtraBundle\Annotation;
  */
 class Secure implements AnnotationInterface
 {
-    protected $roles;
+    private $roles;
 
     public function __construct(array $values)
     {
