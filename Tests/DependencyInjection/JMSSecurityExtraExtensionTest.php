@@ -7,7 +7,7 @@ use JMS\SecurityExtraBundle\DependencyInjection\JMSSecurityExtraExtension;
 
 class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConfigLoadWithEmptyConfig()
+    public function testConfigLoad()
     {
         $extension = new JMSSecurityExtraExtension();
 
@@ -15,30 +15,14 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->load(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
-        $this->assertEquals(array(), $container->getParameter('security.secured_services'));
+        $this->assertFalse($container->getParameter('security.extra.secure_all'));
     }
 
-    /**
-     * @dataProvider getEquivalentConfigData
-     */
-    public function testConfigLoad(array $config)
+    public function testConfigLoadSecureAll()
     {
         $extension = new JMSSecurityExtraExtension();
-        $extension->load(array($config), $container = new ContainerBuilder());
+        $extension->load(array(array('secure_all' => true)), $container = new ContainerBuilder());
 
-        $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
-        $this->assertEquals(array(
-            'foo' => array(),
-            'bar' => array(),
-        ), $container->getParameter('security.secured_services'));
-    }
-
-    public function getEquivalentConfigData()
-    {
-        return array(
-            array(array('service' => array(array('id' => 'foo'), array('id' => 'bar')))),
-            array(array('services' => array('foo', 'bar'))),
-            array(array('services' => array('foo' => null, 'bar' => null))),
-        );
+        $this->assertTrue($container->getParameter('security.extra.secure_all'));
     }
 }

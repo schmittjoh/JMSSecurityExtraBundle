@@ -3,26 +3,22 @@ Overview
 ========
 
 This bundle allows you to secure method invocations on your service layer with
-annotations (additional drivers like xml, yaml, php, etc. might be added in the
-future).
+annotations.
 
 Generally, you can secure all public, or protected methods which are non-static,
 and non-final. Private methods cannot be secured this way.
 
-Annotations can also be declared on parent classes, or interfaces. There is a 
-restriction however:
-
-If you override a method which has security metadata, right now you always need
-to copy over the annotations to your overridden method. In addition, you also
-need to add @SatisfiesParentSecurityPolicy, otherwise there will be an exception
-when the container is built.
+Annotations can also be declared on abstract methods, parent classes, or 
+interfaces.
 
 How does it work?
 -----------------
-The bundle will first collect all available security metadata for your service
-(right now only from annotations). The metadata will then be used to build proxy
-classes which have the requested security checks built-in. These proxy classes
-will replace your original service classes.
+The bundle will first collect all available security metadata for your services
+from annotations. The metadata will then be used to build proxy classes which 
+have the requested security checks built-in. These proxy classes will replace 
+your original service classes. All of that is done automatically for you, you
+don't need to manually clear any cache if you make changes to the metadata.
+
 
 Performance
 -----------
@@ -38,41 +34,38 @@ needs to be generated. Subsequent page loads will be very fast.
 
 Installation
 ------------
-SecurityExtraBundle
-~~~~~~~~~~~~~~~~~~~
 Checkout a copy of the code::
 
-    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git src/Bundle/JMS/SecurityExtraBundle
+    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git src/JMS/SecurityExtraBundle
     
 Then register the bundle with your kernel::
 
     // in AppKernel::registerBundles()
     $bundles = array(
         // ...
-        new Bundle\JMS\SecurityExtraBundle\SecurityExtraBundle(),
+        new JMS\SecurityExtraBundle\SecurityExtraBundle(),
         // ...
     );
 
 Configuration
 -------------
 
-At the minimum, you need to place the following in your application config, 
-e.g. in config.yml::
+By default, security checks are not enabled for any service. You can turn on
+security for your services by one of the following ways:
 
-    security_extra.config: ~
-    
-This configuration will enable security for all your services. Thus, the first
-page load will be very slow (20 seconds upward) depending on how many services
-you have. 
+1. Turn on security for specific services by adding a tag::
 
-You can reduce the overhead by only enabling security for certain services::
+    <service id="foo" class="Bar">
+        <tag name="secure_service"/>
+    </service>
 
-    security_extra.config:
-        services: [my_secure_service_id, another_secure_service_id]
-        
-This way only these services will need to be analyzed, and monitored for
-changes which will greatly improve the performance in your development
-environment.
+2. Turn on security for all services via the bundle configuration::
+
+    jms_security_extra:
+        secure_all: true
+
+If you enable security for all services, be aware that the first page load will
+be very slow depending on how many services you have defined.
 
 
 Annotations
