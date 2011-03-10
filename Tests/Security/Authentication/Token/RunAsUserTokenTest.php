@@ -2,6 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Security\Authentication\Token;
 
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
 use Symfony\Component\Security\Core\Role\Role;
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 
@@ -26,5 +28,11 @@ class RunAsUserTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('secret', $token->getCredentials());
         $token->eraseCredentials();
         $this->assertNull($token->getCredentials());
+    }
+
+    public function testSerializeUnserialize()
+    {
+        $token = new RunAsUserToken('foo', 'bar', 'secret', array(), new UsernamePasswordToken('foo', 'pass', 'foo', array()));
+        $this->assertEquals($token, unserialize(serialize($token)));
     }
 }
