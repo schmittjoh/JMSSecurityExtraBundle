@@ -2,7 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authentication\Token;
 
-use Symfony\Component\Security\Core\Authentication\Token\Token;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -26,20 +27,21 @@ use Symfony\Component\Security\Core\Authentication\Token\Token;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class RunAsUserToken extends Token
+class RunAsUserToken extends AbstractToken
 {
-    protected $originalToken;
-    protected $user;
-    protected $key;
+    private $originalToken;
+    private $key;
+    private $credentials;
 
-    public function __construct($key, $user, $credentials, array $roles, $originalToken)
+    public function __construct($key, $user, $credentials, array $roles, TokenInterface $originalToken)
     {
         parent::__construct($roles);
 
         $this->originalToken = $originalToken;
         $this->credentials = $credentials;
-        $this->setUser($user);
         $this->key = $key;
+
+        $this->setUser($user);
         $this->setAuthenticated(true);
     }
 
@@ -51,5 +53,33 @@ class RunAsUserToken extends Token
     public function getOriginalToken()
     {
         return $this->originalToken;
+    }
+
+    public function getCredentials()
+    {
+        return $this->credentials;
+    }
+
+    public function eraseCredentials()
+    {
+        parent::eraseCredentials();
+
+        $this->credentials = null;
+    }
+
+    public function serialize()
+    {
+        return serialize(array(
+            $this->originalToken,
+            $this->key,
+            $this->credentials,
+            parent::serialize(),
+        ));
+    }
+
+    public function unserialize($str)
+    {
+        list($this->originalToken, $this->key, $this->credentials, $parentStr) = unserialize($str);
+        parent::unserialize($parentStr);
     }
 }
