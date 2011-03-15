@@ -50,19 +50,26 @@ Then register the bundle with your kernel::
 Configuration
 -------------
 
-By default, security checks are not enabled for any service. You can turn on
-security for your services by one of the following ways:
+Below, you find the default configuration::
 
-1. Turn on security for specific services by adding a tag::
+    # app/config/config.yml
+    jms_security_extra:
+        # If you set-up your controllers as services, you must set this to false;
+        # otherwise your security checks will be performed twice.
+        secure_controllers: true
+        
+        # Whether you want to secure all services (true), or only secure specific
+        # services (false); see also below 
+        secure_all_services: false
+
+
+By default, security checks are not enabled for any service. You can turn on
+security for your services either by securing all services as shown above, or
+only for specific services by adding a tag to these services::
 
     <service id="foo" class="Bar">
-        <tag name="secure_service"/>
+        <tag name="security.secure_service"/>
     </service>
-
-2. Turn on security for all services via the bundle configuration::
-
-    jms_security_extra:
-        secure_all: true
 
 If you enable security for all services, be aware that the first page load will
 be very slow depending on how many services you have defined.

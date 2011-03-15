@@ -26,8 +26,8 @@ namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
  */
 class MethodInvocation extends \ReflectionMethod
 {
-    protected $arguments;
-    protected $object;
+    private $arguments;
+    private $object;
 
     public function __construct($class, $name, $object, array $arguments = array())
     {
@@ -39,6 +39,11 @@ class MethodInvocation extends \ReflectionMethod
 
         $this->arguments = $arguments;
         $this->object = $object;
+    }
+
+    public function setArguments(array $arguments)
+    {
+        $this->arguments = $arguments;
     }
 
     /**

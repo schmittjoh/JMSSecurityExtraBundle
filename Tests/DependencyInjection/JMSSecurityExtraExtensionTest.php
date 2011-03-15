@@ -15,14 +15,16 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->load(array($config), $container = new ContainerBuilder());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
-        $this->assertFalse($container->getParameter('security.extra.secure_all'));
+        $this->assertTrue($container->hasDefinition('security.extra.controller_listener'));
+        $this->assertFalse($container->getParameter('security.extra.secure_all_services'));
     }
 
     public function testConfigLoadSecureAll()
     {
         $extension = new JMSSecurityExtraExtension();
-        $extension->load(array(array('secure_all' => true)), $container = new ContainerBuilder());
+        $extension->load(array(array('secure_all_services' => true, 'secure_controllers' => false)), $container = new ContainerBuilder());
 
-        $this->assertTrue($container->getParameter('security.extra.secure_all'));
+        $this->assertFalse($container->hasDefinition('security.extra.controller_listener'));
+        $this->assertTrue($container->getParameter('security.extra.secure_all_services'));
     }
 }

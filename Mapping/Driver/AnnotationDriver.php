@@ -3,17 +3,14 @@
 namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
 use JMS\SecurityExtraBundle\Annotation\RunAs;
-
 use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\SecureReturn;
 use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
 use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use Doctrine\Common\Annotations\AnnotationReader;
 use \ReflectionClass;
 use \ReflectionMethod;
-use Symfony\Component\Finder\Finder;
 
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -39,29 +36,12 @@ use Symfony\Component\Finder\Finder;
 class AnnotationDriver implements DriverInterface
 {
     private $reader;
+    private $converter;
 
     public function __construct()
     {
-        $this->reader = new AnnotationReader(null, new AnnotationParser());
-        $this->reader->setAutoloadAnnotations(false);
-        $this->reader->setDefaultAnnotationNamespace('JMS\\SecurityExtraBundle\\Annotation\\');
-        $this->reader->setAnnotationCreationFunction(function($name, $values) {
-            $reflection = new ReflectionClass($name);
-            if (!$reflection->implementsInterface('JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface')) {
-                return null;
-            }
-
-            return new $name($values);
-        });
-
-        $finder = new Finder();
-        $finder
-            ->name('*.php')
-            ->in(__DIR__.'/../../Annotation/')
-        ;
-        foreach ($finder as $annotationFile) {
-            require_once $annotationFile->getPathName();
-        }
+        $this->reader = new AnnotationReader();
+        $this->converter = new AnnotationConverter();
     }
 
     public function loadMetadataForClass(ReflectionClass $reflection)
@@ -77,29 +57,7 @@ class AnnotationDriver implements DriverInterface
             $annotations = $this->reader->getMethodAnnotations($method);
 
             if (count($annotations) > 0) {
-                $parameters = array();
-                foreach ($method->getParameters() as $index => $parameter) {
-                    $parameters[$parameter->getName()] = $index;
-                }
-
-                $methodMetadata = new MethodMetadata($method);
-                foreach ($annotations as $annotation) {
-                    if ($annotation instanceof Secure) {
-                        $methodMetadata->setRoles($annotation->getRoles());
-                    } else if ($annotation instanceof SecureParam) {
-                        if (!isset($parameters[$annotation->getName()])) {
-                            throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->getName(), $method->getName()));
-                        }
-
-                        $methodMetadata->addParamPermissions($parameters[$annotation->getName()], $annotation->getPermissions());
-                    } else if ($annotation instanceof SecureReturn) {
-                        $methodMetadata->addReturnPermissions($annotation->getPermissions());
-                    } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
-                        $methodMetadata->setSatisfiesParentSecurityPolicy();
-                    } else if ($annotation instanceof RunAs) {
-                        $methodMetadata->setRunAsRoles($annotation->getRoles());
-                    }
-                }
+                $methodMetadata = $this->converter->convertMethodAnnotations($method, $annotations);
                 $metadata->addMethod($method->getName(), $methodMetadata);
             }
         }

@@ -86,12 +86,7 @@ class ProxyClassGenerator
 
     private function getMethodSecurityMetadata(MethodMetadata $method)
     {
-        $metadata = var_export(array(
-            'roles' => $method->getRoles(),
-            'run_as_roles' => $method->getRunAsRoles(),
-            'param_permissions' => $method->getParamPermissions(),
-            'return_permissions' => $method->getReturnPermissions(),
-        ), true);
+        $metadata = var_export($method->getAsArray(), true);
 
         $staticReplaces = array(
             "\n" => '',

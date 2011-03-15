@@ -74,8 +74,8 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
             return;
         }
 
-        $services = $container->findTaggedServiceIds('secure_service');
-        $secureNotAll = !$container->getParameter('security.extra.secure_all');
+        $services = $container->findTaggedServiceIds('security.secure_service');
+        $secureNotAll = !$container->getParameter('security.extra.secure_all_services');
 
         $parameterBag = $container->getParameterBag();
         foreach ($container->getDefinitions() as $id => $definition) {
