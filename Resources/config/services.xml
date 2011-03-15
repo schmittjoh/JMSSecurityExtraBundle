@@ -31,7 +31,7 @@
             <argument type="service" id="security.authentication.manager" />
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="security.access.after_invocation_manager" />
-            <argument type="service" id="security.access.run_as_manager" on-invalid="null" />
+            <argument type="service" id="security.access.run_as_manager" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
             
@@ -39,14 +39,13 @@
             <argument type="collection"></argument>
         </service>
         
-        <!-- 
         <service id="security.access.after_invocation.acl_provider.class" class="%security.access.after_invocation.acl_provider.class%" public="false">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="security.acl.object_identity_retrieval_strategy" />
             <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
             <argument type="service" id="security.acl.permission.map" />
             <tag name="security.after_invocation.provider" />
-        </service>  -->
+        </service>
         
         <service id="security.extra.controller_listener" class="%security.extra.controller_listener.class%">
             <tag name="kernel.listener" event="core.controller" method="filter" priority="-255" />
