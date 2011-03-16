@@ -1,12 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Mapping\Driver;
-
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-
-use \ReflectionClass;
-use \ReflectionMethod;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -22,6 +15,13 @@ use \ReflectionMethod;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
+
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+
+use \ReflectionClass;
+use \ReflectionMethod;
 
 /**
  * This loads all metadata that is applicable for a class, or interface.

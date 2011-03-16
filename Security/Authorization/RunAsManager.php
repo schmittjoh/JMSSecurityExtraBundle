@@ -1,11 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Security\Authorization;
-
-use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-use Symfony\Component\Security\Core\Role\Role;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -21,6 +15,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Security\Authorization;
+
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * The RunAsManager creates throw-away Tokens which are temporarily injected into

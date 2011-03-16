@@ -1,17 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Mapping\Driver;
-
-use JMS\SecurityExtraBundle\Annotation\RunAs;
-use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
-use JMS\SecurityExtraBundle\Annotation\Secure;
-use JMS\SecurityExtraBundle\Annotation\SecureParam;
-use JMS\SecurityExtraBundle\Annotation\SecureReturn;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use \ReflectionClass;
-use \ReflectionMethod;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -27,6 +15,18 @@ use \ReflectionMethod;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
+
+use JMS\SecurityExtraBundle\Annotation\RunAs;
+use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Annotation\SecureReturn;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use \ReflectionClass;
+use \ReflectionMethod;
 
 /**
  * Loads security annotations and converts them to metadata

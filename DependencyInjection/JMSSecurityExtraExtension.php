@@ -1,5 +1,21 @@
 <?php
 
+/*
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -28,7 +44,46 @@ class JMSSecurityExtraExtension extends Extension
 
         if (!$config['secure_controllers']) {
             $container->remove('security.extra.controller_listener');
+        } else {
+            $this->addClassesToCompile(array(
+                'JMS\\SecurityExtraBundle\\Controller\\ControllerListener',
+
+                'JMS\\SecurityExtraBundle\\Mapping\\Driver\\AnnotationReader',
+                'JMS\\SecurityExtraBundle\\Mapping\\Driver\\AnnotationParser',
+                'JMS\\SecurityExtraBundle\\Mapping\\Driver\\AnnotationConverter',
+
+                'JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface',
+                'JMS\\SecurityExtraBundle\\Annotation\\RunAs',
+                'JMS\\SecurityExtraBundle\\Annotation\\SatisfiesParentSecurityPolicy',
+                'JMS\\SecurityExtraBundle\\Annotation\\Secure',
+                'JMS\\SecurityExtraBundle\\Annotation\\SecureParam',
+                'JMS\\SecurityExtraBundle\\Annotation\\SecureReturn',
+
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
+            ));
         }
+
+        if ($config['enable_iddqd_attribute']) {
+            $container
+                ->getDefinition('security.extra.iddqd_voter')
+                ->addTag('security.voter')
+            ;
+
+            // FIXME: Also add an iddqd after invocation provider
+        }
+
+        $this->addClassesToCompile(array(
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodSecurityInterceptor',
+
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AclAfterInvocationProvider',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManager',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManagerInterface',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationProviderInterface',
+
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManager',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManagerInterface',
+        ));
     }
 
     private function getConfigTree()
@@ -39,6 +94,7 @@ class JMSSecurityExtraExtension extends Extension
             ->root('jms_security_extra', 'array')
                 ->booleanNode('secure_controllers')->defaultTrue()->end()
                 ->booleanNode('secure_all_services')->defaultFalse()->end()
+                ->booleanNode('enable_iddqd_attribute')->defaultFalse()->end()
             ->end()
             ->buildTree();
     }

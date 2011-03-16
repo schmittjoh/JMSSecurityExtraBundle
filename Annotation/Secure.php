@@ -1,7 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Annotation;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -17,6 +15,8 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Annotation;
 
 /**
  * Represents a @Secure annotation.

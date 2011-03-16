@@ -1,17 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
-
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
-use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface;
-use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
-use Symfony\Component\Security\Acl\Model\AclProviderInterface;
-use Symfony\Component\Security\Acl\Permission\PermissionMapInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -27,6 +15,18 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
+
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
+use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface;
+use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
+use Symfony\Component\Security\Acl\Model\AclProviderInterface;
+use Symfony\Component\Security\Acl\Permission\PermissionMapInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * This after invocation provider filters returned objects based on ACLs.

@@ -18,6 +18,8 @@
         <parameter key="security.access.after_invocation.acl_provider.class">JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider</parameter>
         
         <parameter key="security.extra.controller_listener.class">JMS\SecurityExtraBundle\Controller\ControllerListener</parameter>
+        
+        <parameter key="security.access.iddqd_voter.class">JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter</parameter>
     </parameters>
 
     <services>
@@ -39,12 +41,15 @@
             <argument type="collection"></argument>
         </service>
         
-        <service id="security.access.after_invocation.acl_provider.class" class="%security.access.after_invocation.acl_provider.class%" public="false">
+        <service id="security.access.after_invocation.acl_provider" class="%security.access.after_invocation.acl_provider.class%" public="false">
             <argument type="service" id="security.acl.provider" />
             <argument type="service" id="security.acl.object_identity_retrieval_strategy" />
             <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
             <argument type="service" id="security.acl.permission.map" />
             <tag name="security.after_invocation.provider" />
+        </service>
+        
+        <service id="security.extra.iddqd_voter" class="%security.access.iddqd_voter.class%" public="false">
         </service>
         
         <service id="security.extra.controller_listener" class="%security.extra.controller_listener.class%">

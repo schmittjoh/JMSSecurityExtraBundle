@@ -1,9 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
-
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -19,6 +15,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation;
+
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * This is the pendant to the AccessDecisionManager which is used to make

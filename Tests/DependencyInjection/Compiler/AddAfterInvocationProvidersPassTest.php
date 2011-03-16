@@ -3,9 +3,7 @@
 namespace JMS\SecurityExtraBundle\Tests\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Definition;
-
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class AddAfterInvocationProvidersPassTest extends \PHPUnit_Framework_TestCase
@@ -25,6 +23,21 @@ class AddAfterInvocationProvidersPassTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->process($container);
+    }
+
+    public function testProcessRemovesAclProviderIfAclIsNotActive()
+    {
+        $container = new ContainerBuilder();
+        $container->setDefinition('security.access.after_invocation_manager', $manager = new Definition());
+
+        $container
+            ->register('security.access.after_invocation.acl_provider')
+            ->addTag('security.after_invocation.provider')
+        ;
+
+        $this->assertEquals(array(), $manager->getArguments());
+        $this->process($container);
+        $this->assertEquals(array(array()), $manager->getArguments());
     }
 
     public function testProcess()

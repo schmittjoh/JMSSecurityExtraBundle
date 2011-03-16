@@ -1,7 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Mapping\Driver;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -18,16 +16,18 @@ namespace JMS\SecurityExtraBundle\Mapping\Driver;
  * limitations under the License.
  */
 
+namespace JMS\SecurityExtraBundle\Mapping\Driver;
+
 /**
  * Driver Interface
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface DriverInterface
 {
     /**
      * Loads metadata for a given class
-     * 
+     *
      * @param ReflectionClass $class
      * @return ClassMetadata|null
      */

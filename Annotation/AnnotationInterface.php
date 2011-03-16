@@ -1,7 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Annotation;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -18,9 +16,11 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * limitations under the License.
  */
 
+namespace JMS\SecurityExtraBundle\Annotation;
+
 /**
  * Annotation Interface
- * 
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface AnnotationInterface

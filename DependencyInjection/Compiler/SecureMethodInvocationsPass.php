@@ -1,21 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\DependencyInjection\Compiler;
-
-use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
-use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
-use \ReflectionClass;
-use \ReflectionMethod;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Security\Core\SecurityContext;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -31,6 +15,22 @@ use Symfony\Component\Security\Core\SecurityContext;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\DependencyInjection\Compiler;
+
+use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
+use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use \ReflectionClass;
+use \ReflectionMethod;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Modifies the container, and sets the proxy classes where needed

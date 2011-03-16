@@ -1,13 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Analysis;
-
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
-use \ReflectionClass;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -23,6 +15,14 @@ use \ReflectionClass;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Analysis;
+
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use \ReflectionClass;
 
 /**
  * Analyzes a service class including parent classes. The gathered information

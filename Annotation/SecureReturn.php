@@ -1,7 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Annotation;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -18,6 +16,8 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * limitations under the License.
  */
 
+namespace JMS\SecurityExtraBundle\Annotation;
+
 /**
  * Represents a @SecureReturn annotation.
  *
@@ -32,7 +32,7 @@ class SecureReturn implements AnnotationInterface
         if (!isset($values['permissions'])) {
             throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureReturn annotation.');
         }
-        
+
         $this->permissions = array_map('trim', explode(',', $values['permissions']));
     }
 

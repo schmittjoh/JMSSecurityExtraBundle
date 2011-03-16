@@ -1,14 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle;
-
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAuthenticationManagersPass;
-use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
-use JMS\SecurityExtraBundle\DependencyInjection\Compiler\SecureMethodInvocationsPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -24,6 +15,15 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle;
+
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAuthenticationManagersPass;
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\SecureMethodInvocationsPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Registers our custom compiler pass

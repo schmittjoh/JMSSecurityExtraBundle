@@ -5,7 +5,7 @@ namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 interface AMNDOIDCS_Interface
 {
     /**
-     * @SecureReturn(permissions="VIEW")
+     * @extra:SecureReturn(permissions="VIEW")
      */
     function abstractMethod();
 }

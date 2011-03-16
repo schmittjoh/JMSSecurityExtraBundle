@@ -5,8 +5,8 @@ namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 class CorrectSubService extends MainService
 {
     /**
-     * @SatisfiesParentSecurityPolicy
-     * @SecureReturn(permissions="VIEW")
+     * @extra:SatisfiesParentSecurityPolicy
+     * @extra:SecureReturn(permissions="VIEW")
      */
     public function differentMethodSignature($comment)
     {

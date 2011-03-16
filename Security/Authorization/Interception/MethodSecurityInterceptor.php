@@ -1,18 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
-
-use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
-use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -28,6 +15,19 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
+
+use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
+use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 /**
  * All invocations of secure methods will go through this class.

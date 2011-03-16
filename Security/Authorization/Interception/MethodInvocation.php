@@ -1,7 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -17,6 +15,8 @@ namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
 /**
  * This class holds all data which is associated with the invocation of a

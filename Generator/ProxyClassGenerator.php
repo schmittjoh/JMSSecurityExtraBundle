@@ -1,13 +1,5 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Generator;
-
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use Symfony\Component\DependencyInjection\Definition;
-use \ReflectionClass;
-use \ReflectionMethod;
-
 /*
  * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
@@ -23,6 +15,14 @@ use \ReflectionMethod;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+namespace JMS\SecurityExtraBundle\Generator;
+
+use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use Symfony\Component\DependencyInjection\Definition;
+use \ReflectionClass;
+use \ReflectionMethod;
 
 /**
  * Generates the proxy class which has security checks built-in according to
@@ -50,30 +50,19 @@ class ProxyClassGenerator
 
             $proxy .= $this->getMethodDefinition($reflection);
 
-            $proxy .= '    static $metadata = '.$this->getMethodSecurityMetadata($method).';
+            $proxy .= '    static $jmsSecurityExtra__metadata = '.$this->getMethodSecurityMetadata($method).';
 
     ';
 
-            if ($reflection->returnsReference()) {
-                $proxy .= '    $returnValue = ';
-            } else {
-                $proxy .= '    return ';
-            }
+            $proxy .= '    return ';
 
             $proxy .= '$this->jmsSecurityExtraBundle__methodSecurityInterceptor->invoke(
     ';
             $proxy .= '        '.$this->getSecureMethodInvocation($method).',
     ';
-            $proxy .= '        $metadata
+            $proxy .= '        $jmsSecurityExtra__metadata
     ';
             $proxy .= '    );';
-
-            if ($reflection->returnsReference()) {
-                $proxy .= '
-
-    ';
-                $proxy .= '    return $returnValue[0];';
-            }
 
             $proxy .= '
     }
@@ -115,7 +104,7 @@ class ProxyClassGenerator
 
         $arguments = array();
         foreach ($method->getReflection()->getParameters() as $param) {
-            $arguments[] = '$p_'.$param->getName();
+            $arguments[] = '$'.$param->getName();
         }
         $code .= implode(', ', $arguments).'))';
 
@@ -200,7 +189,7 @@ class %s extends \%s
                 $def .= '&';
             }
 
-            $def .= '$p_'.$param->getName();
+            $def .= '$'.$param->getName();
 
             if ($param->isOptional()) {
                 $def .= ' = '.var_export($param->getDefaultValue(), true);
