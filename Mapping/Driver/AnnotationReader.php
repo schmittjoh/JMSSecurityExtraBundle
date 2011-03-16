@@ -18,7 +18,6 @@
 
 namespace JMS\SecurityExtraBundle\Mapping\Driver;
 
-use Symfony\Component\Finder\Finder;
 use Doctrine\Common\Annotations\AnnotationReader as BaseAnnotationReader;
 
 /**

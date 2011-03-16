@@ -44,6 +44,18 @@ class JMSSecurityExtraExtension extends Extension
 
         if (!$config['secure_controllers']) {
             $container->remove('security.extra.controller_listener');
+
+            $this->addClassesToCompile(array(
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodSecurityInterceptor',
+
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManager',
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManagerInterface',
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationProviderInterface',
+
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManager',
+                'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManagerInterface',
+            ));
         } else {
             $this->addClassesToCompile(array(
                 'JMS\\SecurityExtraBundle\\Controller\\ControllerListener',
@@ -71,19 +83,6 @@ class JMSSecurityExtraExtension extends Extension
 
             // FIXME: Also add an iddqd after invocation provider
         }
-
-        $this->addClassesToCompile(array(
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodSecurityInterceptor',
-
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AclAfterInvocationProvider',
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManager',
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManagerInterface',
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationProviderInterface',
-
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManager',
-            'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManagerInterface',
-        ));
     }
 
     private function getConfigTree()
