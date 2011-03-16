@@ -29,6 +29,9 @@ class SecureReturn implements AnnotationInterface
 
     public function __construct(array $values)
     {
+        if (isset($values['value'])) {
+            $values['permissions'] = $values['value'];
+        }
         if (!isset($values['permissions'])) {
             throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureReturn annotation.');
         }

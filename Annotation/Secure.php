@@ -29,6 +29,9 @@ class Secure implements AnnotationInterface
 
     public function __construct(array $values)
     {
+        if (isset($values['value'])) {
+            $values['roles'] = $values['value'];
+        }
         if (!isset($values['roles'])) {
             throw new \InvalidArgumentException('You must define a "roles" attribute for each Secure annotation.');
         }

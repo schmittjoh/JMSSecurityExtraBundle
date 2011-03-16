@@ -9,6 +9,11 @@ class FooService implements FooInterface
      * @extra:SecureParam(name="param", permissions="VIEW")
      */
     public function foo($param, $anotherParam) { }
+
+    /**
+     * @extra:Secure("ROLE_FOO, ROLE_BAR")
+     */
+    public function shortNotation() { }
 }
 interface FooInterface
 {

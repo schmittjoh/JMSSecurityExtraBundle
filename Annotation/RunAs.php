@@ -24,6 +24,9 @@ class RunAs implements AnnotationInterface
 
     public function __construct(array $values)
     {
+        if (isset($values['value'])) {
+            $values['roles'] = $values['value'];
+        }
         if (!isset($values['roles'])) {
             throw new \InvalidArgumentException('"roles" must be defined for RunAs annotation.');
         }
