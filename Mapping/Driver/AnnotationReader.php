@@ -37,17 +37,17 @@ class AnnotationReader extends BaseAnnotationReader
 
         $this->setAutoloadAnnotations(false);
         $this->setAnnotationNamespaceAlias('JMS\\SecurityExtraBundle\\Annotation\\', 'extra');
-
-        if (!class_exists('JMS\\SecurityExtraBundle\\Annotation\\AnnotationInterface', false)) {
-            $this->preLoadAnnotations();
-        }
+        $this->loadAnnotations();
     }
 
-    private function preLoadAnnotations()
+    private function loadAnnotations()
     {
-        $dir = __DIR__.'/../../Annotation/';
-
+        $dir = realpath(__DIR__.'/../../Annotation/').'/';
         foreach (array('AnnotationInterface', 'RunAs', 'SatisfiesParentSecurityPolicy', 'Secure', 'SecureParam', 'SecureReturn') as $annotation) {
+            if (class_exists('JMS\\SecurityExtraBundle\\Annotation\\'.$annotation, false)) {
+                continue;
+            }
+
             require_once $dir.$annotation.'.php';
         }
     }
