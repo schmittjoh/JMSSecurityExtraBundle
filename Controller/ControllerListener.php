@@ -24,7 +24,7 @@ use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
 use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use JMS\SecurityExtraBundle\Mapping\Driver\AnnotationReader;
-use Symfony\Component\EventDispatcher\EventInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 /**
  * This listener allows you to use all method annotations on non-service controller actions.
@@ -44,15 +44,15 @@ class ControllerListener
         $this->converter = new AnnotationConverter();
     }
 
-    public function filter(EventInterface $event, $controller)
+    public function onCoreController(FilterControllerEvent $event)
     {
-        if (!is_array($controller)) {
-            return $controller;
+        if (!is_array($controller = $event->getController())) {
+            return;
         }
 
         $method = new MethodInvocation($controller[0], $controller[1], $controller[0]);
         if (!$annotations = $this->reader->getMethodAnnotations($method)) {
-            return $controller;
+            return;
         }
 
         $closureCode = 'return function(';
@@ -87,6 +87,6 @@ class ControllerListener
         $closureCode .= 'return $jmsSecurityExtra__interceptor->invoke($jmsSecurityExtra__method, $jmsSecurityExtra__metadata);';
         $closureCode .= '};';
 
-        return eval($closureCode);
+        $event->setController(eval($closureCode));
     }
 }

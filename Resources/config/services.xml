@@ -53,7 +53,7 @@
         </service>
         
         <service id="security.extra.controller_listener" class="%security.extra.controller_listener.class%">
-            <tag name="kernel.listener" event="core.controller" method="filter" priority="-255" />
+            <tag name="kernel.listener" event="onCoreController" priority="-255" />
             <argument type="service" id="service_container" />
         </service>
     </services>
