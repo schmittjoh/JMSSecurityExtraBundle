@@ -2,6 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use JMS\SecurityExtraBundle\Tests\Controller\Fixtures\SecuredController;
 use JMS\SecurityExtraBundle\Tests\Controller\Fixtures\UnsecuredController;
 use JMS\SecurityExtraBundle\Controller\ControllerListener;
@@ -11,30 +13,33 @@ class ControllerListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getIgnoredControllers
      */
-    public function testFilterIgnoresNonArrayControllers($controller)
+    public function testOnCoreControllerIgnoresNonArrayControllers($controller)
     {
         list($listener,) = $this->getListener();
 
-        $this->assertSame($controller, $listener->filter($this->getEvent(), $controller));
+        $event = $this->getEvent($controller);
+        $listener->onCoreController($event);
+        $this->assertSame($controller, $event->getController());
     }
 
     public function getIgnoredControllers()
     {
         return array(
-            array('foo'),
+            array('array_merge'),
             array(function() { }),
         );
     }
 
-    public function testFilterIgnoredUnsecuredController()
+    public function testOnCoreControllerIgnoredUnsecuredController()
     {
         list($listener,) = $this->getListener();
 
         $controller = array(new UnsecuredController(), 'action');
-        $this->assertSame($controller, $listener->filter($this->getEvent(), $controller));
+        $listener->onCoreController($event = $this->getEvent($controller));
+        $this->assertSame($controller, $event->getController());
     }
 
-    public function testFilter()
+    public function testOnCoreController()
     {
         list($listener, $container) = $this->getListener();
 
@@ -56,7 +61,8 @@ class ControllerListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $controller = array($realController = new SecuredController(), 'action');
-        $newController = $listener->filter($this->getEvent(), $controller);
+        $listener->onCoreController($event = $this->getEvent($controller));
+        $newController = $event->getController();
 
         $this->assertInstanceOf('\Closure', $newController);
         $ref = new \ReflectionFunction($newController);
@@ -86,9 +92,12 @@ class ControllerListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $metadata);
     }
 
-    protected function getEvent()
+    protected function getEvent($controller)
     {
-        return $this->getMock('Symfony\Component\EventDispatcher\EventInterface');
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $request = Request::create('/');
+
+        return new FilterControllerEvent($kernel, $controller, $request, 'foo');
     }
 
     protected function getListener()
