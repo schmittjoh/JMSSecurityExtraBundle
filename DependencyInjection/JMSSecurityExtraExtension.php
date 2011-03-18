@@ -82,10 +82,12 @@ class JMSSecurityExtraExtension extends Extension
         $tb = new TreeBuilder();
 
         return $tb
-            ->root('jms_security_extra', 'array')
-                ->booleanNode('secure_controllers')->defaultTrue()->end()
-                ->booleanNode('secure_all_services')->defaultFalse()->end()
-                ->booleanNode('enable_iddqd_attribute')->defaultFalse()->end()
+            ->root('jms_security_extra')
+                ->children()
+                  ->booleanNode('secure_controllers')->defaultTrue()->end()
+                  ->booleanNode('secure_all_services')->defaultFalse()->end()
+                  ->booleanNode('enable_iddqd_attribute')->defaultFalse()->end()
+                ->end()
             ->end()
             ->buildTree();
     }
