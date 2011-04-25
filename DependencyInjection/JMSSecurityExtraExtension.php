@@ -43,7 +43,7 @@ class JMSSecurityExtraExtension extends Extension
         $container->setParameter('security.extra.secure_all_services', $config['secure_all_services']);
 
         if (!$config['secure_controllers']) {
-            $container->remove('security.extra.controller_listener');
+            $container->removeDefinition('security.extra.controller_listener');
 
             $this->addClassesToCompile(array(
                 'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
