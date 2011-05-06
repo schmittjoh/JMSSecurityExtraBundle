@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-namespace JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Metadata\Driver;
 
 use JMS\SecurityExtraBundle\Annotation\RunAs;
 use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use JMS\SecurityExtraBundle\Annotation\SecureReturn;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 
 /**
  * Converts annotations to method metadata
@@ -39,22 +39,22 @@ class AnnotationConverter
             $parameters[$parameter->getName()] = $index;
         }
 
-        $methodMetadata = new MethodMetadata($method);
+        $methodMetadata = new MethodMetadata($method->getDeclaringClass()->getName(), $method->getName());
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
-                $methodMetadata->setRoles($annotation->getRoles());
+                $methodMetadata->roles = $annotation->roles;
             } else if ($annotation instanceof SecureParam) {
-                if (!isset($parameters[$annotation->getName()])) {
-                    throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->getName(), $method->getName()));
+                if (!isset($parameters[$annotation->name])) {
+                    throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
                 }
 
-                $methodMetadata->addParamPermissions($parameters[$annotation->getName()], $annotation->getPermissions());
+                $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
             } else if ($annotation instanceof SecureReturn) {
-                $methodMetadata->addReturnPermissions($annotation->getPermissions());
+                $methodMetadata->returnPermissions = $annotation->permissions;
             } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
-                $methodMetadata->setSatisfiesParentSecurityPolicy();
+                $methodMetadata->satisfiesParentSecurityPolicy = true;
             } else if ($annotation instanceof RunAs) {
-                $methodMetadata->setRunAsRoles($annotation->getRoles());
+                $methodMetadata->runAsRoles = $annotation->roles;
             }
         }
 

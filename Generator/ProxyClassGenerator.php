@@ -18,8 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Generator;
 
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
+use JMS\SecurityExtraBundle\Metadata\ServiceMetadata;
 use Symfony\Component\DependencyInjection\Definition;
 use \ReflectionClass;
 use \ReflectionMethod;
@@ -45,8 +45,8 @@ class ProxyClassGenerator
     public function generate(Definition $definition, ServiceMetadata $metadata)
     {
         list($className, $proxy) = $this->getClassDefinition($definition);
-        foreach ($metadata->getMethods() as $name => $method) {
-            $reflection = $method->getReflection();
+        foreach ($metadata->methodMetadata as $name => $method) {
+            $reflection = $method->reflection;
 
             $proxy .= $this->getMethodDefinition($reflection);
 
@@ -97,13 +97,13 @@ class ProxyClassGenerator
     private function getSecureMethodInvocation(MethodMetadata $method)
     {
         $code = 'new MethodInvocation('
-                .var_export($method->getReflection()->getDeclaringClass()->getName(), true)
-                .', '.var_export($method->getReflection()->getName(), true)
+                .var_export($method->reflection->getDeclaringClass()->getName(), true)
+                .', '.var_export($method->reflection->getName(), true)
                 .', $this'
                 .', array(';
 
         $arguments = array();
-        foreach ($method->getReflection()->getParameters() as $param) {
+        foreach ($method->reflection->getParameters() as $param) {
             $arguments[] = '$'.$param->getName();
         }
         $code .= implode(', ', $arguments).'))';

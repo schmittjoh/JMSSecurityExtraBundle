@@ -2,11 +2,14 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 
+use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
+use JMS\SecurityExtraBundle\Annotation\SecureReturn;
+
 class CorrectSubService extends MainService
 {
     /**
-     * @extra:SatisfiesParentSecurityPolicy
-     * @extra:SecureReturn(permissions="VIEW")
+     * @SatisfiesParentSecurityPolicy
+     * @SecureReturn(permissions="VIEW")
      */
     public function differentMethodSignature($comment)
     {

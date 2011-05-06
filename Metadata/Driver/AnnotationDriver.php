@@ -16,15 +16,18 @@
  * limitations under the License.
  */
 
-namespace JMS\SecurityExtraBundle\Mapping\Driver;
+namespace JMS\SecurityExtraBundle\Metadata\Driver;
+
+use Annotations\Reader;
 
 use JMS\SecurityExtraBundle\Annotation\RunAs;
 use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\SecureReturn;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
+use Metadata\Driver\DriverInterface;
 use \ReflectionClass;
 use \ReflectionMethod;
 
@@ -40,13 +43,13 @@ class AnnotationDriver implements DriverInterface
 
     public function __construct()
     {
-        $this->reader = new AnnotationReader();
+        $this->reader = new Reader();
         $this->converter = new AnnotationConverter();
     }
 
     public function loadMetadataForClass(ReflectionClass $reflection)
     {
-        $metadata = new ClassMetadata($reflection);
+        $metadata = new ClassMetadata($reflection->getName());
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
             // check if the method was defined on this class
@@ -56,9 +59,9 @@ class AnnotationDriver implements DriverInterface
 
             $annotations = $this->reader->getMethodAnnotations($method);
 
-            if (count($annotations) > 0) {
+            if ($annotations) {
                 $methodMetadata = $this->converter->convertMethodAnnotations($method, $annotations);
-                $metadata->addMethod($method->getName(), $methodMetadata);
+                $metadata->addMethodMetadata($methodMetadata);
             }
         }
 

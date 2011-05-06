@@ -18,10 +18,12 @@
 
 namespace JMS\SecurityExtraBundle\Analysis;
 
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
+
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
+use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
+use JMS\SecurityExtraBundle\Metadata\ServiceMetadata;
+use Metadata\Driver\DriverChain;
 use \ReflectionClass;
 
 /**
@@ -46,7 +48,9 @@ class ServiceAnalyzer
         $this->reflection = new ReflectionClass($class);
         $this->files = array();
         $this->hierarchy = array();
-        $this->driver = new DriverChain();
+        $this->driver = new DriverChain(array(
+            new AnnotationDriver(),
+        ));
         $this->analyzed = false;
         $this->cacheDir = $cacheDir;
     }
@@ -139,37 +143,37 @@ class ServiceAnalyzer
     private function normalizeMetadata()
     {
         $secureMethods = array();
-        foreach ($this->metadata->getClasses() as $class) {
-            if ($class->getReflection()->isFinal()) {
+        foreach ($this->metadata->classMetadata as $class) {
+            if ($class->reflection->isFinal()) {
                 throw new \RuntimeException('Final classes cannot be secured.');
             }
 
-            foreach ($class->getMethods() as $name => $method) {
-                if ($method->getReflection()->isStatic() || $method->getReflection()->isFinal()) {
+            foreach ($class->methodMetadata as $name => $method) {
+                if ($method->reflection->isStatic() || $method->reflection->isFinal()) {
                     throw new \RuntimeException('Annotations cannot be defined on final, or static methods.');
                 }
 
                 if (!isset($secureMethods[$name])) {
-                    $this->metadata->addMethod($name, $method);
+                    $this->metadata->addMethodMetadata($method);
                     $secureMethods[$name] = $method;
-                } else if ($method->getReflection()->isAbstract()) {
+                } else if ($method->reflection->isAbstract()) {
                     $secureMethods[$name]->merge($method);
-                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy()
-                           && $method->getReflection()->getDeclaringClass()->getName() !== $secureMethods[$name]->getReflection()->getDeclaringClass()->getName()) {
-                    throw new \RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(), $name, $secureMethods[$name]->getReflection()->getDeclaringClass()->getFileName()));
+                } else if (false === $secureMethods[$name]->satisfiesParentSecurityPolicy
+                           && $method->reflection->getDeclaringClass()->getName() !== $secureMethods[$name]->reflection->getDeclaringClass()->getName()) {
+                    throw new \RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $secureMethods[$name]->reflection->getDeclaringClass()->getName(), $name, $secureMethods[$name]->reflection->getDeclaringClass()->getFileName()));
                 }
             }
         }
 
         foreach ($secureMethods as $name => $method) {
-            if ($method->getReflection()->isAbstract()) {
+            if ($method->reflection->isAbstract()) {
                 $previous = null;
-                $abstractClass = $method->getReflection()->getDeclaringClass()->getName();
+                $abstractClass = $method->reflection->getDeclaringClass()->getName();
                 foreach ($this->hierarchy as $refClass) {
                     if ($abstractClass === $fqcn = $refClass->getName()) {
-                        $methodMetadata = new MethodMetadata($previous->getMethod($name));
+                        $methodMetadata = new MethodMetadata($previous->getName(), $name);
                         $methodMetadata->merge($method);
-                        $this->metadata->addMethod($name, $methodMetadata);
+                        $this->metadata->addMethodMetadata($methodMetadata);
 
                         continue 2;
                     }
@@ -192,7 +196,7 @@ class ServiceAnalyzer
      */
     private function analyzeControlFlow()
     {
-        $secureMethods = $this->metadata->getMethods();
+        $secureMethods = $this->metadata->methodMetadata;
         $rootClass = $this->hierarchy[0];
 
         while (true) {
@@ -205,12 +209,12 @@ class ServiceAnalyzer
                     continue;
                 }
 
-                if ($secureMethods[$name]->getReflection()->getDeclaringClass()->getName() !== $rootClass->getName()) {
+                if ($secureMethods[$name]->reflection->getDeclaringClass()->getName() !== $rootClass->getName()) {
                     throw new \RuntimeException(sprintf(
                         'You have overridden a secured method "%s::%s" in "%s". '
                        .'Please copy over the applicable security metadata, and '
                        .'also add @SatisfiesParentSecurityPolicy.',
-                        $secureMethods[$name]->getReflection()->getDeclaringClass()->getName(),
+                        $secureMethods[$name]->reflection->getDeclaringClass()->getName(),
                         $name,
                         $rootClass->getName()
                     ));
@@ -235,20 +239,20 @@ class ServiceAnalyzer
         $classMetadata = null;
         foreach ($this->hierarchy as $reflectionClass) {
             if (null === $classMetadata) {
-                $classMetadata = new ClassMetadata($reflectionClass);
+                $classMetadata = new ClassMetadata($reflectionClass->getName());
             }
 
             if (null !== $aMetadata = $this->driver->loadMetadataForClass($reflectionClass)) {
                 if ($reflectionClass->isInterface()) {
                     $classMetadata->merge($aMetadata);
                 } else {
-                    $this->metadata->addMetadata($classMetadata);
+                    $this->metadata->addClassMetadata($classMetadata);
 
                     $classMetadata = $aMetadata;
                 }
             }
         }
-        $this->metadata->addMetadata($classMetadata);
+        $this->metadata->addClassMetadata($classMetadata);
     }
 
     private function hasMethod(\ReflectionClass $class, $name)

@@ -2,10 +2,14 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 
+use JMS\SecurityExtraBundle\Annotation\SecureReturn;
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+
 interface AMNDOIDCS_Interface
 {
     /**
-     * @extra:SecureReturn(permissions="VIEW")
+     * @SecureReturn(permissions="VIEW")
      */
     function abstractMethod();
 }

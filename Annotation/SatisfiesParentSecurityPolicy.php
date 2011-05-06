@@ -74,9 +74,6 @@ namespace JMS\SecurityExtraBundle\Annotation;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SatisfiesParentSecurityPolicy implements AnnotationInterface
+class SatisfiesParentSecurityPolicy
 {
-    public function __construct(array $values)
-    {
-    }
 }

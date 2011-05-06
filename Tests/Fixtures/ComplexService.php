@@ -2,16 +2,20 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 
+use JMS\SecurityExtraBundle\Annotation\SecureReturn;
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+
 interface E {
     /**
-     * @extra:SecureReturn(permissions="VIEW,UNDELETE")
+     * @SecureReturn(permissions="VIEW,UNDELETE")
      */
     function retrieve();
 }
 interface F {
     /**
-     * @extra:SecureParam(name="secure", permissions="OWNER")
-     * @extra:SecureParam(name="foo", permissions="MASTER, EDIT")
+     * @SecureParam(name="secure", permissions="OWNER")
+     * @SecureParam(name="foo", permissions="MASTER, EDIT")
      */
     function delete($foo, $asdf, $secure);
 }
@@ -20,9 +24,9 @@ interface D extends F {}
 interface B extends C, E { }
 abstract class G implements F, E {
     /**
-     * @extra:Secure(roles="ROLE_FOO, IS_AUTHENTICATED_FULLY")
-     * @extra:SecureParam(name="secure", permissions="FOO")
-     * @extra:SecureReturn(permissions="WOW")
+     * @Secure(roles="ROLE_FOO, IS_AUTHENTICATED_FULLY")
+     * @SecureParam(name="secure", permissions="FOO")
+     * @SecureReturn(permissions="WOW")
      */
     abstract function abstractMethod($foo, $secure);
 }

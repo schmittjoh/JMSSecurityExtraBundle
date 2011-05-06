@@ -2,8 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Generator;
 
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use JMS\SecurityExtraBundle\Mapping\MethodMetadata;
+use JMS\SecurityExtraBundle\Metadata\ServiceMetadata;
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -17,15 +17,14 @@ class ProxyClassGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $generator = new ProxyClassGenerator();
         $metadata = new ServiceMetadata();
-        $reflection = new \ReflectionClass($class);
 
-        $methodMetadata = new MethodMetadata($reflection->getMethod($method));
-        $methodMetadata->setRoles(array('ROLE_FOO'));
-        $methodMetadata->setReturnPermissions(array('PERMISSION_RETURN'));
-        $metadata->addMethod($method, $methodMetadata);
+        $methodMetadata = new MethodMetadata($class, $method);
+        $methodMetadata->roles = array('ROLE_FOO');
+        $methodMetadata->returnPermissions = array('PERMISSION_RETURN');
+        $metadata->addMethodMetadata($methodMetadata);
 
         $definition = new Definition();
-        $definition->setClass($reflection->getName());
+        $definition->setClass($class);
 
         list($className, $proxy) = $generator->generate($definition, $metadata);
         $tmpFile = tempnam(sys_get_temp_dir(), 'proxy');

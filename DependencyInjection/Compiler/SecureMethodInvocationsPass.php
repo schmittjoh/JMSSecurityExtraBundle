@@ -19,10 +19,10 @@
 namespace JMS\SecurityExtraBundle\DependencyInjection\Compiler;
 
 use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
-use JMS\SecurityExtraBundle\Mapping\ServiceMetadata;
-use JMS\SecurityExtraBundle\Mapping\ClassMetadata;
+use JMS\SecurityExtraBundle\Metadata\ServiceMetadata;
+use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
 use JMS\SecurityExtraBundle\Generator\ProxyClassGenerator;
-use JMS\SecurityExtraBundle\Mapping\Driver\DriverChain;
+use JMS\SecurityExtraBundle\Metadata\Driver\DriverChain;
 use \ReflectionClass;
 use \ReflectionMethod;
 use Symfony\Component\Config\Resource\FileResource;

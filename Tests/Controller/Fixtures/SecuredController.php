@@ -2,10 +2,12 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Controller\Fixtures;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
+
 class SecuredController
 {
     /**
-     * @extra:Secure(roles="ROLE_FOO")
+     * @Secure(roles="ROLE_FOO")
      */
     public function action(\stdClass $a, array $b, $c, $foo = 'foo')
     {

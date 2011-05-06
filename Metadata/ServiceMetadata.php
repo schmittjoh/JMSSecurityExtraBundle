@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,32 @@
  * limitations under the License.
  */
 
-namespace JMS\SecurityExtraBundle\Annotation;
+namespace JMS\SecurityExtraBundle\Metadata;
+
+use Metadata\ClassHierarchyMetadata;
 
 /**
- * Represents a @SecureReturn annotation.
+ * This class contains metadata for the entire service
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureReturn
+class ServiceMetadata extends ClassHierarchyMetadata
 {
-    public $permissions;
+    public $methodMetadata = array();
 
-    public function __construct(array $values)
+    public function addMethodMetadata(MethodMetadata $metadata)
     {
-        if (isset($values['value'])) {
-            $values['permissions'] = $values['value'];
-        }
-        if (!isset($values['permissions'])) {
-            throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureReturn annotation.');
+        $this->methodMetadata[$metadata->name] = $metadata;
+    }
+
+    public function isProxyRequired()
+    {
+        foreach ($this->classMetadata as $metadata) {
+            if ($metadata->methodMetadata) {
+                return true;
+            }
         }
 
-        $this->permissions = array_map('trim', explode(',', $values['permissions']));
+        return false;
     }
 }

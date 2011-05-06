@@ -21,11 +21,11 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService');
         $service->analyze();
 
-        $methods = $service->getMetadata()->getMethods();
+        $methods = $service->getMetadata()->methodMetadata;
         $this->assertTrue(isset($methods['abstractMethod']));
 
         $metadata = $methods['abstractMethod'];
-        $this->assertEquals(array('VIEW'), $metadata->getReturnPermissions());
+        $this->assertEquals(array('VIEW'), $metadata->returnPermissions);
     }
 
     public function testAnalyzeThrowsNoExceptionWhenSatisfiesParentSecurityPolicyIsDefined()
@@ -33,13 +33,13 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService');
         $service->analyze();
 
-        $methods = $service->getMetadata()->getMethods();
+        $methods = $service->getMetadata()->methodMetadata;
         $this->assertTrue(isset($methods['differentMethodSignature']));
 
         $metadata = $methods['differentMethodSignature'];
-        $this->assertEquals(array(), $metadata->getRoles());
-        $this->assertEquals(array(), $metadata->getParamPermissions());
-        $this->assertEquals(array('VIEW'), $metadata->getReturnPermissions());
+        $this->assertEquals(array(), $metadata->roles);
+        $this->assertEquals(array(), $metadata->paramPermissions);
+        $this->assertEquals(array('VIEW'), $metadata->returnPermissions);
     }
 
     public function testAnalyzeWithComplexHierarchy()
@@ -47,23 +47,23 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService');
         $service->analyze();
 
-        $methods = $service->getMetadata()->getMethods();
+        $methods = $service->getMetadata()->methodMetadata;
         $this->assertTrue(isset($methods['delete'], $methods['retrieve'], $methods['abstractMethod']));
 
         $metadata = $methods['delete'];
-        $this->assertEquals(array(0 => array('MASTER', 'EDIT'), 2 => array('OWNER')), $metadata->getParamPermissions());
-        $this->assertEquals(array(), $metadata->getReturnPermissions());
-        $this->assertEquals(array(), $metadata->getRoles());
+        $this->assertEquals(array(0 => array('MASTER', 'EDIT'), 2 => array('OWNER')), $metadata->paramPermissions);
+        $this->assertEquals(array(), $metadata->returnPermissions);
+        $this->assertEquals(array(), $metadata->roles);
 
         $metadata = $methods['retrieve'];
-        $this->assertEquals(array('VIEW', 'UNDELETE'), $metadata->getReturnPermissions());
-        $this->assertEquals(array(), $metadata->getParamPermissions());
-        $this->assertEquals(array(), $metadata->getRoles());
+        $this->assertEquals(array('VIEW', 'UNDELETE'), $metadata->returnPermissions);
+        $this->assertEquals(array(), $metadata->paramPermissions);
+        $this->assertEquals(array(), $metadata->roles);
 
         $metadata = $methods['abstractMethod'];
-        $this->assertEquals(array('ROLE_FOO', 'IS_AUTHENTICATED_FULLY'), $metadata->getRoles());
-        $this->assertEquals(array(1 => array('FOO')), $metadata->getParamPermissions());
-        $this->assertEquals(array('WOW'), $metadata->getReturnPermissions());
+        $this->assertEquals(array('ROLE_FOO', 'IS_AUTHENTICATED_FULLY'), $metadata->roles);
+        $this->assertEquals(array(1 => array('FOO')), $metadata->paramPermissions);
+        $this->assertEquals(array('WOW'), $metadata->returnPermissions);
     }
 
     public function testAnalyze()
@@ -71,13 +71,13 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\MainService');
         $service->analyze();
 
-        $methods = $service->getMetadata()->getMethods();
+        $methods = $service->getMetadata()->methodMetadata;
         $this->assertTrue(isset($methods['differentMethodSignature']));
 
         $metadata = $methods['differentMethodSignature'];
-        $this->assertEquals(array(array('EDIT')), $metadata->getParamPermissions());
-        $this->assertEquals(array(), $metadata->getReturnPermissions());
-        $this->assertEquals(array(), $metadata->getRoles());
+        $this->assertEquals(array(array('EDIT')), $metadata->paramPermissions);
+        $this->assertEquals(array(), $metadata->returnPermissions);
+        $this->assertEquals(array(), $metadata->roles);
         $this->assertFalse($metadata->isDeclaredOnInterface());
     }
 }

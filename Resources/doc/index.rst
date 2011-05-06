@@ -36,7 +36,7 @@ Installation
 ------------
 Checkout a copy of the code::
 
-    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git src/JMS/SecurityExtraBundle
+    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git vendor/bundles/JMS/SecurityExtraBundle
     
 Then register the bundle with your kernel::
 
@@ -46,6 +46,21 @@ Then register the bundle with your kernel::
         new JMS\SecurityExtraBundle\SecurityExtraBundle(),
         // ...
     );
+
+This bundle also requires the Metadata library::
+
+    git submodule add https://github.com/schmittjoh/metadata.git vendor/metadata
+
+Make sure that you also register the namespaces with the autoloader::
+
+    // app/autoload.php
+    $loader->registerNamespaces(array(
+        // ...
+        'JMS'              => __DIR__.'/../vendor/bundles',
+        'Metadata'         => __DIR__.'/../vendor/metadata/src',
+        // ...
+    ));    
+
 
 Configuration
 -------------

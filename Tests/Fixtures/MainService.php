@@ -2,10 +2,12 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Fixtures;
 
+use JMS\SecurityExtraBundle\Annotation\SecureParam;
+
 class MainService
 {
     /**
-     * @extra:SecureParam(name="comment", permissions="EDIT")
+     * @SecureParam(name="comment", permissions="EDIT")
      */
     public function differentMethodSignature($comment)
     {

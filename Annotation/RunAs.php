@@ -18,9 +18,9 @@
 
 namespace JMS\SecurityExtraBundle\Annotation;
 
-class RunAs implements AnnotationInterface
+class RunAs
 {
-    private $roles;
+    public $roles;
 
     public function __construct(array $values)
     {
@@ -32,10 +32,5 @@ class RunAs implements AnnotationInterface
         }
 
         $this->roles = array_map('trim', explode(',', $values['roles']));
-    }
-
-    public function getRoles()
-    {
-        return $this->roles;
     }
 }
