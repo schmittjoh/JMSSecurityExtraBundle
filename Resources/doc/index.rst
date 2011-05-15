@@ -43,7 +43,7 @@ Then register the bundle with your kernel::
     // in AppKernel::registerBundles()
     $bundles = array(
         // ...
-        new JMS\SecurityExtraBundle\SecurityExtraBundle(),
+        new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
         // ...
     );
 

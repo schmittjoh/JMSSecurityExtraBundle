@@ -47,7 +47,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
     {
         $cacheDir .= '/security/';
         if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
+            @mkdir($cacheDir, 0777, true);
         }
         if (false === is_writable($cacheDir)) {
             throw new \RuntimeException('Cannot write to cache folder: '.$cacheDir);
@@ -55,7 +55,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
         $this->cacheDir = $cacheDir;
 
         if (!file_exists($cacheDir.'SecurityProxies/')) {
-            mkdir($cacheDir.'SecurityProxies/', 0777, true);
+            @mkdir($cacheDir.'SecurityProxies/', 0777, true);
         }
         if (false === is_writeable($cacheDir.'SecurityProxies/')) {
             throw new \RuntimeException('Cannot write to cache folder: '.$cacheDir.'SecurityProxies/');
