@@ -102,6 +102,8 @@ This annotation lets you define who is allowed to invoke a method::
 
     <?php
     
+    use JMS\SecurityExtraBundle\Annotation\Secure;
+    
     class MyService
     {
         /**
@@ -119,6 +121,8 @@ This annotation lets you define restrictions for parameters which are passed to
 the method. This is only useful if the parameters are domain objects::
 
     <?php
+    
+    use JMS\SecurityExtraBundle\Annotation\SecureParam;
     
     class MyService
     {
@@ -138,6 +142,8 @@ This annotation lets you define restrictions for the value which is returned by
 the method. This is also only useful if the returned value is a domain object::
 
     <?php
+    
+    use JMS\SecurityExtraBundle\Annotation\SecureReturn;
     
     class MyService
     {
@@ -163,6 +169,9 @@ public and private services, and private services are only to be invoked
 through a specific public service::
 
     <?php
+    
+    use JMS\SecurityExtraBundle\Annotation\Secure;
+    use JMS\SecurityExtraBundle\Annotation\RunAs;
     
     class MyPrivateService
     {
