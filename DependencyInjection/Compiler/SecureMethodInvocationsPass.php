@@ -108,7 +108,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
     private function processDefinition(ContainerBuilder $container, $id, Definition $definition)
     {
         if ($this->needsReAssessment($id, $definition)) {
-            $analyzer = new ServiceAnalyzer($definition->getClass());
+            $analyzer = new ServiceAnalyzer($definition->getClass(), $container->get('annotation_reader'));
             $analyzer->analyze();
 
             $files = array();

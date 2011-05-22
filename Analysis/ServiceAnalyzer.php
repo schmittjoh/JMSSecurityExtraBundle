@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Analysis;
 
+use Doctrine\Common\Annotations\Reader;
+
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
@@ -41,18 +43,16 @@ class ServiceAnalyzer
     private $analyzed;
     private $hierarchy;
     private $metadata;
-    private $cacheDir;
 
-    public function __construct($class, $cacheDir = null)
+    public function __construct($class, Reader $reader)
     {
         $this->reflection = new ReflectionClass($class);
         $this->files = array();
         $this->hierarchy = array();
         $this->driver = new DriverChain(array(
-            new AnnotationDriver(),
+            new AnnotationDriver($reader),
         ));
         $this->analyzed = false;
-        $this->cacheDir = $cacheDir;
     }
 
     public function analyze()

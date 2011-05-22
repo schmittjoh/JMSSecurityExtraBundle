@@ -18,8 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Controller;
 
-use Annotations\ReaderInterface;
-
+use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationConverter;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
@@ -39,7 +38,7 @@ class ControllerListener
     private $converter;
     private $container;
 
-    public function __construct(ContainerInterface $container, ReaderInterface $reader)
+    public function __construct(ContainerInterface $container, Reader $reader)
     {
         $this->container = $container;
         $this->reader = $reader;

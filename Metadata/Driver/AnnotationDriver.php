@@ -18,8 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Metadata\Driver;
 
-use Annotations\Reader;
-
+use Doctrine\Common\Annotations\Reader;
 use JMS\SecurityExtraBundle\Annotation\RunAs;
 use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use JMS\SecurityExtraBundle\Annotation\Secure;
@@ -41,9 +40,9 @@ class AnnotationDriver implements DriverInterface
     private $reader;
     private $converter;
 
-    public function __construct()
+    public function __construct(Reader $reader)
     {
-        $this->reader = new Reader();
+        $this->reader = $reader;
         $this->converter = new AnnotationConverter();
     }
 

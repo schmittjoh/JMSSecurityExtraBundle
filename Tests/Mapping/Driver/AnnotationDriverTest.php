@@ -2,6 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
 require_once __DIR__.'/Fixtures/services.php';
@@ -10,7 +12,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoadMetadataFromClass()
     {
-        $driver = new AnnotationDriver();
+        $driver = new AnnotationDriver(new AnnotationReader());
 
         $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooService'));
         $this->assertTrue(isset($metadata->methodMetadata['foo']));
@@ -29,7 +31,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadMetadataFromClassWithShortNotation()
     {
-        $driver = new AnnotationDriver();
+        $driver = new AnnotationDriver(new AnnotationReader());
 
         $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Mapping\Driver\FooService'));
         $this->assertTrue(isset($metadata->methodMetadata['shortNotation']));
