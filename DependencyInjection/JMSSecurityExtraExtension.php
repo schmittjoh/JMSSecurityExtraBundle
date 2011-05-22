@@ -60,7 +60,7 @@ class JMSSecurityExtraExtension extends Extension
             $this->addClassesToCompile(array(
                 'JMS\\SecurityExtraBundle\\Controller\\ControllerListener',
 
-                'JMS\\SecurityExtraBundle\\Mapping\\Driver\\AnnotationConverter',
+                'JMS\\SecurityExtraBundle\\Metadata\\Driver\\AnnotationConverter',
 
                 'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
             ));
