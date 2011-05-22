@@ -96,8 +96,8 @@ be very slow depending on how many services you have defined.
 Annotations
 -----------
 
-@extra:Secure
-~~~~~~~~~~~~~
+@Secure
+~~~~~~~
 This annotation lets you define who is allowed to invoke a method::
 
     <?php
@@ -105,7 +105,7 @@ This annotation lets you define who is allowed to invoke a method::
     class MyService
     {
         /**
-         * @extra:Secure(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
+         * @Secure(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
          */
         public function secureMethod() 
         {
@@ -113,8 +113,8 @@ This annotation lets you define who is allowed to invoke a method::
         }
     }
 
-@extra:SecureParam
-~~~~~~~~~~~~~~~~~~
+@SecureParam
+~~~~~~~~~~~~
 This annotation lets you define restrictions for parameters which are passed to
 the method. This is only useful if the parameters are domain objects::
 
@@ -123,8 +123,8 @@ the method. This is only useful if the parameters are domain objects::
     class MyService
     {
         /**
-         * @extra:SecureParam(name="comment", permissions="EDIT, DELETE")
-         * @extra:SecureParam(name="post", permissions="OWNER")
+         * @SecureParam(name="comment", permissions="EDIT, DELETE")
+         * @SecureParam(name="post", permissions="OWNER")
          */
         public function secureMethod($comment, $post)
         {
@@ -132,8 +132,8 @@ the method. This is only useful if the parameters are domain objects::
         }
     }
 
-@extra:SecureReturn
-~~~~~~~~~~~~~~~~~~~
+@SecureReturn
+~~~~~~~~~~~~~
 This annotation lets you define restrictions for the value which is returned by
 the method. This is also only useful if the returned value is a domain object::
 
@@ -142,7 +142,7 @@ the method. This is also only useful if the returned value is a domain object::
     class MyService
     {
         /**
-         * @extra:SecureReturn(permissions="VIEW")
+         * @SecureReturn(permissions="VIEW")
          */
         public function secureMethod()
         {
@@ -152,8 +152,8 @@ the method. This is also only useful if the returned value is a domain object::
         }
     }
     
-@extra:RunAs
-~~~~~~~~~~~~
+@RunAs
+~~~~~~
 This annotation lets you specifiy roles which are added only for the duration 
 of the method invocation. These roles will not be taken into consideration 
 for before, or after invocation access decisions. 
@@ -167,7 +167,7 @@ through a specific public service::
     class MyPrivateService
     {
         /**
-         * @extra:Secure(roles="ROLE_PRIVATE_SERVICE")
+         * @Secure(roles="ROLE_PRIVATE_SERVICE")
          */
         public function aMethodOnlyToBeInvokedThroughASpecificChannel()
         {
@@ -180,8 +180,8 @@ through a specific public service::
         protected $myPrivateService;
     
         /**
-         * @extra:Secure(roles="ROLE_USER")
-         * @extra:RunAs(roles="ROLE_PRIVATE_SERVICE")
+         * @Secure(roles="ROLE_USER")
+         * @RunAs(roles="ROLE_PRIVATE_SERVICE")
          */
         public function canBeInvokedFromOtherServices()
         {
@@ -189,8 +189,8 @@ through a specific public service::
         }
     }
 
-@extra:SatisfiesParentSecurityPolicy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@SatisfiesParentSecurityPolicy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This must be defined on a method that overrides a method which has security metadata.
 It is there to ensure that you are aware the security of the overridden method cannot
 be enforced anymore, and that you must copy over all annotations if you want to keep
