@@ -53,7 +53,7 @@
         </service>
         
         <service id="security.extra.controller_listener" class="%security.extra.controller_listener.class%">
-            <tag name="kernel.listener" event="onCoreController" priority="-255" />
+            <tag name="kernel.listener" event="oncore.controller" method="CoreController" priority="-255" />
             <argument type="service" id="service_container" />
             <argument type="service" id="annotation_reader" />
         </service>
