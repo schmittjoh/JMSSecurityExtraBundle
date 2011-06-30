@@ -60,41 +60,32 @@ class AclAfterInvocationProvider implements AfterInvocationProviderInterface
             return null;
         }
 
-        $firstAttribute = true;
         foreach ($attributes as $attribute) {
             if (!$this->supportsAttribute($attribute)) {
                 continue;
             }
 
-            if ($firstAttribute) {
-                $firstAttribute = false;
-
-                if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($returnedObject)) {
-                    if (null !== $this->logger) {
-                        $this->logger->debug('Returned object was no domain object, skipping security check.');
-                    }
-
-                    return $returnedObject;
+            if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($returnedObject)) {
+                if (null !== $this->logger) {
+                    $this->logger->debug('Returned object was no domain object, skipping security check.');
                 }
 
-                $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);
-
-                try {
-                    $acl = $this->aclProvider->findAcl($oid, $sids);
-                } catch (AclNotFoundException $noAcl) {
-                    throw new AccessDeniedException('No applicable ACL found for domain object.');
-                }
+                return $returnedObject;
             }
 
-            try {
-                if ($acl->isGranted($this->permissionMap->getMasks($attribute), $sids, false)) {
+            $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);
 
+            try {
+                $acl = $this->aclProvider->findAcl($oid, $sids);
+                if ($acl->isGranted($this->permissionMap->getMasks($attribute, $returnedObject), $sids, false)) {
                     return $returnedObject;
-                } else {
-                    if (null !== $this->logger) {
-                        $this->logger->debug('Token has been denied access for returned object.');
-                    }
                 }
+
+                if (null !== $this->logger) {
+                    $this->logger->debug('Token has been denied access for returned object.');
+                }
+            } catch (AclNotFoundException $noAcl) {
+                throw new AccessDeniedException('No applicable ACL found for domain object.');
             } catch (NoAceFoundException $noAce) {
                 if (null !== $this->logger) {
                     $this->logger->debug('No applicable ACE found for the given Token, denying access.');
