@@ -72,8 +72,9 @@ namespace JMS\SecurityExtraBundle\Annotation;
  *     }
  * </code>
  *
+ * @Annotation
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SatisfiesParentSecurityPolicy
+final class SatisfiesParentSecurityPolicy
 {
 }

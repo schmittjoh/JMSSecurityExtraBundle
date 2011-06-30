@@ -21,9 +21,10 @@ namespace JMS\SecurityExtraBundle\Annotation;
 /**
  * Represents a @SecureReturn annotation.
  *
+ * @Annotation
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecureReturn
+final class SecureReturn
 {
     public $permissions;
 

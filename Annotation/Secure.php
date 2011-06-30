@@ -21,9 +21,10 @@ namespace JMS\SecurityExtraBundle\Annotation;
 /**
  * Represents a @Secure annotation.
  *
+ * @Annotation
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Secure
+final class Secure
 {
     public $roles;
 
