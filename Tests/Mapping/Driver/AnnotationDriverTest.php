@@ -38,4 +38,13 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $method = $metadata->methodMetadata['shortNotation'];
         $this->assertEquals(array('ROLE_FOO', 'ROLE_BAR'), $method->roles);
     }
+
+    public function testLoadMetadataFromClassDoesNotProcessMethodsForWhichNoSecurityMetadataExists()
+    {
+        $driver = new AnnotationDriver(new AnnotationReader());
+
+        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Fixtures\MainService'));
+        $this->assertTrue(class_exists('JMS\SecurityExtraBundle\Tests\Fixtures\Annotation\NonSecurityAnnotation', false));
+        $this->assertFalse(isset($metadata->methodMetadata['foo']));
+    }
 }

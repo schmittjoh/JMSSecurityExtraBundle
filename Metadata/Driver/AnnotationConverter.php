@@ -40,24 +40,30 @@ class AnnotationConverter
         }
 
         $methodMetadata = new MethodMetadata($method->getDeclaringClass()->getName(), $method->getName());
+        $hasSecurityMetadata = false;
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
                 $methodMetadata->roles = $annotation->roles;
+                $hasSecurityMetadata = true;
             } else if ($annotation instanceof SecureParam) {
                 if (!isset($parameters[$annotation->name])) {
                     throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
                 }
 
                 $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
+                $hasSecurityMetadata = true;
             } else if ($annotation instanceof SecureReturn) {
                 $methodMetadata->returnPermissions = $annotation->permissions;
+                $hasSecurityMetadata = true;
             } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
                 $methodMetadata->satisfiesParentSecurityPolicy = true;
+                $hasSecurityMetadata = true;
             } else if ($annotation instanceof RunAs) {
                 $methodMetadata->runAsRoles = $annotation->roles;
+                $hasSecurityMetadata = true;
             }
         }
 
-        return $methodMetadata;
+        return $hasSecurityMetadata ? $methodMetadata : null;
     }
 }

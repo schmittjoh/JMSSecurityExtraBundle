@@ -56,10 +56,10 @@ class ControllerListener
             return;
         }
 
-        static $emptyMetadata = array('roles' => array(), 'run_as_roles' => array(), 'param_permissions' => array(), 'return_permissions' => array());
-        if ($emptyMetadata === $jmsSecurityExtra__metadata = $this->converter->convertMethodAnnotations($method, $annotations)->getAsArray()) {
+        if (null === $metadata = $this->converter->convertMethodAnnotations($method, $annotations)) {
             return;
         }
+        $jmsSecurityExtra__metadata = $metadata->getAsArray();
 
         $closureCode = 'return function(';
         $params = $paramNames = array();
