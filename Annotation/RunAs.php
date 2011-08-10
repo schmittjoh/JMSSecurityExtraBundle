@@ -18,7 +18,10 @@
 
 namespace JMS\SecurityExtraBundle\Annotation;
 
-/** @Annotation */
+/**
+ * @Annotation
+ * @Target("METHOD")
+ */
 final class RunAs
 {
     public $roles;

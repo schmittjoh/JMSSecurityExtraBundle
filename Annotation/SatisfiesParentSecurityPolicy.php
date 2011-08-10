@@ -73,6 +73,7 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * </code>
  *
  * @Annotation
+ * @Target("METHOD")
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 final class SatisfiesParentSecurityPolicy

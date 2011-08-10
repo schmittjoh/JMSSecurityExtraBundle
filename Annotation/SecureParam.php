@@ -22,6 +22,7 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * Represents a @SecureParam annotation.
  *
  * @Annotation
+ * @Target("METHOD")
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 final class SecureParam
