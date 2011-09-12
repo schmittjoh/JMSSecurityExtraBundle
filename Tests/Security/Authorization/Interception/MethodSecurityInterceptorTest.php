@@ -2,10 +2,16 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception;
 
+use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
+
+use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
+
+use Metadata\MetadataFactoryInterface;
+
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
-use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodInvocation;
+use CG\Proxy\MethodInvocation;
 
 class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +28,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null))
         ;
 
-        $interceptor->invoke($this->getInvocation(), $this->getMetadata());
+        $this->getInvocation($interceptor)->proceed();
     }
 
     /**
@@ -51,7 +57,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new AuthenticationException('Could not authenticate.')))
         ;
 
-        $interceptor->invoke($this->getInvocation(), $this->getMetadata());
+        $this->getInvocation($interceptor)->proceed();
     }
 
     /**
@@ -75,8 +81,10 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new AuthenticationException('Could not authenticate.')))
         ;
 
+        $invocation = $this->getInvocation($interceptor);
         $interceptor->setAlwaysAuthenticate(true);
-        $interceptor->invoke($this->getInvocation(), $this->getMetadata());
+
+        $invocation->proceed();
     }
 
     /**
@@ -84,7 +92,18 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeCallsADMForRolesAndThrowsExceptionWhenInsufficientPriviledges()
     {
-        list($interceptor, $context, $authManager, $adm,,) = $this->getInterceptor();
+        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
+        $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
+        $metadata->methodMetadata['foo']->roles = array('ROLE_FOO');
+        $factory
+            ->expects($this->once())
+            ->method('getMetadataForClass')
+            ->with($this->equalTo($metadata->reflection->name))
+            ->will($this->returnValue($metadata))
+        ;
+
+        list($interceptor, $context, $authManager, $adm,,) = $this->getInterceptor($factory);
 
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token
@@ -110,15 +129,15 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($token))
         ;
 
-        $method = $this->getInvocation();
+        $invocation = $this->getInvocation($interceptor);
         $adm
             ->expects($this->once())
             ->method('decide')
-            ->with($this->equalTo($token), $this->equalTo(array('ROLE_FOO')), $this->equalTo($method))
+            ->with($this->equalTo($token), $this->equalTo(array('ROLE_FOO')), $this->equalTo($invocation))
             ->will($this->returnValue(false))
         ;
 
-        $interceptor->invoke($method, $this->getMetadata(array('ROLE_FOO')));
+        $invocation->proceed();
     }
 
     /**
@@ -126,7 +145,21 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeCallsADMForEachParamPermissionsAndThrowsExceptionOnInsufficientPermissions()
     {
-        list($interceptor, $context,, $adm,,) = $this->getInterceptor();
+        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
+        $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
+        $metadata->methodMetadata['foo']->paramPermissions = array(
+            $p0 = array('ROLE_FOO', 'ROLE_ASDF'),
+            $p1 = array('ROLE_MOO'),
+        );
+        $factory
+            ->expects($this->once())
+            ->method('getMetadataForClass')
+            ->with($this->equalTo($metadata->reflection->name))
+            ->will($this->returnValue($metadata))
+        ;
+
+        list($interceptor, $context,, $adm,,) = $this->getInterceptor($factory);
 
         $context
             ->expects($this->once())
@@ -134,12 +167,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($token = $this->getToken()))
         ;
 
-        $metadata = $this->getMetadata();
-        $metadata['param_permissions'] = array(
-            $p0 = array('ROLE_FOO', 'ROLE_ASDF'),
-            $p1 = array('ROLE_MOO'),
-        );
-        $method = $this->getInvocation();
+        $invocation = $this->getInvocation($interceptor);
         $adm
             ->expects($this->at(0))
             ->method('decide')
@@ -153,7 +181,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false))
         ;
 
-        $interceptor->invoke($method, $metadata);
+        $invocation->proceed();
     }
 
     /**
@@ -161,8 +189,19 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokehandlesExceptionsFromWithintheInvokedMethodGracefully()
     {
-        $method = $this->getInvocation('throwException');
-        list($interceptor, $context,,,, $runAsManager) = $this->getInterceptor();
+        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
+        $metadata->methodMetadata['throwException'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
+        $metadata->methodMetadata['throwException']->runAsRoles = array('ROLE_FOO');
+        $factory
+            ->expects($this->once())
+            ->method('getMetadataForClass')
+            ->with($this->equalTo($metadata->reflection->name))
+            ->will($this->returnValue($metadata))
+        ;
+
+        list($interceptor, $context,,,, $runAsManager) = $this->getInterceptor($factory);
+        $invocation = $this->getInvocation($interceptor, 'throwException');
 
         $token = $this->getToken();
         $context
@@ -171,8 +210,6 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($token))
         ;
 
-        $metadata = $this->getMetadata();
-        $metadata['run_as_roles'] = array('ROLE_FOO');
         $runAsToken = new RunAsUserToken('asdf', 'user', 'foo', array('ROLE_FOO'), $token);
         $runAsManager
             ->expects($this->once())
@@ -185,7 +222,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ->method('setToken')
         ;
 
-        $interceptor->invoke($method, $metadata);
+        $invocation->proceed();
     }
 
     protected function getToken($isAuthenticated = true)
@@ -200,19 +237,22 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
         return $token;
     }
 
-    protected function getMetadata(array $roles = array(), array $runAsRoles = array(),
-        array $paramPermissions = array(), array $returnPermissions = array())
+    protected function getInterceptor(MetadataFactoryInterface $metadataFactory = null)
     {
-        return array(
-            'roles' => $roles,
-            'run_as_roles' => $runAsRoles,
-            'param_permissions' => $paramPermissions,
-            'return_permissions' => $returnPermissions,
-        );
-    }
+        if (null === $metadataFactory) {
+            $metadataFactory = $this->getMock('Metadata\MetadataFactoryInterface');
 
-    protected function getInterceptor()
-    {
+            $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
+            $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
+
+            $metadataFactory
+                ->expects($this->once())
+                ->method('getMetadataForClass')
+                ->with($this->equalTo('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService'))
+                ->will($this->returnValue($metadata))
+            ;
+        }
+
         $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
                             ->disableOriginalConstructor()
                             ->getMock();
@@ -223,7 +263,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
         $runAsManager = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface');
 
         return array(
-            new MethodSecurityInterceptor($securityContext, $authenticationManager, $accessDecisionManager, $afterInvocationManager, $runAsManager),
+            new MethodSecurityInterceptor($securityContext, $authenticationManager, $accessDecisionManager, $afterInvocationManager, $runAsManager, $metadataFactory),
             $securityContext,
             $authenticationManager,
             $accessDecisionManager,
@@ -232,13 +272,14 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function getInvocation($method = 'foo', $arguments = array())
+    protected function getInvocation(MethodSecurityInterceptor $interceptor, $method = 'foo', $arguments = array())
     {
         if ('foo' === $method && 0 === count($arguments)) {
             $arguments = array(new \stdClass(), new \stdClass());
         }
+        $object = new SecureService();
 
-        return new MethodInvocation($object = new SecureService(), $method, $object, $arguments);
+        return new MethodInvocation(new \ReflectionMethod($object, $method), $object, $arguments, array($interceptor));
     }
 }
 

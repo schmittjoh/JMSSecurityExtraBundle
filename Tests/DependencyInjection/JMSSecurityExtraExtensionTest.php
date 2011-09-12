@@ -12,28 +12,34 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new JMSSecurityExtraExtension();
 
         $config = array();
-        $extension->load(array($config), $container = new ContainerBuilder());
+        $extension->load(array($config), $container = $this->getContainer());
 
         $this->assertTrue($container->hasDefinition('security.access.method_interceptor'));
-        $this->assertTrue($container->hasDefinition('security.extra.controller_listener'));
-        $this->assertFalse($container->getParameter('security.extra.secure_all_services'));
+        $this->assertFalse($container->getParameter('security.access.secure_all_services'));
         $this->assertFalse($container->getDefinition('security.extra.iddqd_voter')->hasTag('security.voter'));
     }
 
     public function testConfigLoadSecureAll()
     {
         $extension = new JMSSecurityExtraExtension();
-        $extension->load(array(array('secure_all_services' => true, 'secure_controllers' => false)), $container = new ContainerBuilder());
+        $extension->load(array(array('secure_all_services' => true)), $container = $this->getContainer());
 
-        $this->assertFalse($container->hasDefinition('security.extra.controller_listener'));
-        $this->assertTrue($container->getParameter('security.extra.secure_all_services'));
+        $this->assertTrue($container->getParameter('security.access.secure_all_services'));
     }
 
     public function testConfigLoadEnableIddqdAttribute()
     {
         $extension = new JMSSecurityExtraExtension();
-        $extension->load(array(array('enable_iddqd_attribute' => true)), $container = new ContainerBuilder());
+        $extension->load(array(array('enable_iddqd_attribute' => true)), $container = $this->getContainer());
 
         $this->assertTrue($container->getDefinition('security.extra.iddqd_voter')->hasTag('security.voter'));
+    }
+
+    private function getContainer()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.cache_dir', sys_get_temp_dir());
+
+        return $container;
     }
 }

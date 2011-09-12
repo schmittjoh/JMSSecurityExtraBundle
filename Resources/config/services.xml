@@ -17,9 +17,11 @@
         <parameter key="security.access.after_invocation_manager.class">JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManager</parameter>
         <parameter key="security.access.after_invocation.acl_provider.class">JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider</parameter>
         
-        <parameter key="security.extra.controller_listener.class">JMS\SecurityExtraBundle\Controller\ControllerListener</parameter>
-        
         <parameter key="security.access.iddqd_voter.class">JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter</parameter>
+        
+        <parameter key="security.extra.metadata_factory.class">Metadata\MetadataFactory</parameter>
+        <parameter key="security.extra.annotation_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver</parameter>
+        <parameter key="security.extra.file_cache.class">Metadata\Cache\FileCache</parameter>
     </parameters>
 
     <services>
@@ -34,7 +36,15 @@
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="security.access.after_invocation_manager" />
             <argument type="service" id="security.access.run_as_manager" />
+            <argument type="service" id="security.extra.metadata_factory" />
             <argument type="service" id="logger" on-invalid="null" />
+        </service>
+        
+        <service id="security.access.pointcut" class="JMS\SecurityExtraBundle\Security\Authorization\Interception\SecurityPointcut">
+            <argument type="service" id="security.extra.metadata_factory" />
+            <argument>%security.access.secure_all_services%</argument>
+        
+            <tag name="jms_aop.pointcut_evaluator" interceptor="security.access.method_interceptor" />
         </service>
             
         <service id="security.access.after_invocation_manager" class="%security.access.after_invocation_manager.class%" public="false">
@@ -52,10 +62,21 @@
         <service id="security.extra.iddqd_voter" class="%security.access.iddqd_voter.class%" public="false">
         </service>
         
-        <service id="security.extra.controller_listener" class="%security.extra.controller_listener.class%">
-            <tag name="kernel.event_listener" event="kernel.controller" method="onCoreController" priority="-255" />
-            <argument type="service" id="service_container" />
+        <service id="security.extra.annotation_driver" class="%security.extra.annotation_driver.class%" public="false">
             <argument type="service" id="annotation_reader" />
+        </service>
+        
+        <service id="security.extra.file_cache" class="%security.extra.file_cache.class%" public="false">
+            <argument>%security.extra.cache_dir%</argument>
+            <argument>%kernel.debug%</argument>
+        </service>
+        
+        <service id="security.extra.metadata_factory" class="%security.extra.metadata_factory.class%" public="false">
+            <argument type="service" id="security.extra.annotation_driver" />
+            <argument type="service" id="security.extra.file_cache" />
+            <call method="setIncludeInterfaces">
+                <argument>true</argument>
+            </call>
         </service>
     </services>
 

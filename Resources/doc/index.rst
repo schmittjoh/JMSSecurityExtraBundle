@@ -47,7 +47,8 @@ Then register the bundle with your kernel::
         // ...
     );
 
-This bundle also requires the Metadata library::
+This bundle also requires the Metadata library (**you need to use the master branch,
+and not the 1.0 version** which is bundled with the Symfony Standard Edition)::
 
     git submodule add https://github.com/schmittjoh/metadata.git vendor/metadata
 
@@ -69,10 +70,6 @@ Below, you find the default configuration::
 
     # app/config/config.yml
     jms_security_extra:
-        # If you set-up your controllers as services, you must set this to false;
-        # otherwise your security checks will be performed twice.
-        secure_controllers: true
-        
         # Whether you want to secure all services (true), or only secure specific
         # services (false); see also below 
         secure_all_services: false

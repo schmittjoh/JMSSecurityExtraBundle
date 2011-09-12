@@ -34,37 +34,20 @@ class JMSSecurityExtraExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $processor = new Processor();
-        $config = $processor->process($this->getConfigTree(), $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
         $loader->load('services.xml');
 
-        $container->setParameter('security.extra.secure_all_services', $config['secure_all_services']);
+        $container->setParameter('security.access.secure_all_services', $config['secure_all_services']);
 
-        if (!$config['secure_controllers']) {
-            $container->removeDefinition('security.extra.controller_listener');
-
-            $this->addClassesToCompile(array(
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodSecurityInterceptor',
-
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManager',
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationManagerInterface',
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\AfterInvocation\\AfterInvocationProviderInterface',
-
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManager',
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\RunAsManagerInterface',
-            ));
-        } else {
-            $this->addClassesToCompile(array(
-                'JMS\\SecurityExtraBundle\\Controller\\ControllerListener',
-
-                'JMS\\SecurityExtraBundle\\Metadata\\Driver\\AnnotationConverter',
-
-                'JMS\\SecurityExtraBundle\\Security\\Authorization\\Interception\\MethodInvocation',
-            ));
+        $cacheDir = $container->getParameterBag()->resolveValue($config['cache_dir']);
+        if (!is_dir($cacheDir)) {
+            if (false === @mkdir($cacheDir, 0777, true)) {
+                throw new \RuntimeException(sprintf('Could not create cache directory "%s".', $cacheDir));
+            }
         }
+        $container->setParameter('security.extra.cache_dir', $cacheDir);
 
         if ($config['enable_iddqd_attribute']) {
             $container
@@ -74,20 +57,5 @@ class JMSSecurityExtraExtension extends Extension
 
             // FIXME: Also add an iddqd after invocation provider
         }
-    }
-
-    private function getConfigTree()
-    {
-        $tb = new TreeBuilder();
-
-        return $tb
-            ->root('jms_security_extra')
-                ->children()
-                  ->booleanNode('secure_controllers')->defaultTrue()->end()
-                  ->booleanNode('secure_all_services')->defaultFalse()->end()
-                  ->booleanNode('enable_iddqd_attribute')->defaultFalse()->end()
-                ->end()
-            ->end()
-            ->buildTree();
     }
 }

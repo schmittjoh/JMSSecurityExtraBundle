@@ -1,0 +1,12 @@
+This document details all the possible changes that you should investigate when 
+upgrading your project from JMSSecurityExtraBundle 1.0.x to 1.1:
+
+- The configuration option "secure_controllers" has been removed. This setting is
+  now automatically enabled, but it requires the JMSDiExtraBundle.
+
+- The dependencies of this bundle have changed:
+  
+    * The metadata library master branch is now required instead of the 1.0 version.
+    * The JMSAopBundle is now required.
+    * The JMSDiExtraBundle is now required if you want to secure your non-service
+      controllers (if you only have service controllers, you don't need it).

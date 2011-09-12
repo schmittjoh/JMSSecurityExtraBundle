@@ -19,11 +19,11 @@
 namespace JMS\SecurityExtraBundle;
 
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAuthenticationManagersPass;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
-use JMS\SecurityExtraBundle\DependencyInjection\Compiler\SecureMethodInvocationsPass;
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\CollectSecuredServicesPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+
 
 /**
  * Registers our custom compiler pass
@@ -40,11 +40,6 @@ class JMSSecurityExtraBundle extends Bundle
 
         $passConfig = $container->getCompilerPassConfig();
         $passConfig->addPass(new AddAfterInvocationProvidersPass());
-        $passConfig->addPass(
-            new SecureMethodInvocationsPass(
-                $container->getParameter('kernel.cache_dir')
-            ),
-            PassConfig::TYPE_BEFORE_REMOVING
-        );
+        $passConfig->addPass(new CollectSecuredServicesPass());
     }
 }

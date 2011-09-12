@@ -38,12 +38,10 @@ use \ReflectionMethod;
 class AnnotationDriver implements DriverInterface
 {
     private $reader;
-    private $converter;
 
     public function __construct(Reader $reader)
     {
         $this->reader = $reader;
-        $this->converter = new AnnotationConverter();
     }
 
     public function loadMetadataForClass(ReflectionClass $reflection)
@@ -58,11 +56,46 @@ class AnnotationDriver implements DriverInterface
 
             $annotations = $this->reader->getMethodAnnotations($method);
 
-            if ($annotations && null !== $methodMetadata = $this->converter->convertMethodAnnotations($method, $annotations)) {
+            if ($annotations && null !== $methodMetadata = $this->convertMethodAnnotations($method, $annotations)) {
                 $metadata->addMethodMetadata($methodMetadata);
             }
         }
 
         return $metadata;
+    }
+
+    private function convertMethodAnnotations(\ReflectionMethod $method, array $annotations)
+    {
+        $parameters = array();
+        foreach ($method->getParameters() as $index => $parameter) {
+            $parameters[$parameter->getName()] = $index;
+        }
+
+        $methodMetadata = new MethodMetadata($method->getDeclaringClass()->getName(), $method->getName());
+        $hasSecurityMetadata = false;
+        foreach ($annotations as $annotation) {
+            if ($annotation instanceof Secure) {
+                $methodMetadata->roles = $annotation->roles;
+                $hasSecurityMetadata = true;
+            } else if ($annotation instanceof SecureParam) {
+                if (!isset($parameters[$annotation->name])) {
+                    throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
+                }
+
+                $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
+                $hasSecurityMetadata = true;
+            } else if ($annotation instanceof SecureReturn) {
+                $methodMetadata->returnPermissions = $annotation->permissions;
+                $hasSecurityMetadata = true;
+            } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
+                $methodMetadata->satisfiesParentSecurityPolicy = true;
+                $hasSecurityMetadata = true;
+            } else if ($annotation instanceof RunAs) {
+                $methodMetadata->runAsRoles = $annotation->roles;
+                $hasSecurityMetadata = true;
+            }
+        }
+
+        return $hasSecurityMetadata ? $methodMetadata : null;
     }
 }

@@ -81,14 +81,4 @@ class MethodMetadata extends BaseMethodMetadata
             }
         }
     }
-
-    public function getAsArray()
-    {
-        return array(
-            'roles' => $this->roles,
-            'run_as_roles' => $this->runAsRoles,
-            'param_permissions' => $this->paramPermissions,
-            'return_permissions' => $this->returnPermissions,
-        );
-    }
 }

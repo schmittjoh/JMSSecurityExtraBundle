@@ -1,41 +1,45 @@
 <?php
 
-namespace JMS\SecurityExtraBundle\Tests\Analysis;
+namespace JMS\SecurityExtraBundle\Tests\Metadata;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 
-use JMS\SecurityExtraBundle\Analysis\ServiceAnalyzer;
+use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
-class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
+use Metadata\MetadataFactory;
+
+class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \RuntimeException
-     * @expectedMessage You have overridden a secured method "differentMethodSignature" in "SubService". Please copy over the applicable security metadata, and also add @SatisfiesParentSecurityPolicy.
-     */
+    * @expectedException \RuntimeException
+    * @expectedMessage You have overridden a secured method "differentMethodSignature" in "SubService". Please copy over the applicable security metadata, and also add @SatisfiesParentSecurityPolicy.
+    */
     public function testAnalyzeThrowsExceptionWhenSecureMethodIsOverridden()
     {
-        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\SubService', new AnnotationReader());
-        $service->analyze();
+        $this->getFactory()->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\SubService');
     }
 
     public function testAnalyzeThrowsNoExceptionWhenAbstractMethodIsNotOverridenInDirectChildClass()
     {
-        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService', new AnnotationReader());
-        $service->analyze();
+        $metadata = $this
+            ->getFactory()
+            ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\AbstractMethodNotDirectlyOverwrittenInDirectChildService')
+        ;
 
-        $methods = $service->getMetadata()->methodMetadata;
-        $this->assertTrue(isset($methods['abstractMethod']));
+        $this->assertTrue(isset($metadata->methodMetadata['abstractMethod']));
 
-        $metadata = $methods['abstractMethod'];
+        $metadata = $metadata->methodMetadata['abstractMethod'];
         $this->assertEquals(array('VIEW'), $metadata->returnPermissions);
     }
 
     public function testAnalyzeThrowsNoExceptionWhenSatisfiesParentSecurityPolicyIsDefined()
     {
-        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService', new AnnotationReader());
-        $service->analyze();
+        $metadata = $this
+            ->getFactory()
+            ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService')
+        ;
 
-        $methods = $service->getMetadata()->methodMetadata;
+        $methods = $metadata->methodMetadata;
         $this->assertTrue(isset($methods['differentMethodSignature']));
 
         $metadata = $methods['differentMethodSignature'];
@@ -46,10 +50,12 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function testAnalyzeWithComplexHierarchy()
     {
-        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService', new AnnotationReader());
-        $service->analyze();
+        $metadata = $this
+            ->getFactory()
+            ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService')
+        ;
 
-        $methods = $service->getMetadata()->methodMetadata;
+        $methods = $metadata->methodMetadata;
         $this->assertTrue(isset($methods['delete'], $methods['retrieve'], $methods['abstractMethod']));
 
         $metadata = $methods['delete'];
@@ -70,10 +76,12 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     public function testAnalyze()
     {
-        $service = new ServiceAnalyzer('JMS\SecurityExtraBundle\Tests\Fixtures\MainService', new AnnotationReader());
-        $service->analyze();
+        $metadata = $this
+            ->getFactory()
+            ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\MainService')
+        ;
 
-        $methods = $service->getMetadata()->methodMetadata;
+        $methods = $metadata->methodMetadata;
         $this->assertTrue(isset($methods['differentMethodSignature']));
 
         $metadata = $methods['differentMethodSignature'];
@@ -81,5 +89,13 @@ class ServiceAnalyzerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $metadata->returnPermissions);
         $this->assertEquals(array(), $metadata->roles);
         $this->assertFalse($metadata->isDeclaredOnInterface());
+    }
+
+    private function getFactory()
+    {
+        $factory = new MetadataFactory(new AnnotationDriver(new AnnotationReader()));
+        $factory->setIncludeInterfaces(true);
+
+        return $factory;
     }
 }
