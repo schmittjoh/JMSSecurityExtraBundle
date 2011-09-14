@@ -44,7 +44,7 @@
             <argument type="service" id="security.extra.metadata_factory" />
             <argument>%security.access.secure_all_services%</argument>
         
-            <tag name="jms_aop.pointcut_evaluator" interceptor="security.access.method_interceptor" />
+            <tag name="jms_aop.pointcut" interceptor="security.access.method_interceptor" />
         </service>
             
         <service id="security.access.after_invocation_manager" class="%security.access.after_invocation_manager.class%" public="false">
