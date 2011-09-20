@@ -34,6 +34,11 @@ class JMSSecurityExtraExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
+        $bundles = $container->getParameter('kernel.bundles');
+        if (!isset($bundles['JMSAopBundle'])) {
+            throw new \RuntimeException('The JMSSecurityExtraBundle requires the JMSAopBundle, please make sure to enable it in your AppKernel.');
+        }
+        
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
