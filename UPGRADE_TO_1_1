@@ -6,7 +6,11 @@ upgrading your project from JMSSecurityExtraBundle 1.0.x to 1.1:
 
 - The dependencies of this bundle have changed:
   
-    * The metadata library master branch is now required instead of the 1.0 version.
-    * The JMSAopBundle is now required.
+    * The metadata library master branch is now required instead of the 1.0 version
+      (if you are using the Standard Edition, just remove the "version=orign/1.0.x" 
+      line from your deps file).
+    * The JMSAopBundle is now required. For installation instructions, please see
+      https://github.com/schmittjoh/JMSAopBundle
     * The JMSDiExtraBundle is now required if you want to secure your non-service
-      controllers (if you only have service controllers, you don't need it).
+      controllers (if you only have service controllers, you don't need it). For
+      installation instructions, see https://github.com/schmittjoh/JMSDiExtraBundle
