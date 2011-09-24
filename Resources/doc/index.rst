@@ -34,29 +34,42 @@ needs to be generated. Subsequent page loads will be very fast.
 
 Installation
 ------------
-Checkout a copy of the code::
+Add the following to your ``deps`` file::
 
-    git submodule add https://github.com/schmittjoh/SecurityExtraBundle.git vendor/bundles/JMS/SecurityExtraBundle
+    [JMSSecurityExtraBundle]
+        git=https://github.com/schmittjoh/JMSSecurityExtraBundle.git
+        target=/bundles/JMS/SecurityExtraBundle
+        
+    ; Dependencies:
+    ;--------------
+    [metadata]
+        git=https://github.com/schmittjoh/metadata.git
+        ; version=origin/1.0.x <- make sure to delete this line if it is there
     
+    ; see https://github.com/schmittjoh/JMSAopBundle/blob/master/Resources/doc/index.rst    
+    [JMSAopBundle]
+        git=https://github.com/schmittjoh/JMSAopBundle.git
+        target=/bundles/JMS/AopBundle
+    
+    [cg-library]
+        git=https://github.com/schmittjoh/cg-library.git
+        
+    ; This dependency is optional (you need it if you are using non-service controllers):
+    ; see https://github.com/schmittjoh/JMSDiExtraBundle/blob/master/Resources/doc/index.rst
+    [JMSDiExtraBundle]
+        git=https://github.com/schmittjoh/JMSDiExtraBundle.git
+        target=/bundles/JMS/DiExtraBundle
+
 Then register the bundle with your kernel::
 
     // in AppKernel::registerBundles()
     $bundles = array(
         // ...
+        new JMS\AopBundle\JMSAopBundle(),
         new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
+        new JMS\DiExtraBundle\JMSDiExtraBundle($this),
         // ...
     );
-
-This bundle also requires the Metadata library (**you need to use the master branch,
-and not the 1.0 version** which is bundled with the Symfony Standard Edition)::
-
-    git submodule add https://github.com/schmittjoh/metadata.git vendor/metadata
-
-In addition, this bundle also requires the JMSAopBundle. See its documentation for
-installation instructions:
-
-    https://github.com/schmittjoh/JMSAopBundle/blob/master/Resources/doc/index.rst
-
 
 Make sure that you also register the namespaces with the autoloader::
 
@@ -65,9 +78,9 @@ Make sure that you also register the namespaces with the autoloader::
         // ...
         'JMS'              => __DIR__.'/../vendor/bundles',
         'Metadata'         => __DIR__.'/../vendor/metadata/src',
+        'CG'               => __DIR__.'/../vendor/cg-library/src',
         // ...
-    ));    
-
+    ));
 
 Configuration
 -------------
