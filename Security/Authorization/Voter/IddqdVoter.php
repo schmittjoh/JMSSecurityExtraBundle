@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
- * This voter adds a special role "IDDQD" which effectively bypasses any,
+ * This voter adds a special role "ROLE_IDDQD" which effectively bypasses any,
  * and all security checks.
  *
  * Most of the time, you will want to use this rule in combination with a
@@ -41,7 +41,7 @@ class IddqdVoter implements VoterInterface
     protected function isIddqd(TokenInterface $token)
     {
         foreach ($token->getRoles() as $role) {
-            if ('IS_IDDQD' === $role->getRole()) {
+            if ('ROLE_IDDQD' === $role->getRole()) {
                 return true;
             }
         }

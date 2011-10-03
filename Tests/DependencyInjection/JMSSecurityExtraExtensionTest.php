@@ -39,6 +39,7 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
         $container->setParameter('kernel.cache_dir', sys_get_temp_dir());
+        $container->setParameter('kernel.bundles', array('JMSAopBundle' => 'JMS\AopBundle\JMSAopBundle'));
 
         return $container;
     }

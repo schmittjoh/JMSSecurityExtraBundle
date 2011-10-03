@@ -14,3 +14,4 @@ upgrading your project from JMSSecurityExtraBundle 1.0.x to 1.1:
     * The JMSDiExtraBundle is now required if you want to secure your non-service
       controllers (if you only have service controllers, you don't need it). For
       installation instructions, see https://github.com/schmittjoh/JMSDiExtraBundle
+    * The attribute "IS_IDDQD" has been renamed to "ROLE_IDDQD"
