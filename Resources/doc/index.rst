@@ -44,7 +44,7 @@ Add the following to your ``deps`` file::
     ;--------------
     [metadata]
         git=https://github.com/schmittjoh/metadata.git
-        ; version=origin/1.0.x <- make sure to delete this line if it is there
+        version=1.1.0 ; <- make sure to get 1.1, not 1.0
     
     ; see https://github.com/schmittjoh/JMSAopBundle/blob/master/Resources/doc/index.rst    
     [JMSAopBundle]
