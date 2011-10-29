@@ -22,9 +22,15 @@
         <parameter key="security.extra.metadata_factory.class">Metadata\MetadataFactory</parameter>
         <parameter key="security.extra.annotation_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver</parameter>
         <parameter key="security.extra.file_cache.class">Metadata\Cache\FileCache</parameter>
+        
+        <parameter key="security.expressions.parameter_compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler</parameter>
     </parameters>
 
     <services>
+        <service id="security.expressions.parameter_compiler" class="%security.expressions.parameter_compiler.class%" public="false">
+            <tag name="security.expressions.type_compiler" />
+        </service>
+    
         <service id="security.access.run_as_manager" class="%security.access.run_as_manager.class%" public="false">
             <argument>%security.run_as.key%</argument>
             <argument>%security.run_as.role_prefix%</argument>
