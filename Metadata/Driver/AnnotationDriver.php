@@ -19,6 +19,7 @@
 namespace JMS\SecurityExtraBundle\Metadata\Driver;
 
 use Doctrine\Common\Annotations\Reader;
+use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
 use JMS\SecurityExtraBundle\Annotation\RunAs;
 use JMS\SecurityExtraBundle\Annotation\SatisfiesParentSecurityPolicy;
 use JMS\SecurityExtraBundle\Annotation\Secure;
@@ -29,6 +30,7 @@ use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use Metadata\Driver\DriverInterface;
 use \ReflectionClass;
 use \ReflectionMethod;
+use Symfony\Component\Security\Core\Authorization\Expression\Expression;
 
 /**
  * Loads security annotations and converts them to metadata
@@ -76,6 +78,9 @@ class AnnotationDriver implements DriverInterface
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
                 $methodMetadata->roles = $annotation->roles;
+                $hasSecurityMetadata = true;
+            } else if ($annotation instanceof PreAuthorize) {
+                $methodMetadata->roles = array(new Expression($annotation->expr));
                 $hasSecurityMetadata = true;
             } else if ($annotation instanceof SecureParam) {
                 if (!isset($parameters[$annotation->name])) {
