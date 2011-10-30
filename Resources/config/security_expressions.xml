@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="security.acl.permission_evaluator.class">JMS\SecurityExtraBundle\Security\Acl\Expression\PermissionEvaluator</parameter>
+        <parameter key="security.acl.has_permission_compiler.class">JMS\SecurityExtraBundle\Security\Acl\Expression\HasPermissionFunctionCompiler</parameter>
+        
+        <parameter key="security.expressions.voter.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\LazyLoadingExpressionVoter</parameter>
+        <parameter key="security.expressions.handler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\ContainerAwareExpressionHandler</parameter>
+        
+        <parameter key="security.expressions.compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler</parameter>
+        <parameter key="security.expressions.expression.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression</parameter>
+        
+        <parameter key="security.expressions.variable_compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ContainerAwareVariableCompiler</parameter>
+    </parameters>
+
+    <services>
+        <service id="security.expressions.variable_compiler" class="%security.expressions.variable_compiler.class%" public="false">
+            <tag name="security.expressions.type_compiler" />
+            
+            <!-- Some variables for built-in compilers for lazy-loading -->
+            <tag name="security.expressions.variable" variable="trust_resolver"
+                 service="security.authentication.trust_resolver" />
+        </service>
+    
+        <service id="security.expressions.voter" class="%security.expressions.voter.class%" public="false">
+            <argument type="service" id="security.expressions.handler" />
+            
+            <call method="setLazyCompiler">
+                <argument type="service" id="service_container" />
+                <argument>security.expressions.compiler</argument>
+            </call>
+            
+            <tag name="security.voter" priority="230" />
+        </service>
+        
+        <service id="security.expressions.handler" class="%security.expressions.handler.class%" public="false">
+            <argument type="service" id="service_container" />
+        </service>
+        
+        <service id="security.expressions.compiler" class="%security.expressions.compiler.class%" />
+        
+        <service id="security.expressions.expression" class="%security.expressions.expression.class%" public="false" abstract="true" />
+        
+        <!-- Expression-Based ACL -->
+        <service id="security.acl.permission_evaluator" class="%security.acl.permission_evaluator.class%" public="false">
+            <tag name="monolog.logger" channel="security" />
+            <argument type="service" id="security.acl.provider" />
+            <argument type="service" id="security.acl.object_identity_retrieval_strategy" />
+            <argument type="service" id="security.acl.security_identity_retrieval_strategy" />
+            <argument type="service" id="security.acl.permission.map" />
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+                
+        <service id="security.acl.has_permission_compiler" class="%security.acl.has_permission_compiler.class%" public="false">
+            <tag name="security.expressions.function_compiler" />
+            <tag name="security.expressions.variable" variable="permission_evaluator" service="security.acl.permission_evaluator"/>
+        </service>        
+    </services>
+</container>

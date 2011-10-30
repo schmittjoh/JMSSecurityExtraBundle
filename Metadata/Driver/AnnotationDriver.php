@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Metadata\Driver;
 
+use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
 use Doctrine\Common\Annotations\Reader;
 use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
 use JMS\SecurityExtraBundle\Annotation\RunAs;
@@ -30,7 +31,7 @@ use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use Metadata\Driver\DriverInterface;
 use \ReflectionClass;
 use \ReflectionMethod;
-use Symfony\Component\Security\Core\Authorization\Expression\Expression;
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
 /**
  * Loads security annotations and converts them to metadata
@@ -84,7 +85,7 @@ class AnnotationDriver implements DriverInterface
                 $hasSecurityMetadata = true;
             } else if ($annotation instanceof SecureParam) {
                 if (!isset($parameters[$annotation->name])) {
-                    throw new \InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
+                    throw new InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
                 }
 
                 $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@
  */
 
 namespace JMS\SecurityExtraBundle;
+
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\DisableVotersPass;
+
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddExpressionCompilersPass;
 
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
@@ -39,7 +43,14 @@ class JMSSecurityExtraBundle extends Bundle
         parent::build($container);
 
         $passConfig = $container->getCompilerPassConfig();
+
+        // needs to run before voter collection
+        $passes = $passConfig->getBeforeOptimizationPasses();
+        array_unshift($passes, new DisableVotersPass());
+        $passConfig->setBeforeOptimizationPasses($passes);
+
         $passConfig->addPass(new AddAfterInvocationProvidersPass());
         $passConfig->addPass(new CollectSecuredServicesPass());
+        $passConfig->addPass(new AddExpressionCompilersPass());
     }
 }

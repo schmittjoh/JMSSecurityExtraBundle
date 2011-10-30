@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
+use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use CG\Core\ClassUtils;
 
 use CG\Proxy\MethodInterceptorInterface;
@@ -111,7 +112,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
             }
 
             if (null === $runAsToken) {
-                throw new \RuntimeException('RunAsManager must not return null from buildRunAs().');
+                throw new RuntimeException('RunAsManager must not return null from buildRunAs().');
             }
 
             $this->securityContext->setToken($runAsToken);

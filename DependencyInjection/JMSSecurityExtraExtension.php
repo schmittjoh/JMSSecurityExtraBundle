@@ -18,6 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
+use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
@@ -36,9 +37,9 @@ class JMSSecurityExtraExtension extends Extension
     {
         $bundles = $container->getParameter('kernel.bundles');
         if (!isset($bundles['JMSAopBundle'])) {
-            throw new \RuntimeException('The JMSSecurityExtraBundle requires the JMSAopBundle, please make sure to enable it in your AppKernel.');
+            throw new RuntimeException('The JMSSecurityExtraBundle requires the JMSAopBundle, please make sure to enable it in your AppKernel.');
         }
-        
+
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
@@ -49,10 +50,31 @@ class JMSSecurityExtraExtension extends Extension
         $cacheDir = $container->getParameterBag()->resolveValue($config['cache_dir']);
         if (!is_dir($cacheDir)) {
             if (false === @mkdir($cacheDir, 0777, true)) {
-                throw new \RuntimeException(sprintf('Could not create cache directory "%s".', $cacheDir));
+                throw new RuntimeException(sprintf('Could not create cache directory "%s".', $cacheDir));
             }
         }
         $container->setParameter('security.extra.cache_dir', $cacheDir);
+
+        if (isset($config['expressions'])) {
+            $loader->load('security_expressions.xml');
+
+            if (!is_dir($cacheDir.'/expressions')) {
+                if (false === @mkdir($cacheDir.'/expressions', 0777, true)) {
+                    throw new RuntimeException(sprintf('Could not create cache directory "%s".', $cacheDir.'/expressions'));
+                }
+            }
+
+            $container->getDefinition('security.expressions.voter')
+                ->addMethodCall('setCacheDir', array($cacheDir.'/expressions'));
+        }
+
+        $disableAllVoters = !isset($config['voters']);
+        $container->setParameter('security.authenticated_voter.disabled',
+            $disableAllVoters || $config['voters']['authenticated']);
+        $container->setParameter('security.role_voter.disabled',
+            $disableAllVoters || $config['voters']['role']);
+        $container->setParameter('security.acl_voter.disabled',
+            $disableAllVoters || $config['voters']['acl']);
 
         if ($config['enable_iddqd_attribute']) {
             $container

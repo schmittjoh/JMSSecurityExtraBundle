@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Metadata;
 
+use JMS\SecurityExtraBundle\Exception\RuntimeException;
+use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
 use Metadata\MethodMetadata;
 use Metadata\MergeableInterface;
 use Metadata\MergeableClassMetadata;
@@ -32,15 +34,15 @@ class ClassMetadata extends MergeableClassMetadata
     public function addMethodMetadata(MethodMetadata $metadata)
     {
         if ($this->reflection->isFinal()) {
-            throw new \RuntimeException(sprintf('Class "%s" is declared final, and cannot be secured.', $reflection->name));
+            throw new RuntimeException(sprintf('Class "%s" is declared final, and cannot be secured.', $reflection->name));
         }
 
         if ($metadata->reflection->isStatic()) {
-            throw new \RuntimeException(sprintf('Method "%s::%s" is declared static and cannot be secured.', $metadata->reflection->class, $metadata->reflection->name));
+            throw new RuntimeException(sprintf('Method "%s::%s" is declared static and cannot be secured.', $metadata->reflection->class, $metadata->reflection->name));
         }
 
         if ($metadata->reflection->isFinal()) {
-            throw new \RuntimeException(sprintf('Method "%s::%s" is declared final and cannot be secured.', $metadata->reflection->class, $metadata->reflection->name));
+            throw new RuntimeException(sprintf('Method "%s::%s" is declared final and cannot be secured.', $metadata->reflection->class, $metadata->reflection->name));
         }
 
         parent::addMethodMetadata($metadata);
@@ -49,7 +51,7 @@ class ClassMetadata extends MergeableClassMetadata
     public function merge(MergeableInterface $metadata)
     {
         if (!$metadata instanceof ClassMetadata) {
-            throw new \InvalidArgumentException('$metadata must be an instance of ClassMetadata.');
+            throw new InvalidArgumentException('$metadata must be an instance of ClassMetadata.');
         }
 
         foreach ($this->methodMetadata as $name => $methodMetadata) {
@@ -65,7 +67,7 @@ class ClassMetadata extends MergeableClassMetadata
                         continue;
                     }
 
-                    throw new \RuntimeException(sprintf(
+                    throw new RuntimeException(sprintf(
                          'You have overridden a secured method "%s::%s" in "%s". '
                         .'Please copy over the applicable security metadata, and '
                         .'also add @SatisfiesParentSecurityPolicy.',
@@ -76,7 +78,7 @@ class ClassMetadata extends MergeableClassMetadata
                 }
 
                 if (!$metadata->methodMetadata[$name]->satisfiesParentSecurityPolicy) {
-                    throw new \RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $metadata->reflection->name, $name, $methodMetadata->reflection->getDeclaringClass()->getFilename()));
+                    throw new RuntimeException(sprintf('Unresolved security metadata conflict for method "%s::%s" in "%s". Please copy the respective annotations, and add @SatisfiesParentSecurityPolicy to the child method.', $metadata->reflection->name, $name, $methodMetadata->reflection->getDeclaringClass()->getFilename()));
                 }
             }
         }

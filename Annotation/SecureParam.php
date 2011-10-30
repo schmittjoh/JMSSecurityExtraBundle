@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2010 Johannes M. Schmitt <schmittjoh@gmail.com>
+ * Copyright 2011 Johannes M. Schmitt <schmittjoh@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Annotation;
 
+use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
+
 /**
  * Represents a @SecureParam annotation.
  *
@@ -33,10 +35,10 @@ final class SecureParam
     public function __construct(array $values)
     {
         if (!isset($values['name'])) {
-            throw new \InvalidArgumentException('You must define a "name" attribute for each SecureParam annotation.');
+            throw new InvalidArgumentException('You must define a "name" attribute for each SecureParam annotation.');
         }
         if (!isset($values['permissions'])) {
-            throw new \InvalidArgumentException('You must define a "permissions" attribute for each SecureParam annotation.');
+            throw new InvalidArgumentException('You must define a "permissions" attribute for each SecureParam annotation.');
         }
 
         $this->name = $values['name'];
