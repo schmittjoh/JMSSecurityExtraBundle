@@ -2,35 +2,13 @@
 Overview
 ========
 
-This bundle allows you to secure method invocations on your service layer with
-annotations.
+This bundle enhances the Symfony2 Security Component by adding several new features.
 
-Generally, you can secure all public, or protected methods which are non-static,
-and non-final. Private methods cannot be secured this way.
+Features:
 
-Annotations can also be declared on abstract methods, parent classes, or 
-interfaces.
-
-How does it work?
------------------
-The bundle will first collect all available security metadata for your services
-from annotations. The metadata will then be used to build proxy classes which 
-have the requested security checks built-in. These proxy classes will replace 
-your original service classes. All of that is done automatically for you, you
-don't need to manually clear any cache if you make changes to the metadata.
-
-
-Performance
------------
-While there will be virtually no performance difference in your production 
-environment, the performance in the development environment significantly
-depends on your configuration (see the configuration section).
-
-Generally, you will find that when you change the files of a secure service
-the first page load after changing the file will increase. This is because
-the cache for this service will need to be rebuilt, and a proxy class possibly
-needs to be generated. Subsequent page loads will be very fast.
-
+  - powerful expression-based authorization language
+  - method security authorization
+  - authorization configuration via annotations
 
 Installation
 ------------
@@ -96,7 +74,88 @@ Below, you find the default configuration::
         # Enabling this setting will add an additional special attribute "IS_IDDQD".
         # Anybody with this attribute will effectively bypass all security checks.
         enable_iddqd_attribute: false        
+        
+        # Enables expression language
+        expressions: false
 
+        # Allows you to disable some, or all built-in voters
+        voters:
+            authenticated: true
+            role:          true
+            acl:           true
+
+
+Expression-based Authorization Language
+---------------------------------------
+The expression language is a very powerful alternative to the simple attributes
+of the security voting system. They allow to perform complex access decision
+checks, and because they are compiled down to raw PHP, they are much faster than
+the built-in voters.
+
+Programmatic Usage
+~~~~~~~~~~~~~~~~~~
+You can execute expressions programmatically by using the ``isGranted`` method
+of the SecurityContext. Some examples::
+
+    use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
+    
+    $securityContext->isGranted(new Expression('hasRole("A")'));
+    $securityContext->isGranted(new Expression('hasRole("A") or (hasRole("B") and hasRole("C")'));
+    $securityContext->isGranted(new Expression('hasPermission(object, "VIEW")'), $object);
+    $securityContext->isGranted(new Expression('token.getUsername() == "Johannes"');
+
+Annotation-based Usage
+~~~~~~~~~~~~~~~~~~~~~~
+see @PreAuthorize in the annotation reference
+
+Reference
+~~~~~~~~~
++===================================+============================================+
+| Expression                        | Description                                |
++===================================+============================================+
+| hasRole('ROLE')                   | Checks whether the token has a certain     |
+|                                   | role.                                      |
++-----------------------------------+--------------------------------------------+
+| hasAnyRole('ROLE1', 'ROLE2', ...) | Checks whether the token has any of the    |
+|                                   | given roles.                               |
++-----------------------------------+--------------------------------------------+
+| isAnonymous()                     | Checks whether the token is anonymous.     |
++-----------------------------------+--------------------------------------------+
+| isRememberMe()                    | Checks whether the token is remember me.   |
++-----------------------------------+--------------------------------------------+
+| isFullyAuthenticated()            | Checks whether the token is fully          |
+|                                   | authenticated.                             |
++-----------------------------------+--------------------------------------------+
+| isAuthenticated()                 | Checks whether the token is not anonymous. |
++-----------------------------------+--------------------------------------------+
+| hasPermission(var, 'PERMISSION')  | Checks whether the token has the given     |
+|                                   | permission for the given object (ACL).     |
++-----------------------------------+--------------------------------------------+
+| token                             | Variable that grants access to the token   |
+|                                   | which is currently in the security context.|
++-----------------------------------+--------------------------------------------+
+| user                              | Variable that grants access to the user    |
+|                                   | which is currently in the security context.|
++-----------------------------------+--------------------------------------------+
+| object                            | Variable that grants access to the object  |
+|                                   | which was passed to the access decision    |
+|                                   | manager.                                   |
++-----------------------------------+--------------------------------------------+
+| and / &&                          | Binary "and" operator                      |
++-----------------------------------+--------------------------------------------+
+| or / ||                           | Binary "or" operator                       |
++-----------------------------------+--------------------------------------------+
+| ==                                | Binary "is equal" operator                 |
++-----------------------------------+--------------------------------------------+
+
+
+Method Security Authorization
+-----------------------------
+Generally, you can secure all public, or protected methods which are non-static,
+and non-final. Private methods cannot be secured this way.
+
+Annotations can also be declared on abstract methods, parent classes, or 
+interfaces.
 
 By default, security checks are not enabled for any service. You can turn on
 security for your services either by securing all services as shown above, or
@@ -111,6 +170,23 @@ be very slow depending on how many services you have defined.
 
 Annotations
 -----------
+@PreAuthorize
+~~~~~~~~~~~~~
+This annotation lets you define an expression (see the expression language
+paragraph) which is executed prior to invoking a method::
+
+    <?php
+    
+    use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
+    
+    class MyService
+    {
+        /** @PreAuthorize("hasRole('A') or (hasRole('B') and hasRole('C'))") */
+        public function secureMethod()
+        {
+            // ...
+        }
+    }
 
 @Secure
 ~~~~~~~

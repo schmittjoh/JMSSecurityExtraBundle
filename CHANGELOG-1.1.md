@@ -1,5 +1,4 @@
-This document details all the possible changes that you should investigate when 
-upgrading your project from JMSSecurityExtraBundle 1.0.x to 1.1:
+This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
 
 - The configuration option "secure_controllers" has been removed. This setting is
   now automatically enabled, but it requires the JMSDiExtraBundle.
@@ -16,3 +15,10 @@ upgrading your project from JMSSecurityExtraBundle 1.0.x to 1.1:
       installation instructions, see https://github.com/schmittjoh/JMSDiExtraBundle
 
 - The attribute "IS_IDDQD" has been renamed to "ROLE_IDDQD"
+
+- A powerful expression-based authorization language has been added which works
+  in combination with the existing voting system. Since it is much more powerful
+  than the built-in voters, and also much faster, you are highly encouraged to
+  migrate your existing authorization rules to expressions, and eventually disable 
+  the built-in voters entirely.
+  
