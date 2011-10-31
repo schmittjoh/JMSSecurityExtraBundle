@@ -70,11 +70,11 @@ class JMSSecurityExtraExtension extends Extension
 
         $disableAllVoters = !isset($config['voters']);
         $container->setParameter('security.authenticated_voter.disabled',
-            $disableAllVoters || $config['voters']['authenticated']);
+            $disableAllVoters || !$config['voters']['authenticated']);
         $container->setParameter('security.role_voter.disabled',
-            $disableAllVoters || $config['voters']['role']);
+            $disableAllVoters || !$config['voters']['role']);
         $container->setParameter('security.acl_voter.disabled',
-            $disableAllVoters || $config['voters']['acl']);
+            $disableAllVoters || !$config['voters']['acl']);
 
         if ($config['enable_iddqd_attribute']) {
             $container
