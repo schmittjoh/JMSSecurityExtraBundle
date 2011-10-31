@@ -18,10 +18,9 @@
 
 namespace JMS\SecurityExtraBundle;
 
+use JMS\SecurityExtraBundle\DependencyInjection\Compiler\IntegrationPass;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\DisableVotersPass;
-
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddExpressionCompilersPass;
-
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\CollectSecuredServicesPass;
@@ -52,5 +51,6 @@ class JMSSecurityExtraBundle extends Bundle
         $passConfig->addPass(new AddAfterInvocationProvidersPass());
         $passConfig->addPass(new CollectSecuredServicesPass());
         $passConfig->addPass(new AddExpressionCompilersPass());
+        $passConfig->addPass(new IntegrationPass());
     }
 }
