@@ -6,9 +6,9 @@ This bundle enhances the Symfony2 Security Component by adding several new featu
 
 Features:
 
-  - powerful expression-based authorization language
-  - method security authorization
-  - authorization configuration via annotations
+- powerful expression-based authorization language
+- method security authorization
+- authorization configuration via annotations
 
 Installation
 ------------
@@ -90,7 +90,9 @@ Expression-based Authorization Language
 The expression language is a very powerful alternative to the simple attributes
 of the security voting system. They allow to perform complex access decision
 checks, and because they are compiled down to raw PHP, they are much faster than
-the built-in voters.
+the built-in voters. Also they are lazy-loading by nature, so you will also 
+safe some resources for example by not having to initialize the entire ACL system
+on each request.
 
 Programmatic Usage
 ~~~~~~~~~~~~~~~~~~
@@ -110,7 +112,7 @@ see @PreAuthorize in the annotation reference
 
 Reference
 ~~~~~~~~~
-+===================================+============================================+
++-----------------------------------+--------------------------------------------+
 | Expression                        | Description                                |
 +===================================+============================================+
 | hasRole('ROLE')                   | Checks whether the token has a certain     |
