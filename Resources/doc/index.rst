@@ -80,9 +80,9 @@ Below, you find the default configuration::
 
         # Allows you to disable some, or all built-in voters
         voters:
-            authenticated: true
-            role:          true
-            acl:           true
+            enable_authenticated: true
+            enable_role:          true
+            enable_acl:           true
 
 
 Expression-based Authorization Language

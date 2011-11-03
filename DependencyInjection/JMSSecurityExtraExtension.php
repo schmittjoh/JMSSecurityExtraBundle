@@ -55,7 +55,7 @@ class JMSSecurityExtraExtension extends Extension
         }
         $container->setParameter('security.extra.cache_dir', $cacheDir);
 
-        if (isset($config['expressions'])) {
+        if ($config['expressions']) {
             $loader->load('security_expressions.xml');
 
             if (!is_dir($cacheDir.'/expressions')) {
@@ -70,11 +70,11 @@ class JMSSecurityExtraExtension extends Extension
 
         $disableAllVoters = !isset($config['voters']);
         $container->setParameter('security.authenticated_voter.disabled',
-            $disableAllVoters || !$config['voters']['authenticated']);
+            $disableAllVoters || $config['voters']['disable_authenticated']);
         $container->setParameter('security.role_voter.disabled',
-            $disableAllVoters || !$config['voters']['role']);
+            $disableAllVoters || $config['voters']['disable_role']);
         $container->setParameter('security.acl_voter.disabled',
-            $disableAllVoters || !$config['voters']['acl']);
+            $disableAllVoters || $config['voters']['disable_acl']);
 
         if ($config['enable_iddqd_attribute']) {
             $container
