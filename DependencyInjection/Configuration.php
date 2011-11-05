@@ -28,6 +28,15 @@ class Configuration implements ConfigurationInterface
         $tb = new TreeBuilder();
         $tb
             ->root('jms_security_extra')
+                ->validate()
+                    ->always(function($v) {
+                        if ($v['method_access_control'] && !$v['expressions']) {
+                            throw new \Exception('You need to enable expressions if you want to configure method access via the DI config.');
+                        }
+
+                        return $v;
+                    })
+                ->end()
                 ->children()
                     ->booleanNode('secure_all_services')->defaultFalse()->end()
                     ->booleanNode('enable_iddqd_attribute')->defaultFalse()->end()
@@ -41,6 +50,10 @@ class Configuration implements ConfigurationInterface
                             ->booleanNode('disable_role')->defaultFalse()->end()
                             ->booleanNode('disable_acl')->defaultFalse()->end()
                         ->end()
+                    ->end()
+                    ->arrayNode('method_access_control')
+                        ->useAttributeAsKey('pattern')
+                        ->prototype('scalar')->isRequired()->cannotBeEmpty()->end()
                     ->end()
                 ->end()
             ->end()

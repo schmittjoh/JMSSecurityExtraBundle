@@ -8,6 +8,7 @@
         <parameter key="security.secured_services" type="collection"></parameter>
     
         <parameter key="security.access.method_interceptor.class">JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor</parameter>
+        <parameter key="security.access.method_access_control" type="collection" />
 
         <parameter key="security.access.run_as_manager.class">JMS\SecurityExtraBundle\Security\Authorization\RunAsManager</parameter>
         <parameter key="security.authentication.provider.run_as.class">JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider</parameter>
@@ -20,6 +21,8 @@
         <parameter key="security.access.iddqd_voter.class">JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter</parameter>
         
         <parameter key="security.extra.metadata_factory.class">Metadata\MetadataFactory</parameter>
+        <parameter key="security.extra.lazy_loading_driver.class">Metadata\Driver\LazyLoadingDriver</parameter>
+        <parameter key="security.extra.driver_chain.class">Metadata\Driver\DriverChain</parameter>
         <parameter key="security.extra.annotation_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver</parameter>
         <parameter key="security.extra.file_cache.class">Metadata\Cache\FileCache</parameter>
     </parameters>
@@ -43,6 +46,7 @@
         <service id="security.access.pointcut" class="JMS\SecurityExtraBundle\Security\Authorization\Interception\SecurityPointcut">
             <argument type="service" id="security.extra.metadata_factory" />
             <argument>%security.access.secure_all_services%</argument>
+            <argument>%security.access.method_access_control%</argument>
         
             <tag name="jms_aop.pointcut" interceptor="security.access.method_interceptor" />
         </service>
@@ -62,6 +66,18 @@
         <service id="security.extra.iddqd_voter" class="%security.access.iddqd_voter.class%" public="false">
         </service>
         
+        <service id="security.extra.driver_chain" class="%security.extra.driver_chain.class%" public="false">
+            <argument type="collection">
+                <argument type="service" id="security.extra.annotation_driver" />
+            </argument>
+        </service>
+        <service id="security.extra.metadata_driver" alias="security.extra.driver_chain"></service>
+        
+        <service id="security.extra.lazy_loading_driver" class="%security.extra.lazy_loading_driver.class%" public="false">
+            <argument type="service" id="service_container" />
+            <argument>security.extra.metadata_driver</argument>
+        </service>
+        
         <service id="security.extra.annotation_driver" class="%security.extra.annotation_driver.class%" public="false">
             <argument type="service" id="annotation_reader" />
         </service>
@@ -72,7 +88,7 @@
         </service>
         
         <service id="security.extra.metadata_factory" class="%security.extra.metadata_factory.class%" public="false">
-            <argument type="service" id="security.extra.annotation_driver" />
+            <argument type="service" id="security.extra.lazy_loading_driver" />
             <argument type="service" id="security.extra.file_cache" />
             <call method="setIncludeInterfaces">
                 <argument>true</argument>

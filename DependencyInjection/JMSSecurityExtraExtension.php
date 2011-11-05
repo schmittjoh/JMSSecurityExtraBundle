@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Reference;
+
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
@@ -83,6 +85,16 @@ class JMSSecurityExtraExtension extends Extension
             ;
 
             // FIXME: Also add an iddqd after invocation provider
+        }
+
+        if ($config['method_access_control']) {
+            $driverDef = $container->getDefinition('security.extra.driver_chain');
+            $args = $driverDef->getArguments();
+            array_unshift($args[0], new Reference('security.extra.config_driver'));
+            $driverDef->setArguments($args);
+
+            $container->setParameter('security.access.method_access_control',
+                $config['method_access_control']);
         }
     }
 }

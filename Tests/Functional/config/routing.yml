@@ -1,0 +1,9 @@
+crud_controller_add:
+    pattern: /add
+    defaults:
+        _controller: TestBundle:Crud:add
+        
+crud_controller_edit:
+    pattern: /edit
+    defaults:
+        _controller: TestBundle:Crud:edit

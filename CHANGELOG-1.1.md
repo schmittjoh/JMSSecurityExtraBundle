@@ -21,4 +21,8 @@ This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
   than the built-in voters, and also much faster, you are highly encouraged to
   migrate your existing authorization rules to expressions, and eventually disable 
   the built-in voters entirely.
+
+- The ability to configure method access control (e.g. for controller actions)
+  in the DI configuration has been added. Note that for non-service controllers
+  the JMSDiExtraBundle is required.
   

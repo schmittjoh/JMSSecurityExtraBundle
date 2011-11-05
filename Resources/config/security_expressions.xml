@@ -16,9 +16,16 @@
         
         <parameter key="security.expressions.variable_compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ContainerAwareVariableCompiler</parameter>
         <parameter key="security.expressions.parameter_compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler</parameter>
+        
+        <parameter key="security.extra.config_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\ConfigDriver</parameter>
     </parameters>
 
     <services>
+        <service id="security.extra.config_driver" class="%security.extra.config_driver.class%" public="false">
+            <argument>%kernel.bundles%</argument>
+            <argument>%security.access.method_access_control%</argument>
+        </service>
+    
         <service id="security.expressions.parameter_compiler" class="%security.expressions.parameter_compiler.class%" public="false">
             <tag name="security.expressions.type_compiler" />
         </service>

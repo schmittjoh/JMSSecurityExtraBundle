@@ -83,6 +83,10 @@ Below, you find the default configuration::
             disable_authenticated: true
             disable_role:          true
             disable_acl:           true
+            
+        # Allows you to specify access control rules for specific methods, such
+        # as controller actions
+        method_access_control: { }
 
 
 Expression-based Authorization Language
@@ -130,18 +134,22 @@ Reference
 +-----------------------------------+--------------------------------------------+
 | isAuthenticated()                 | Checks whether the token is not anonymous. |
 +-----------------------------------+--------------------------------------------+
-| hasPermission(var, 'PERMISSION')  | Checks whether the token has the given     |
-|                                   | permission for the given object (ACL).     |
+| hasPermission(*var*, 'PERMISSION')| Checks whether the token has the given     |
+|                                   | permission for the given object (requires  |
+|                                   | the ACL system).                           |
 +-----------------------------------+--------------------------------------------+
-| token                             | Variable that grants access to the token   |
+| token                             | Variable that refers to the token          |
 |                                   | which is currently in the security context.|
 +-----------------------------------+--------------------------------------------+
-| user                              | Variable that grants access to the user    |
+| user                              | Variable that refers to the user           |
 |                                   | which is currently in the security context.|
 +-----------------------------------+--------------------------------------------+
-| object                            | Variable that grants access to the object  |
-|                                   | which was passed to the access decision    |
-|                                   | manager.                                   |
+| object                            | Variable that refers to the object for     |
+|                                   | which access is being requested.           |
++-----------------------------------+--------------------------------------------+
+| #*paramName*                      | Any identifier prefixed with # refers to   |
+|                                   | a parameter of the same name that is passed|
+|                                   | to the method where the expression is used.|
 +-----------------------------------+--------------------------------------------+
 | and / &&                          | Binary "and" operator                      |
 +-----------------------------------+--------------------------------------------+
@@ -154,21 +162,48 @@ Reference
 Method Security Authorization
 -----------------------------
 Generally, you can secure all public, or protected methods which are non-static,
-and non-final. Private methods cannot be secured this way.
+and non-final. Private methods cannot be secured. You can also add metadata for
+abstract methods, or interfaces which will then be applied to their concrete 
+implementations automatically.
 
-Annotations can also be declared on abstract methods, parent classes, or 
-interfaces.
+Access Control via DI configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You can specify access control **expressions** in the DI configuration::
 
-By default, security checks are not enabled for any service. You can turn on
-security for your services either by securing all services as shown above, or
-only for specific services by adding a tag to these services::
+    # config.yml
+    jms_security_extra:
+        method_access_control:
+            ':loginAction$': 'isAnonymous()'
+            'AcmeFooBundle:.*:deleteAction': 'hasRole("ROLE_ADMIN")'
+            '^MyNamespace\MyService::foo$': 'hasPermission(#user, "VIEW")' 
+
+The pattern is a case-sensitive regular expression which is matched against two notations.
+The first match is being used.
+
+First, your pattern is matched against the notation for non-service controllers. 
+This obviously is only done if your class is actually a controller, e.g. 
+``AcmeFooBundle:Add:new`` for a controller named ``AddController`` and a method 
+named ``newAction`` in a sub-namespace ``Controller`` in a bundle named ``AcmeFooBundle``. 
+
+Last, your pattern is matched against the concatenation of the class name, and
+the method name that is being called, e.g. ``My\Fully\Qualified\ClassName::myMethodName``.
+
+**Note:** If you would like to secure non-service controllers, the 
+``JMSDiExtraBundle`` must be installed.
+
+Access Control via Annotations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you like to secure a service with annotations, you need to enable annotation
+configuration for this service::
 
     <service id="foo" class="Bar">
         <tag name="security.secure_service"/>
     </service>
 
-If you enable security for all services, be aware that the first page load will
-be very slow depending on how many services you have defined.
+In case, you like to configure all services via annotations, you can also set
+``secure_all_services`` to true. Then, you do not need to add a tag for each 
+service.
+
 
 Annotations
 -----------

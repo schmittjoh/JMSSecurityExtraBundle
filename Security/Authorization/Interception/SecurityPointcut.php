@@ -27,11 +27,13 @@ class SecurityPointcut implements PointcutInterface
     private $metadataFactory;
     private $secureAllServices;
     private $securedClasses = array();
+    private $patterns;
 
-    public function __construct(MetadataFactoryInterface $metadataFactory, $secureAllServices = false)
+    public function __construct(MetadataFactoryInterface $metadataFactory, $secureAllServices = false, array $patterns = array())
     {
         $this->metadataFactory = $metadataFactory;
         $this->secureAllServices = $secureAllServices;
+        $this->patterns = $patterns;
     }
 
     public function setSecuredClasses(array $classes)
@@ -47,6 +49,24 @@ class SecurityPointcut implements PointcutInterface
 
         if ('Controller' === substr(ClassUtils::getUserClass($class->name), -10)) {
             return true;
+        }
+
+        foreach ($this->patterns as $pattern => $expr) {
+            // if not for all patterns the class is specified, then we need to scan all
+            // classes to catch all methods
+            if (false === $pos = strpos($pattern, '::')) {
+                // controller notation is already checked by JMSDiExtraBundle,
+                // we can safely ignore these patterns here
+                if (2 === substr_count($pattern, ':')) {
+                    continue;
+                }
+
+                return true;
+            }
+
+            if (0 < preg_match('#'.substr($pattern, 0, $pos).'$#', $class->name)) {
+                return true;
+            }
         }
 
         foreach ($this->securedClasses as $securedClass) {
