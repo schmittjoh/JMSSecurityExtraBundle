@@ -18,9 +18,16 @@
         <parameter key="security.expressions.parameter_compiler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler</parameter>
         
         <parameter key="security.extra.config_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\ConfigDriver</parameter>
+        
+        <parameter key="security.extra.twig_extension.class">JMS\SecurityExtraBundle\Twig\SecurityExtension</parameter>
     </parameters>
 
     <services>
+        <service id="security.extra.twig_extension" class="%security.extra.twig_extension.class%" public="false">
+            <argument type="service" id="security.context" />
+            <tag name="twig.extension" alias="jms_security_extra" />
+        </service>
+    
         <service id="security.extra.config_driver" class="%security.extra.config_driver.class%" public="false">
             <argument>%kernel.bundles%</argument>
             <argument>%security.access.method_access_control%</argument>

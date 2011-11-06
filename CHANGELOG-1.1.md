@@ -25,4 +25,8 @@ This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
 - The ability to configure method access control (e.g. for controller actions)
   in the DI configuration has been added. Note that for non-service controllers
   the JMSDiExtraBundle is required.
+
+- The "is_expr_granted" Twig function has been added if you want to check an
+  expression from a Twig template.
+
   

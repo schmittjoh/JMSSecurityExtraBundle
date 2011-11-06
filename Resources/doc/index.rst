@@ -110,6 +110,14 @@ of the SecurityContext. Some examples::
     $securityContext->isGranted(new Expression('hasPermission(object, "VIEW")'), $object);
     $securityContext->isGranted(new Expression('token.getUsername() == "Johannes"');
 
+Twig Usage
+~~~~~~~~~~
+You can check expressions from Twig templates using the ``is_expr_granted``
+function. Some examples::
+
+    is_expr_granted("hasRole('FOO')")
+    is_expr_granted("hasPermission(object, 'VIEW')", object)
+
 Annotation-based Usage
 ~~~~~~~~~~~~~~~~~~~~~~
 see @PreAuthorize in the annotation reference
