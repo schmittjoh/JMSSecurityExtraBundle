@@ -59,27 +59,45 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->parser->parse('isAnonymous() and hasRole("FOO")'));
     }
 
-    public function testPrecendence()
+    /**
+     * @dataProvider getPrecedenceTests
+     */
+    public function testPrecendence($expected, $expr)
     {
+        $this->assertEquals($expected, $this->parser->parse($expr));
+    }
+
+    public function getPrecedenceTests()
+    {
+        $tests = array();
+
         $expected = new OrExpression(
             new AndExpression(new VariableExpression('A'), new VariableExpression('B')),
             new VariableExpression('C')
         );
-        $this->assertEquals($expected, $this->parser->parse('A && B || C'));
-        $this->assertEquals($expected, $this->parser->parse('(A && B) || C'));
+        $tests[] = array($expected, 'A && B || C');
+        $tests[] = array($expected, '(A && B) || C');
 
         $expected = new OrExpression(
-            new VariableExpression('C'),
+        new VariableExpression('C'),
             new AndExpression(new VariableExpression('A'), new VariableExpression('B'))
         );
-        $this->assertEquals($expected, $this->parser->parse('C || A && B'));
-        $this->assertEquals($expected, $this->parser->parse('C || (A && B)'));
+        $tests[] = array($expected, 'C || A && B');
+        $tests[] = array($expected, 'C || (A && B)');
 
         $expected = new AndExpression(
-            new AndExpression(new VariableExpression('A'), new VariableExpression('B')),
+        new AndExpression(new VariableExpression('A'), new VariableExpression('B')),
             new VariableExpression('C')
         );
-        $this->assertEquals($expected, $this->parser->parse('A && B && C'));
+        $tests[] = array($expected, 'A && B && C');
+
+        $expected = new AndExpression(
+            new VariableExpression('A'),
+            new OrExpression(new VariableExpression('B'), new VariableExpression('C'))
+        );
+        $tests[] = array($expected, 'A && (B || C)');
+
+        return $tests;
     }
 
     public function testGetProperty()

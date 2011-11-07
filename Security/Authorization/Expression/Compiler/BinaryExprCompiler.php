@@ -39,9 +39,11 @@ abstract class BinaryExprCompiler implements TypeCompilerInterface
     public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
         $compiler
+            ->write("(")
             ->compileInternal($expr->left)
-            ->write(" ".$this->getOperator()." ")
+            ->write(") ".$this->getOperator()." (")
             ->compileInternal($expr->right)
+            ->write(")")
         ;
     }
 

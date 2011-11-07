@@ -275,6 +275,6 @@ final class ExpressionParser
             $this->lexer->lookahead['value'],
             $this->lexer->lookahead['position']);
 
-        throw new RuntimeException(sprintf('Execpted %s, but got %s.', $expected, $actual));
+        throw new RuntimeException(sprintf('Expected %s, but got %s.', $expected, $actual));
     }
 }
