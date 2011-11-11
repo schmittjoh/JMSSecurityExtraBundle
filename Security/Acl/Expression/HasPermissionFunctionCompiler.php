@@ -36,6 +36,7 @@ class HasPermissionFunctionCompiler implements FunctionCompilerInterface
 
     public function compilePreconditions(ExpressionCompiler $compiler, FunctionExpression $function)
     {
+        $compiler->verifyItem('token', 'Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
     }
 
     public function compile(ExpressionCompiler $compiler, FunctionExpression $function)
@@ -43,6 +44,8 @@ class HasPermissionFunctionCompiler implements FunctionCompilerInterface
         $compiler
             ->compileInternal(new VariableExpression('permission_evaluator'))
             ->write('->hasPermission(')
+            ->compileInternal(new VariableExpression('token'))
+            ->write(', ')
             ->compileInternal($function->args[0])
             ->write(', ')
             ->compileInternal($function->args[1])

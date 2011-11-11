@@ -15,10 +15,10 @@ class HasPermissionFunctionCompilerTest extends \PHPUnit_Framework_TestCase
     public function testCompile()
     {
         $source = $this->compiler->compile(new FunctionExpression('hasPermission', 
-            array(new ConstantExpression('VIEW'), new VariableExpression('foo'))));
+            array(new VariableExpression('foo'), new ConstantExpression('VIEW'))));
         
         $this->assertContains(
-        	"\$context['permission_evaluator']->hasPermission('VIEW', \$context['foo']);",
+        	"\$context['permission_evaluator']->hasPermission(\$context['token'], \$context['foo'], 'VIEW');",
         	$source);
     }
     
