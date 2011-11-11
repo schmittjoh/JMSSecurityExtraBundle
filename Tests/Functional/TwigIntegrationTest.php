@@ -9,25 +9,31 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 class TwigIntegrationTest extends BaseTestCase
 {
+    private $context;
+    private $twig;
+    
     public function testIsExprGrantedWithSufficientPermissions()
     {
-        $this->createClient(array('config' => 'all_voters_disabled.yml'));
+        $this->context->setToken(new UsernamePasswordToken('foo', 'bar', 'baz', array('FOO')));
 
-        $context = self::$kernel->getContainer()->get('security.context');
-        $context->setToken(new UsernamePasswordToken('foo', 'bar', 'baz', array('FOO')));
-
-        $twig = self::$kernel->getContainer()->get('twig');
-        $this->assertEquals('granted', $twig->render('TestBundle::is_expr_granted.html.twig'));
+        $this->assertEquals('granted', 
+            $this->twig->render('TestBundle::is_expr_granted.html.twig'));
     }
 
     public function testIsExprGranted()
     {
+        $this->context->setToken(new AnonymousToken('foo', 'bar'));
+
+        $this->assertEquals('denied', 
+            $this->twig->render('TestBundle::is_expr_granted.html.twig'));
+    }
+    
+    protected function setUp()
+    {
+        parent::setUp();
+        
         $this->createClient(array('config' => 'all_voters_disabled.yml'));
-
-        $context = self::$kernel->getContainer()->get('security.context');
-        $context->setToken(new AnonymousToken('foo', 'bar'));
-
-        $twig = self::$kernel->getContainer()->get('twig');
-        $this->assertEquals('denied', $twig->render('TestBundle::is_expr_granted.html.twig'));
+        $this->context = self::$kernel->getContainer()->get('security.context');
+        $this->twig = self::$kernel->getContainer()->get('twig');
     }
 }

@@ -18,6 +18,9 @@
 
 namespace JMS\SecurityExtraBundle\Security\Acl\Expression;
 
+use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\PermissionMapInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface;
@@ -45,6 +48,7 @@ class PermissionEvaluator
         $this->oidRetrievalStrategy = $oidRetrievalStrategy;
         $this->sidRetrievalStrategy = $sidRetrievalStrategy;
         $this->permissionMap = $permissionMap;
+        $this->allowIfObjectIdentityUnavailable = $allowIfObjectIdentityUnavailable;
         $this->logger = $logger;
     }
 
@@ -69,7 +73,7 @@ class PermissionEvaluator
 
         if ($object instanceof ObjectIdentityInterface) {
             $oid = $object;
-        } else if (null === $oid = $this->objectIdentityRetrievalStrategy->getObjectIdentity($object)) {
+        } else if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($object)) {
             if (null !== $this->logger) {
                 $this->logger->debug(sprintf('Object identity unavailable. Voting to %s', $this->allowIfObjectIdentityUnavailable? 'grant access' : 'abstain'));
             }
@@ -77,7 +81,7 @@ class PermissionEvaluator
             return $this->allowIfObjectIdentityUnavailable ? true : false;
         }
 
-        $sids = $this->securityIdentityRetrievalStrategy->getSecurityIdentities($token);
+        $sids = $this->sidRetrievalStrategy->getSecurityIdentities($token);
 
         try {
             $acl = $this->aclProvider->findAcl($oid, $sids);
