@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Acl\Expression;
 
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ConstantExpression;
+
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
@@ -48,8 +50,18 @@ class HasPermissionFunctionCompiler implements FunctionCompilerInterface
             ->write(', ')
             ->compileInternal($function->args[0])
             ->write(', ')
+        ;
+
+        if ($function->args[1] instanceof ConstantExpression) {
+            $compiler->write(var_export(strtoupper($function->args[1]->value), true).')');
+
+            return;
+        }
+
+        $compiler
+            ->write('strtoupper(')
             ->compileInternal($function->args[1])
-            ->write(')')
+            ->write('))')
         ;
     }
 }
