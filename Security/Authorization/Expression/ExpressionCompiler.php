@@ -269,6 +269,10 @@ class ExpressionCompiler
         if ($expr instanceof FunctionExpression) {
             $this->getFunctionCompiler($expr->name)->compilePreconditions($this, $expr);
 
+            foreach ($expr->args as $arg) {
+                $this->compilePreconditions($arg);
+            }
+
             return $this;
         }
 

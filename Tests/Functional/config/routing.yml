@@ -7,3 +7,16 @@ crud_controller_edit:
     pattern: /edit
     defaults:
         _controller: TestBundle:Crud:edit
+        
+post_controller_add:
+    pattern: /post/add
+    defaults:
+        _controller: TestBundle:Post:newPost
+        
+post_controller_edit:
+    pattern: /post/edit/{id}
+    defaults:
+        _controller: TestBundle:Post:editPost
+        
+form_login_bundle:
+    resource: @FormLoginBundle/Resources/config/routing.yml

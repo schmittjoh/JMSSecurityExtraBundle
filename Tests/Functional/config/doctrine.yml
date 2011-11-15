@@ -1,7 +1,10 @@
+services:
+    em: @doctrine.orm.entity_manager
+
 doctrine:
     dbal:
         driver:   pdo_sqlite
-        memory:   true
+        path:     %kernel.cache_dir%/sqlite.db
         
     orm:
         auto_generate_proxy_classes: %kernel.debug%

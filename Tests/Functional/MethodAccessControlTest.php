@@ -40,4 +40,24 @@ class MethodAccessControlTest extends BaseTestCase
         );
         $manager->delete();
     }
+
+    public function testAcl()
+    {
+        $client = $this->createClient(array('config' => 'acl_enabled.yml'));
+        $client->insulate();
+
+        $this->importDatabaseSchema();
+        $this->login($client);
+
+        $client->request('POST', '/post/add', array('title' => 'Foo'));
+
+        $response = $client->getResponse();
+        $this->assertEquals('/post/edit/1', $response->headers->get('Location'),
+            substr($response, 0, 2000));
+
+        $client->request('GET', '/post/edit/1');
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), substr($response, 0, 2000));
+        $this->assertEquals('Foo', $response->getContent());
+    }
 }

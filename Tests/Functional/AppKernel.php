@@ -2,6 +2,32 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
+// get the autoload file
+$dir = __DIR__;
+$lastDir = null;
+while ($dir !== $lastDir) {
+    $lastDir = $dir;
+
+    if (is_file($dir.'/autoload.php')) {
+        require_once $dir.'/autoload.php';
+        break;
+    }
+
+    if (is_file($dir.'/app/bootstrap.php.cache')) {
+        require_once $dir.'/app/bootstrap.php.cache';
+        break;
+    }
+
+    if (is_file($dir.'/autoload.php.dist')) {
+        require_once $dir.'/autoload.php.dist';
+        break;
+    }
+
+    $dir = dirname($dir);
+}
+
+use Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\FormLoginBundle;
+
 use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\TestBundle;
 
 use Symfony\Component\HttpKernel\Util\Filesystem;
@@ -36,6 +62,8 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new TestBundle(),
+            new FormLoginBundle(),
+            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \JMS\AopBundle\JMSAopBundle(),
             new \JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new \JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
@@ -55,5 +83,15 @@ class AppKernel extends Kernel
     protected function getContainerClass()
     {
         return parent::getContainerClass().sha1($this->config);
+    }
+
+    public function serialize()
+    {
+        return $this->config;
+    }
+
+    public function unserialize($str)
+    {
+        $this->__construct($str);
     }
 }
