@@ -20,7 +20,13 @@ This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
   in combination with the existing voting system. Since it is much more powerful
   than the built-in voters, and also much faster, you are highly encouraged to
   migrate your existing authorization rules to expressions, and eventually disable 
-  the built-in voters entirely.
+  the built-in voters entirely. Some examples for how to convert simple attributes
+  to their equivalent expressions are listed below:
+  
+    * IS_AUTHENTICATED_ANONYMOUSLY -> "isAnonymous() or isRememberMe() or isFullyAuthenticated()"
+    * IS_AUTHENTICATED_REMEMBERME -> "isAuthenticated()"
+    * IS_AUTHENTICATED_FULLY -> "isFullyAuthenticated()"
+    * ROLE_FOO -> "hasRole('ROLE_FOO')"
 
 - The ability to configure method access control (e.g. for controller actions)
   in the DI configuration has been added. Note that for non-service controllers
