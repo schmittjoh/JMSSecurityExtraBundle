@@ -80,9 +80,9 @@ Below, you find the default configuration::
 
         # Allows you to disable some, or all built-in voters
         voters:
-            disable_authenticated: true
-            disable_role:          true
-            disable_acl:           true
+            disable_authenticated: false
+            disable_role:          false
+            disable_acl:           false
             
         # Allows you to specify access control rules for specific methods, such
         # as controller actions
@@ -95,7 +95,7 @@ The expression language is a very powerful alternative to the simple attributes
 of the security voting system. They allow to perform complex access decision
 checks, and because they are compiled down to raw PHP, they are much faster than
 the built-in voters. Also they are lazy-loading by nature, so you will also 
-safe some resources for example by not having to initialize the entire ACL system
+save some resources for example by not having to initialize the entire ACL system
 on each request.
 
 Programmatic Usage
