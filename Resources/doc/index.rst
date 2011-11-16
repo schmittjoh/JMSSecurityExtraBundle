@@ -80,9 +80,9 @@ Below, you find the default configuration::
 
         # Allows you to disable some, or all built-in voters
         voters:
-            disable_authenticated: true
-            disable_role:          true
-            disable_acl:           true
+            disable_authenticated: false
+            disable_role:          false
+            disable_acl:           false
             
         # Allows you to specify access control rules for specific methods, such
         # as controller actions
