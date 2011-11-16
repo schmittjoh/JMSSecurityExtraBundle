@@ -23,7 +23,7 @@ This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
   the built-in voters entirely. Some examples for how to convert simple attributes
   to their equivalent expressions are listed below:
   
-    * IS_AUTHENTICATED_ANONYMOUSLY -> "isAnonymous() or isAuthenticated()"
+    * IS_AUTHENTICATED_ANONYMOUSLY -> "permitAll"
     * IS_AUTHENTICATED_REMEMBERED -> "isAuthenticated()"
     * IS_AUTHENTICATED_FULLY -> "isFullyAuthenticated()"
     * ROLE_FOO -> "hasRole('ROLE_FOO')"
