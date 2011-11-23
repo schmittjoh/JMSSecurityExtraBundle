@@ -20,9 +20,7 @@ namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\TypeCompilerInterface;
-
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\IsEqualExpression;
-
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\Func\FunctionCompilerInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ExpressionInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpression;
@@ -282,6 +280,22 @@ class ExpressionCompiler
             return $this;
         }
 
+        if ($expr instanceof MethodCallExpression) {
+            $this->compilePreconditions($expr->object);
+
+            foreach ($expr->args as $arg) {
+                $this->compilePreconditions($arg);
+            }
+
+            return $this;
+        }
+
+        if ($expr instanceof GetPropertyExpression) {
+            $this->compilePreconditions($expr->object);
+
+            return $this;
+        }
+
         return $this;
     }
 
@@ -334,7 +348,16 @@ class ExpressionCompiler
         if ($expr instanceof MethodCallExpression) {
             $this->compileInternal($expr->object);
             $this->code .= '->'.$expr->method.'(';
-            $this->compileInternal($expr->args);
+
+            $first = true;
+            foreach ($expr->args as $arg) {
+                if (!$first) {
+                    $this->code .= ', ';
+                }
+                $first = false;
+
+                $this->compileInternal($arg);
+            }
             $this->code .= ')';
 
             return $this;

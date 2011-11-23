@@ -2,6 +2,14 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler;
+
+use JMS\SecurityExtraBundle\Security\Acl\Expression\HasPermissionFunctionCompiler;
+
+use JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression\Fixture\Issue22\Project;
+
+use JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression\Fixture\Issue22\SecuredObject;
+use CG\Proxy\MethodInvocation;
 use Symfony\Component\Security\Core\Role\Role;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
@@ -71,6 +79,32 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
             array(false, false, false, true),
             array(false, false, false, false),
         );
+    }
+
+    public function testCompileWhenParameterIsWrappedInMethodCall()
+    {
+        $this->compiler->addTypeCompiler(new ParameterExpressionCompiler());
+        $this->compiler->addFunctionCompiler(new HasPermissionFunctionCompiler());
+
+        $evaluator = eval($this->compiler->compileExpression(
+            new Expression('hasPermission(#project.getCompany(), "OPERATOR")')));
+
+        $secureObject = new SecuredObject();
+        $project = new Project();
+        $permissionEvaluator = $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Acl\Expression\PermissionEvaluator')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $permissionEvaluator->expects($this->once())
+            ->method('hasPermission')
+            ->will($this->returnValue(false));
+
+        $context = array(
+            'token'  => $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'),
+            'object' => new MethodInvocation(new \ReflectionMethod($secureObject, 'delete'), $secureObject, array($project), array()),
+            'permission_evaluator' => $permissionEvaluator,
+        );
+
+        $this->assertFalse($evaluator($context));
     }
 
     protected function setUp()
