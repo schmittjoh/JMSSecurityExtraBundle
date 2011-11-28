@@ -86,6 +86,9 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
         $this->compiler->addTypeCompiler(new ParameterExpressionCompiler());
         $this->compiler->addFunctionCompiler(new HasPermissionFunctionCompiler());
 
+        // the first call ensure that state is reset correctly
+        $this->compiler->compileExpression(new Expression(
+        	'hasPermission(#project.getCompany(), "OPERATOR")'));
         $evaluator = eval($this->compiler->compileExpression(
             new Expression('hasPermission(#project.getCompany(), "OPERATOR")')));
 

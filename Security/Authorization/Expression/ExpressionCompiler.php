@@ -98,7 +98,7 @@ class ExpressionCompiler
     {
         $this->nameCount  = 0;
         $this->code       = '';
-        $this->itemExists = $this->itemType = array();
+        $this->itemExists = $this->itemType = $this->attributes = array();
         $this->rolesName  = null;
 
         if ($raw) {
