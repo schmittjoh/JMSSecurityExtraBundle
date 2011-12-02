@@ -27,10 +27,6 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\Func\Func
 
 class HasPermissionFunctionCompiler implements FunctionCompilerInterface
 {
-    private $hasPermName;
-    private $oidRetrievalStrategyLocalName;
-    private $sidRetrievalStrategyLocalName;
-
     public function getName()
     {
         return 'hasPermission';
