@@ -105,10 +105,10 @@ of the SecurityContext. Some examples::
 
     use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
     
-    $securityContext->isGranted(new Expression('hasRole("A")'));
-    $securityContext->isGranted(new Expression('hasRole("A") or (hasRole("B") and hasRole("C")'));
-    $securityContext->isGranted(new Expression('hasPermission(object, "VIEW")'), $object);
-    $securityContext->isGranted(new Expression('token.getUsername() == "Johannes"');
+    $securityContext->isGranted(array(new Expression('hasRole("A")')));
+    $securityContext->isGranted(array(new Expression('hasRole("A") or (hasRole("B") and hasRole("C"))')));
+    $securityContext->isGranted(array(new Expression('hasPermission(object, "VIEW")'), $object));
+    $securityContext->isGranted(array(new Expression('token.getUsername() == "Johannes"')));
 
 Twig Usage
 ~~~~~~~~~~
