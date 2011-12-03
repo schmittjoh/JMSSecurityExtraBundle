@@ -44,6 +44,7 @@ final class ExpressionLexer
     const T_CLOSE_BRACE = 14;
     const T_COLON = 15;
     const T_IS_EQUAL = 16;
+    const T_NOT = 17;
 
     public static function getLiteral($type)
     {
@@ -94,6 +95,8 @@ final class ExpressionLexer
                 $type = self::T_AND;
             } else if ('||' === $value || 'or' === strtolower($value)) {
                 $type = self::T_OR;
+            } else if ('!' === $value || 'not' === strtolower($value)) {
+                $type = self::T_NOT;
             } else if (':' === $value) {
                 $type = self::T_COLON;
             } else if ('.' === $value) {

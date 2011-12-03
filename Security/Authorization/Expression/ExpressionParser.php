@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\NotExpression;
+
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\IsEqualExpression;
 
@@ -40,6 +42,7 @@ final class ExpressionParser
     const PRECEDENCE_OR       = 10;
     const PRECEDENCE_AND      = 15;
     const PRECEDENCE_IS_EQUAL = 20;
+    const PRECEDENCE_NOT      = 30;
 
     private $lexer;
 
@@ -95,6 +98,13 @@ final class ExpressionParser
 
     private function Primary()
     {
+        if (ExpressionLexer::T_NOT === $this->lexer->lookahead['type']) {
+            $this->lexer->next();
+            $expr = new NotExpression($this->Expression(self::PRECEDENCE_NOT));
+
+            return $this->Suffix($expr);
+        }
+        
         if (ExpressionLexer::T_OPEN_PARENTHESIS === $this->lexer->lookahead['type']) {
             $this->lexer->next();
             $expr = $this->Expression();

@@ -60,6 +60,7 @@ class ExpressionCompiler
         $this->addTypeCompiler(new Compiler\IsEqualExpressionCompiler());
         $this->addTypeCompiler(new Compiler\OrExpressionCompiler());
         $this->addTypeCompiler(new Compiler\VariableExpressionCompiler());
+        $this->addTypeCompiler(new Compiler\NotExpressionCompiler());
 
         $this->functionCompilers = array(
             'isAnonymous' => new Compiler\Func\IsAnonymousFunctionCompiler(),
