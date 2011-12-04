@@ -118,6 +118,14 @@ function. Some examples::
     is_expr_granted("hasRole('FOO')")
     is_expr_granted("hasPermission(object, 'VIEW')", object)
 
+Usage in Access Control
+~~~~~~~~~~~~~~~~~~~~~~~
+You can also use expressions in the ``access_control``::
+
+    security:
+        access_control:
+            - { path: ^/foo, access: "hasRole('FOO') and hasRole('BAR')" }
+
 Annotation-based Usage
 ~~~~~~~~~~~~~~~~~~~~~~
 see @PreAuthorize in the annotation reference

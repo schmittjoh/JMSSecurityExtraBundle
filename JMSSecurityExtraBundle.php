@@ -18,6 +18,7 @@
 
 namespace JMS\SecurityExtraBundle;
 
+use JMS\SecurityExtraBundle\DependencyInjection\SecurityExtension;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\IntegrationPass;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\DisableVotersPass;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddExpressionCompilersPass;
@@ -27,9 +28,8 @@ use JMS\SecurityExtraBundle\DependencyInjection\Compiler\CollectSecuredServicesP
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-
 /**
- * Registers our custom compiler pass
+ * Registers our custom compiler pass.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -39,7 +39,10 @@ class JMSSecurityExtraBundle extends Bundle
 
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
+        if (!$container->hasExtension('security')) {
+            throw new \LogicException('The JMSSecurityExtraBundle must be registered after the SecurityBundle in your AppKernel.php.');
+        }
+        $container->registerExtension(new SecurityExtension());
 
         $passConfig = $container->getCompilerPassConfig();
 
