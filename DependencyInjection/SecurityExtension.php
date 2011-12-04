@@ -18,9 +18,9 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
-use Symfony\Bundle\SecurityBundle\DependencyInjection\FactoryConfiguration;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension as BaseSecurityExtension;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,13 +32,13 @@ use Symfony\Component\Config\FileLocator;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecurityExtension extends BaseSecurityExtension
+class SecurityExtension extends Extension
 {
-    private $parentRef;
+    private $extension;
 
-    public function __construct()
+    public function __construct(BaseSecurityExtension $extension)
     {
-        $this->parentRef = new \ReflectionClass('Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension');
+        $this->extension = $extension;
     }
 
     public function getAlias()
@@ -46,86 +46,34 @@ class SecurityExtension extends BaseSecurityExtension
         return 'security';
     }
 
+    public function getClassesToCompile()
+    {
+        return array_merge(parent::getClassesToCompile(), $this->extension->getClassesToCompile());
+    }
+
     public function load(array $configs, ContainerBuilder $container)
     {
-        if (!array_filter($configs)) {
-            return;
+        $parentConfigs = array();
+
+        foreach ($configs as $config) {
+            if (isset($config['rule'])) {
+                unset($config['rule']);
+            }
+            if (isset($config['access_control'])) {
+                unset($config['access_control']);
+            }
+
+            $parentConfigs[] = $config;
         }
+        $this->extension->load($parentConfigs, $container);
 
-        if (false === $this->parentRef->hasProperty('userProviderFactories')) {
-            // first assemble the factories
-            $factoriesConfig = new FactoryConfiguration();
-            $config = $this->processConfiguration($factoriesConfig, $configs);
-            $factories = $this->invokeParent('createListenerFactories', array($container, $config));
-
-            // normalize and merge the actual configuration
-            $mainConfig = new MainConfiguration($factories);
-        } else {
-            // normalize and merge the actual configuration
-            $mainConfig = new MainConfiguration($this->getField('factories'), $this->getField('userProviderFactories'));
-        }
-
-        $config = $this->processConfiguration($mainConfig, $configs);
-
-        // load services
-        $loader = new XmlFileLoader($container, new FileLocator(
-            dirname($this->parentRef->getFilename()).'/../Resources/config'));
-        $loader->load('security.xml');
-        $loader->load('security_listeners.xml');
-        $loader->load('security_rememberme.xml');
-        $loader->load('templating_php.xml');
-        $loader->load('templating_twig.xml');
-        $loader->load('collectors.xml');
-
-        // set some global scalars
-        $container->setParameter('security.access.denied_url', $config['access_denied_url']);
-        $container->setParameter('security.authentication.manager.erase_credentials', $config['erase_credentials']);
-        $container->setParameter('security.authentication.session_strategy.strategy', $config['session_fixation_strategy']);
-        $container
-            ->getDefinition('security.access.decision_manager')
-            ->addArgument($config['access_decision_manager']['strategy'])
-            ->addArgument($config['access_decision_manager']['allow_if_all_abstain'])
-            ->addArgument($config['access_decision_manager']['allow_if_equal_granted_denied'])
-        ;
-        $container->setParameter('security.access.always_authenticate_before_granting', $config['always_authenticate_before_granting']);
-        $container->setParameter('security.authentication.hide_user_not_found', $config['hide_user_not_found']);
-
-        $this->invokeParent('createFirewalls', array($config, $container));
+        $config = $this->processConfiguration(new MainConfiguration(), $configs);
         $this->createAuthorization($config, $container);
-        $this->invokeParent('createRoleHierarchy', array($config, $container));
+    }
 
-        if (isset($config['util']['secure_random'])) {
-            $this->invokeParent('configureSecureRandom', array($config['util']['secure_random'], $container));
-        }
-
-        if ($config['encoders']) {
-            $this->invokeParent('createEncoders', array($config['encoders'], $container));
-        }
-
-        // load ACL
-        if (isset($config['acl'])) {
-            $this->invokeParent('aclLoad', array($config['acl'], $container));
-        }
-
-        // add some required classes for compilation
-        $this->addClassesToCompile(array(
-            'Symfony\\Component\\Security\\Http\\Firewall',
-            'Symfony\\Component\\Security\\Http\\FirewallMapInterface',
-            'Symfony\\Component\\Security\\Core\\SecurityContext',
-            'Symfony\\Component\\Security\\Core\\SecurityContextInterface',
-            'Symfony\\Component\\Security\\Core\\User\\UserProviderInterface',
-            'Symfony\\Component\\Security\\Core\\Authentication\\AuthenticationProviderManager',
-            'Symfony\\Component\\Security\\Core\\Authentication\\AuthenticationManagerInterface',
-            'Symfony\\Component\\Security\\Core\\Authorization\\AccessDecisionManager',
-            'Symfony\\Component\\Security\\Core\\Authorization\\AccessDecisionManagerInterface',
-            'Symfony\\Component\\Security\\Core\\Authorization\\Voter\\VoterInterface',
-
-            'Symfony\\Bundle\\SecurityBundle\\Security\\FirewallMap',
-            'Symfony\\Bundle\\SecurityBundle\\Security\\FirewallContext',
-
-            'Symfony\\Component\\HttpFoundation\\RequestMatcher',
-            'Symfony\\Component\\HttpFoundation\\RequestMatcherInterface',
-        ));
+    public function __call($method, array $args)
+    {
+        return call_user_func_array(array($this->extension, $method), $args);
     }
 
     private function createAuthorization($config, ContainerBuilder $container)
@@ -162,19 +110,11 @@ class SecurityExtension extends BaseSecurityExtension
         }
     }
 
-    private function getField($field)
-    {
-        $field = $this->parentRef->getProperty($field);
-        $field->setAccessible(true);
-
-        return $field->getValue($this);
-    }
-
     private function invokeParent($method, array $args = array())
     {
-        $method = $this->parentRef->getMethod($method);
-        $method->setAccessible(true);
+        $ref = new \ReflectionMethod($this->extension, $method);
+        $ref->setAccessible(true);
 
-        return $method->invokeArgs($this, $args);
+        return $ref->invokeArgs($this->extension, $args);
     }
 }

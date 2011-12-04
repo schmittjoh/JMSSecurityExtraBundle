@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+
 use Symfony\Component\HttpKernel\Kernel;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\MainConfiguration as BaseConfiguration;
@@ -36,22 +38,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class MainConfiguration extends BaseConfiguration
+class MainConfiguration implements ConfigurationInterface
 {
-    private $parentRef;
-
-    /**
-     * Constructor.
-     *
-     * @param array $factories
-     */
-    public function __construct(array $factories)
-    {
-        parent::__construct($factories);
-
-        $this->parentRef = new \ReflectionClass('Symfony\Bundle\SecurityBundle\DependencyInjection\MainConfiguration');
-    }
-
     /**
      * Generates the configuration tree builder.
      *
@@ -63,46 +51,7 @@ class MainConfiguration extends BaseConfiguration
         $rootNode = $tb->root('security');
 
         $rootNode
-            ->children()
-                ->scalarNode('access_denied_url')->defaultNull()->end()
-                ->scalarNode('session_fixation_strategy')->cannotBeEmpty()->defaultValue('migrate')->end()
-                ->booleanNode('hide_user_not_found')->defaultTrue()->end()
-                ->booleanNode('always_authenticate_before_granting')->defaultFalse()->end()
-                ->booleanNode('erase_credentials')->defaultTrue()->end()
-                ->arrayNode('access_decision_manager')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('strategy')->defaultValue('affirmative')->end()
-                        ->booleanNode('allow_if_all_abstain')->defaultFalse()->end()
-                        ->booleanNode('allow_if_equal_granted_denied')->defaultTrue()->end()
-                    ->end()
-                ->end()
-            ->end()
-
-            // add a faux-entry for factories, so that no validation error is thrown
-            ->fixXmlConfig('factory', 'factories')
-            ->children()
-                ->arrayNode('factories')->ignoreExtraKeys()->end()
-            ->end()
-        ;
-
-        $this->invokeParent('addAclSection', array($rootNode));
-        $this->invokeParent('addEncodersSection', array($rootNode));
-        $this->invokeParent('addProvidersSection', array($rootNode));
-        $this->invokeParent('addFirewallsSection', array($rootNode, $this->getField('factories')));
-        $this->addAccessControlSection($rootNode);
-        $this->invokeParent('addRoleHierarchySection', array($rootNode));
-
-        if ($this->parentRef->hasMethod('addUtilSection')) {
-            $this->invokeParent('addUtilSection', array($rootNode));
-        }
-
-        return $tb;
-    }
-
-    private function addAccessControlSection(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
+            ->ignoreExtraKeys()
             ->fixXmlConfig('rule', 'access_control')
             ->children()
                 ->arrayNode('access_control')
@@ -141,21 +90,7 @@ class MainConfiguration extends BaseConfiguration
                 ->end()
             ->end()
         ;
-    }
 
-    private function getField($field)
-    {
-        $field = $this->parentRef->getProperty($field);
-        $field->setAccessible(true);
-
-        return $field->getValue($this);
-    }
-
-    private function invokeParent($method, array $args = array())
-    {
-        $method = $this->parentRef->getMethod($method);
-        $method->setAccessible(true);
-
-        return $method->invokeArgs($this, $args);
+        return $tb;
     }
 }

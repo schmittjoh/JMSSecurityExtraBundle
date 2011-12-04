@@ -42,7 +42,7 @@ class JMSSecurityExtraBundle extends Bundle
         if (!$container->hasExtension('security')) {
             throw new \LogicException('The JMSSecurityExtraBundle must be registered after the SecurityBundle in your AppKernel.php.');
         }
-        $container->registerExtension(new SecurityExtension());
+        $container->registerExtension(new SecurityExtension($container->getExtension('security')));
 
         $passConfig = $container->getCompilerPassConfig();
 
