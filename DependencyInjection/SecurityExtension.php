@@ -43,7 +43,17 @@ class SecurityExtension extends Extension
 
     public function getAlias()
     {
-        return 'security';
+        return $this->extension->getAlias();
+    }
+
+    public function getNamespace()
+    {
+        return $this->extension->getNamespace();
+    }
+
+    public function getXsdValidationBasePath()
+    {
+        return $this->extension->getXsdValidationBasePath();
     }
 
     public function getClassesToCompile()
