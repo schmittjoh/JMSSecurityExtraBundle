@@ -61,6 +61,14 @@ class VariableExpressionCompiler implements TypeCompilerInterface
             return;
         }
 
+        if ($expr->allowNull) {
+            $compiler->write("(isset(\$context['{$expr->name}']) ? ");
+        }
+
         $compiler->write("\$context['{$expr->name}']");
+
+        if ($expr->allowNull) {
+            $compiler->write(" : null)");
+        }
     }
 }

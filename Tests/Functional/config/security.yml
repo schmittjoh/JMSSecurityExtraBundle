@@ -4,6 +4,9 @@ security:
             users:
                 johannes: { password: test, roles: [ROLE_FOO] }
     
+    role_hierarchy:
+        ROLE_FOO: [ROLE_BAR]
+    
     encoders:
         Symfony\Component\Security\Core\User\UserInterface: plaintext
         

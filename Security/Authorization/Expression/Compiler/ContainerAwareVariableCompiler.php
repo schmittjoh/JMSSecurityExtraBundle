@@ -18,6 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ExpressionInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\VariableExpressionCompiler;
@@ -36,10 +38,17 @@ class ContainerAwareVariableCompiler extends VariableExpressionCompiler
     public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
         if (isset($this->serviceMap[$expr->name])) {
-            $compiler->write("\$context['container']->get('{$this->serviceMap[$expr->name]}')");
+            $compiler->write("\$context['container']->get('{$this->serviceMap[$expr->name]}'");
+
+            if ($expr->allowNull) {
+                $compiler->write(", ".ContainerInterface::NULL_ON_INVALID_REFERENCE);
+            }
+
+            $compiler->write(")");
 
             return;
         }
+
         if (isset($this->parameterMap[$expr->name])) {
             $compiler->write("\$context['container']->getParameter('{$this->parameterMap[$expr->name]}')");
 

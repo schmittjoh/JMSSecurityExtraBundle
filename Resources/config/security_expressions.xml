@@ -43,6 +43,8 @@
             <!-- Some variables for built-in compilers for lazy-loading -->
             <tag name="security.expressions.variable" variable="trust_resolver"
                  service="security.authentication.trust_resolver" />
+            <tag name="security.expressions.variable" variable="role_hierarchy"
+                 service="security.role_hierarchy" />
         </service>
     
         <service id="security.expressions.voter" class="%security.expressions.voter.class%" public="false">

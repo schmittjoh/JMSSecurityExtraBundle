@@ -13,5 +13,10 @@ class IntegrationPass implements CompilerPassInterface
             && !$container->hasDefinition('security.acl.provider')) {
             $container->removeDefinition('security.acl.permission_evaluator');
         }
+
+        if ($container->hasDefinition('security.role_hierarchy')) {
+            $container->getDefinition('security.role_hierarchy')
+                ->setPublic(true);
+        }
     }
 }

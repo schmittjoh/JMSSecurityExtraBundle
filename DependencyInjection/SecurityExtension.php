@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\FileLocator;
 
 /**
- * Enhances the default security extension.
+ * Enhances the access_control section of the SecurityBundle.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -77,7 +77,7 @@ class SecurityExtension extends Extension
         }
         $this->extension->load($parentConfigs, $container);
 
-        $config = $this->processConfiguration(new MainConfiguration(), $configs);
+        $config = $this->processConfiguration(new AccessControlConfiguration(), $configs);
         $this->createAuthorization($config, $container);
     }
 
@@ -116,7 +116,7 @@ class SecurityExtension extends Extension
             }
 
             $container->getDefinition('security.access_map')
-                      ->addMethodCall('add', array($matcher, $attributes, $access['requires_channel']));
+                ->addMethodCall('add', array($matcher, $attributes, $access['requires_channel']));
         }
     }
 

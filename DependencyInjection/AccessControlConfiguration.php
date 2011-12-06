@@ -28,17 +28,11 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 /**
- * This class contains the configuration information for the following tags:
- *
- *   * security.config
- *   * security.acl
- *
- * This information is solely responsible for how the different configuration
- * sections are normalized, and merged.
+ * Enhances the access_control section configuration.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class MainConfiguration implements ConfigurationInterface
+class AccessControlConfiguration implements ConfigurationInterface
 {
     /**
      * Generates the configuration tree builder.

@@ -16,9 +16,6 @@ use JMS\DiExtraBundle\Annotation as DI;
 
 class PostController
 {
-    /** @DI\Inject("security.acl.provider") */
-    private $provider;
-
     /** @DI\Inject */
     private $request;
 
@@ -47,11 +44,11 @@ class PostController
             $this->em->flush();
 
             $oid = ObjectIdentity::fromDomainObject($post);
-            $acl = $this->provider->createAcl($oid);
+            $acl = $this->getAclProvider()->createAcl($oid);
 
             $sid = UserSecurityIdentity::fromToken($this->context->getToken());
             $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
-            $this->provider->updateAcl($acl);
+            $this->getAclProvider()->updateAcl($acl);
 
             $this->em->getConnection()->commit();
 
@@ -73,4 +70,15 @@ class PostController
     {
         return new Response($post->getTitle());
     }
+
+    /**
+     * @PreAuthorize("hasRole('ROLE_BAR')")
+     */
+    public function listPostAction()
+    {
+        return new Response('list');
+    }
+
+    /** @DI\LookupMethod("security.acl.provider") */
+    protected function getAclProvider() { }
 }

@@ -18,5 +18,10 @@ post_controller_edit:
     defaults:
         _controller: TestBundle:Post:editPost
         
+post_controller_list:
+    pattern: /post/list
+    defaults:
+        _controller: TestBundle:Post:listPost
+        
 form_login_bundle:
     resource: @FormLoginBundle/Resources/config/routing.yml

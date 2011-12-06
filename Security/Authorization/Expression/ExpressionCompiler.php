@@ -154,12 +154,15 @@ class ExpressionCompiler
         $this->verifyItem('token', 'Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->rolesName = $rolesName = $this->nextName();
+        $hierarchyName = $this->nextName();
         $tmpName = $this->nextName();
         $this
             ->writeln("\$$rolesName = \$context['token']->getRoles();")
-            ->writeln("if (isset(\$context['role_hierarchy'])) {")
+            ->write("if (null !== \$$hierarchyName = ")
+            ->compileInternal(new VariableExpression('role_hierarchy', true))
+            ->writeln(") {")
             ->indent()
-            ->writeln("\$$rolesName = \$context['role_hierarchy']->getReachableRoles(\$$rolesName);")
+            ->writeln("\$$rolesName = \${$hierarchyName}->getReachableRoles(\$$rolesName);")
             ->outdent()
             ->write("}\n\n")
             ->writeln("\$$tmpName = array();")

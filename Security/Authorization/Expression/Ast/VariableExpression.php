@@ -21,9 +21,11 @@ namespace JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast;
 class VariableExpression implements ExpressionInterface
 {
     public $name;
+    public $allowNull;
 
-    public function __construct($name)
+    public function __construct($name, $allowNull = false)
     {
         $this->name = $name;
+        $this->allowNull = $allowNull;
     }
 }

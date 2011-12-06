@@ -60,4 +60,18 @@ class MethodAccessControlTest extends BaseTestCase
         $this->assertEquals(200, $response->getStatusCode(), substr($response, 0, 2000));
         $this->assertEquals('Foo', $response->getContent());
     }
+
+    public function testRoleHierarchyIsRespected()
+    {
+        $client = $this->createClient(array('config' => 'all_voters_disabled.yml'));
+        $client->insulate();
+
+        $this->login($client);
+
+        $client->request('GET', '/post/list');
+
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), substr($response, 0, 2000));
+        $this->assertEquals('list', $response->getContent(), substr($response, 0, 2000));
+    }
 }
