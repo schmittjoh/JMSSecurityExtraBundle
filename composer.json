@@ -1,0 +1,24 @@
+{
+    "name":         "jms/security-extra-bundle",
+    "description":  "Enhances the Symfony2 Security Component by adding several new features",
+    "keywords":     ["annotations","authorization"],
+    "type":         "symfony-bundle",
+    "license":      "Apache",
+    "authors": [
+        {
+            "name":   "Johannes M. Schmitt",
+            "email":  "schmittjoh@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle":  ">=2.0.0,<2.1.0-dev",
+        "metadata/metadata":         "master-dev"
+    },
+    "recommend": {
+        "jms/di-extra-bundle": "master-dev"
+    },
+    "autoload": {
+        "psr-0": { "JMS\\SecurityExtraBundle": "" }
+    },
+    "target-dir": "JMS/SecurityExtraBundle"
+}
