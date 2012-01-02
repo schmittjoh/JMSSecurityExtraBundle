@@ -12,11 +12,11 @@
     ],
     "require": {
         "symfony/framework-bundle": "2.*",
-        "metadata/metadata": "master-dev",
-        "jms/aop-bundle": "master-dev"
+        "jms/metadata": "1.1.*",
+        "jms/aop-bundle": "1.0.*"
     },
     "recommend": {
-        "jms/di-extra-bundle": "master-dev"
+        "jms/di-extra-bundle": "1.0.*"
     },
     "autoload": {
         "psr-0": { "JMS\\SecurityExtraBundle": "" }
