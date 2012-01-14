@@ -128,7 +128,7 @@ You can also use expressions in the ``access_control``::
 
 Annotation-based Usage
 ~~~~~~~~~~~~~~~~~~~~~~
-see @PreAuthorize in the annotation reference
+see @PreAuthorize in the annotation reference, remember to enable expressions in config, otherwise you'll get "Token does not have the required roles." exception 
 
 Reference
 ~~~~~~~~~
