@@ -47,7 +47,7 @@ class AclVoter implements VoterInterface
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         foreach ($attributes as $attribute) {
-            if (null === $masks = $this->permissionMap->getMasks((string) $attribute, $object)) {
+            if (null === $masks = $this->permissionMap->getMasks(strtoupper((string) $attribute), $object)) {
                 continue;
             }
 
