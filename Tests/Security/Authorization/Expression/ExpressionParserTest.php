@@ -60,6 +60,15 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Malformed expression. Expected end of expression, but got "," (T_COMMA).
+     */
+    public function testInvalidExpression()
+    {
+    	$this->parser->parse('object, "FOO")');
+    }
+
+    /**
      * @dataProvider getPrecedenceTests
      */
     public function testPrecendence($expected, $expr)

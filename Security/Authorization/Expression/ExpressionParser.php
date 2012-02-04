@@ -55,7 +55,14 @@ final class ExpressionParser
     {
         $this->lexer->initialize($str);
 
-        return $this->Expression();
+        $expr = $this->Expression();
+
+        if (null !== $this->lexer->lookahead) {
+            throw new \RuntimeException(sprintf('Malformed expression. Expected end of expression, but got "%s" (%s).',
+                $this->lexer->lookahead['value'], $this->lexer->getLiteral($this->lexer->lookahead['type'])));
+        }
+
+        return $expr;
     }
 
     private function Expression($precedence = 0)
@@ -104,7 +111,7 @@ final class ExpressionParser
 
             return $this->Suffix($expr);
         }
-        
+
         if (ExpressionLexer::T_OPEN_PARENTHESIS === $this->lexer->lookahead['type']) {
             $this->lexer->next();
             $expr = $this->Expression();
