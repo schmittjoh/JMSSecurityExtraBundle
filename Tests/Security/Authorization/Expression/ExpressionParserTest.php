@@ -28,7 +28,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     public function testSingleFunctionWithOneArgument()
     {
         $this->assertEquals(new FunctionExpression('hasRole', array(
-        	new ConstantExpression('ROLE_ADMIN'))),
+            new ConstantExpression('ROLE_ADMIN'))),
             $this->parser->parse('hasRole("ROLE_ADMIN")'));
     }
 
@@ -65,7 +65,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidExpression()
     {
-    	$this->parser->parse('object, "FOO")');
+        $this->parser->parse('object, "FOO")');
     }
 
     /**

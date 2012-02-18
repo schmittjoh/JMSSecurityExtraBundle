@@ -18,8 +18,8 @@ class HasPermissionFunctionCompilerTest extends \PHPUnit_Framework_TestCase
             array(new VariableExpression('foo'), new ConstantExpression('VIEW'))));
 
         $this->assertContains(
-        	"\$context['permission_evaluator']->hasPermission(\$context['token'], \$context['foo'], 'VIEW');",
-        	$source);
+            "\$context['permission_evaluator']->hasPermission(\$context['token'], \$context['foo'], 'VIEW');",
+            $source);
     }
 
     public function testCompileUpperCasesPermissions()

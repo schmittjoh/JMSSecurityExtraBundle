@@ -53,7 +53,7 @@ namespace JMS\SecurityExtraBundle\Annotation;
  * automatically:
  *
  * <code>
- * 		 // child class
+ *          // child class
  *     public function editComment($commentId)
  *     {
  *         // retrieve comment from database

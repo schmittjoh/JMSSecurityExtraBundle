@@ -35,7 +35,7 @@ class MethodAccessControlTest extends BaseTestCase
         $manager = self::$kernel->getContainer()->get('user_manager');
 
         $this->assertNotEquals(
-        	'JMS\SecurityExtraBundle\Tests\Functional\TestBundle\User\UserManager',
+            'JMS\SecurityExtraBundle\Tests\Functional\TestBundle\User\UserManager',
             get_class($manager)
         );
         $manager->delete();
@@ -49,17 +49,13 @@ class MethodAccessControlTest extends BaseTestCase
         $this->importDatabaseSchema();
         $this->login($client);
 
-        var_dump('ADDING POST');
         $client->request('POST', '/post/add', array('title' => 'Foo'));
-        var_dump('POST ADDED');
 
         $response = $client->getResponse();
         $this->assertEquals('/post/edit/1', $response->headers->get('Location'),
             substr($response, 0, 2000));
 
-        var_dump('EDITING POST');
         $client->request('GET', '/post/edit/1');
-        var_dump('POST EDITED');
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), substr($response, 0, 2000));
         $this->assertEquals('Foo', $response->getContent());
@@ -67,7 +63,7 @@ class MethodAccessControlTest extends BaseTestCase
 
     public function testRoleHierarchyIsRespected()
     {
-    	$client = $this->createClient(array('config' => 'all_voters_disabled.yml'));
+        $client = $this->createClient(array('config' => 'all_voters_disabled.yml'));
         $client->insulate();
 
         $this->login($client);

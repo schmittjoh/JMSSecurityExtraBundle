@@ -54,9 +54,9 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadWithMethodAccessControl()
     {
         $this->extension->load(array(array(
-        	'expressions' => true,
-        	'method_access_control' => array(
-            	':login$' => 'hasRole("FOO")',
+            'expressions' => true,
+            'method_access_control' => array(
+                ':login$' => 'hasRole("FOO")',
             )
         )), $container = $this->getContainer());
 
@@ -71,7 +71,7 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->extension->load(array(array(
             'expressions' => false,
-        	'method_access_control' => array('foo' => 'bar'),
+            'method_access_control' => array('foo' => 'bar'),
         )), $this->getContainer());
     }
 
