@@ -98,6 +98,7 @@ class JMSSecurityExtraExtension extends Extension
         }
         
         if (isset($config['util']['secure_random'])) {
+        	$loader->load('security_secure_random.xml');
             $this->configureSecureRandom($config['util']['secure_random']);
         }
     }

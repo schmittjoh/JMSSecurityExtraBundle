@@ -25,9 +25,6 @@
         <parameter key="security.extra.driver_chain.class">Metadata\Driver\DriverChain</parameter>
         <parameter key="security.extra.annotation_driver.class">JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver</parameter>
         <parameter key="security.extra.file_cache.class">Metadata\Cache\FileCache</parameter>
-        
-        <parameter key="security.util.secure_random_schema.class">JMS\SecurityExtraBundle\Security\Util\SecureRandomSchema</parameter>
-        <parameter key="security.util.secure_random_schema_listener.class">JMS\SecurityExtraBundle\Security\EventListener\SecureRandomSchemaListener</parameter>
     </parameters>
 
     <services>
@@ -97,18 +94,6 @@
                 <argument>true</argument>
             </call>
         </service>
-        
-        <!-- Utilities -->
-        <service id="security.util.secure_random" class="JMS\SecurityExtraBundle\Security\Util\SecureRandom">
-            <tag name="monolog.logger" channel="security" />
-            <argument type="service" id="logger" />
-        </service>
-        <service id="security.util.secure_random_schema" class="%security.util.secure_random_schema.class%">
-            <argument></argument><!-- Table Name -->
-        </service>
-        <service id="security.util.secure_random_schema_listener" class="%security.util.secure_random_schema_listener.class%" public="false">
-            <argument type="service" id="security.util.secure_random_schema" />
-        </service>        
     </services>
 
 </container>
