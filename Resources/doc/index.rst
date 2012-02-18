@@ -9,6 +9,7 @@ Features:
 - powerful expression-based authorization language
 - method security authorization
 - authorization configuration via annotations
+- secure random number generator
 
 Installation
 ------------
@@ -87,6 +88,12 @@ Below, you find the default configuration::
         # Allows you to specify access control rules for specific methods, such
         # as controller actions
         method_access_control: { }
+
+        util:
+            secure_random:
+                connection: # the doctrine connection name
+                table_name: seed_table
+                seed_provider: # service id of your own seed provider implementation
 
 
 Expression-based Authorization Language
@@ -221,6 +228,24 @@ configuration for this service::
 In case, you like to configure all services via annotations, you can also set
 ``secure_all_services`` to true. Then, you do not need to add a tag for each 
 service.
+
+Secure Random Number Generator
+------------------------------
+In almost all applications, you need to generate random numbers that cannot be
+guessed by a possible attacker. Unfortunately, PHP does not provide capabilities
+to do this consistently on all platforms. 
+
+This bundle ships with several seed provider implementations, and will choose
+the best provider possible depending on your PHP setup.
+
+You can enable the "security.secure_random" service with the following config::
+
+    jms_security_extra:
+        util:
+            secure_random: ~
+
+Also make sure to run ``php app/console doctrine:schema:update``, or create an
+equivalent migration to import the seed table.
 
 
 Annotations
