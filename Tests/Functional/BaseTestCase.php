@@ -2,7 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
-use Symfony\Component\HttpKernel\Util\Filesystem;
+use Symfony\Component\Filesystem\Filesystem;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

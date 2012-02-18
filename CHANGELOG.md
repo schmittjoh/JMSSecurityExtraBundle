@@ -1,4 +1,13 @@
-This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
+This document details all changes between different versions of JMSSecurityExtraBundle:
+
+1.2
+---
+
+- added a secure random number generator service
+
+
+1.1
+---
 
 - The configuration option "secure_controllers" has been removed. This setting is
   now automatically enabled, but it requires the JMSDiExtraBundle.
@@ -35,4 +44,8 @@ This document details all changes from JMSSecurityExtraBundle 1.0.x to 1.1:
 - The "is_expr_granted" Twig function has been added if you want to check an
   expression from a Twig template.
 
-  
+
+1.0
+---
+
+Initial release  

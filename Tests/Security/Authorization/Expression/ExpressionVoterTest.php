@@ -8,7 +8,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
-use Symfony\Component\HttpKernel\Util\Filesystem;
+use Symfony\Component\Filesystem\Filesystem;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionVoter;
 
 class ExpressionVoterTest extends \PHPUnit_Framework_TestCase
