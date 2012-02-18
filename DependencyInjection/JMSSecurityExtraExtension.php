@@ -96,13 +96,13 @@ class JMSSecurityExtraExtension extends Extension
             $container->setParameter('security.access.method_access_control',
                 $config['method_access_control']);
         }
-        
+
         if (isset($config['util']['secure_random'])) {
-        	$loader->load('security_secure_random.xml');
+            $loader->load('security_secure_random.xml');
             $this->configureSecureRandom($config['util']['secure_random']);
         }
     }
-    
+
     private function configureSecureRandom(array $config, ContainerBuilder $container)
     {
         if (isset($config['seed_provider'])) {
