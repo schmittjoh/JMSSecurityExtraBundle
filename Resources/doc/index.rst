@@ -1,6 +1,5 @@
-========
 Overview
-========
+--------
 
 This bundle enhances the Symfony2 Security Component by adding several new features.
 
