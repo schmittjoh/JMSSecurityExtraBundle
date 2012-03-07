@@ -24,7 +24,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocati
 use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
@@ -44,7 +44,7 @@ class MethodSecurityInterceptor
     protected $runAsManager;
     protected $logger;
 
-    public function __construct(SecurityContext $securityContext, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
+    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
                                 AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, LoggerInterface $logger = null)
     {
         $this->alwaysAuthenticate = false;
