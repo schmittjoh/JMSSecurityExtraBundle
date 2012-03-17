@@ -1,5 +1,8 @@
 Expression-based Authorization Language
----------------------------------------
+#######################################
+
+Introduction
+------------
 The expression language is a very powerful alternative to the simple attributes
 of the security voting system. They allow to perform complex access decision
 checks, and because they are compiled down to raw PHP, they are much faster than
@@ -7,6 +10,8 @@ the built-in voters. Also they are lazy-loading by nature, so you will also
 save some resources for example by not having to initialize the entire ACL system
 on each request.
 
+Usage
+-----
 Programmatic Usage
 ~~~~~~~~~~~~~~~~~~
 You can execute expressions programmatically by using the ``isGranted`` method
@@ -41,7 +46,7 @@ See @PreAuthorize in the annotation reference. Please also remember to enable ex
 in your config, otherwise you will get an exception upon checking access. 
 
 Reference
-~~~~~~~~~
+---------
 +-----------------------------------+--------------------------------------------+
 | Expression                        | Description                                |
 +===================================+============================================+
