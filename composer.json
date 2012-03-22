@@ -2,8 +2,9 @@
     "name": "jms/security-extra-bundle",
     "description": "Enhances the Symfony2 Security Component by adding several new features",
     "keywords": ["annotations","authorization"],
+    "homepage": "http://jmsyst.com/bundles/JMSSecurityExtraBundle",
     "type": "symfony-bundle",
-    "license": "Apache",
+    "license": "Apache2",
     "authors": [
         {
             "name": "Johannes M. Schmitt",
