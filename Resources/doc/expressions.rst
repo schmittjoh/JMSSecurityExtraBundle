@@ -15,7 +15,11 @@ Usage
 Programmatic Usage
 ~~~~~~~~~~~~~~~~~~
 You can execute expressions programmatically by using the ``isGranted`` method
-of the SecurityContext. Some examples::
+of the SecurityContext. Some examples:
+
+.. code-block :: php
+
+    <?php
 
     use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
     
@@ -27,18 +31,30 @@ of the SecurityContext. Some examples::
 Twig Usage
 ~~~~~~~~~~
 You can check expressions from Twig templates using the ``is_expr_granted``
-function. Some examples::
+function. Some examples:
+
+.. code-block :: jinja
 
     is_expr_granted("hasRole('FOO')")
     is_expr_granted("hasPermission(object, 'VIEW')", object)
 
 Usage in Access Control
 ~~~~~~~~~~~~~~~~~~~~~~~
-You can also use expressions in the ``access_control``::
+You can also use expressions in the ``access_control``:
 
-    security:
-        access_control:
-            - { path: ^/foo, access: "hasRole('FOO') and hasRole('BAR')" }
+.. configuration-block ::
+
+    .. code-block :: yaml
+
+        security:
+            access_control:
+                - { path: ^/foo, access: "hasRole('FOO') and hasRole('BAR')" }
+
+    .. code-block :: xml
+    
+        <security>
+            <rule path="^/foo" access="hasRole('FOO') and hasRole('BAR')" />
+        </security>
 
 Annotation-based Usage
 ~~~~~~~~~~~~~~~~~~~~~~

@@ -3,7 +3,9 @@ Annotations
 @PreAuthorize
 ~~~~~~~~~~~~~
 This annotation lets you define an expression (see the expression language
-paragraph) which is executed prior to invoking a method::
+paragraph) which is executed prior to invoking a method:
+
+.. code-block :: php
 
     <?php
     
@@ -20,7 +22,9 @@ paragraph) which is executed prior to invoking a method::
 
 @Secure
 ~~~~~~~
-This annotation lets you define who is allowed to invoke a method::
+This annotation lets you define who is allowed to invoke a method:
+
+.. code-block :: php
 
     <?php
     
@@ -40,7 +44,9 @@ This annotation lets you define who is allowed to invoke a method::
 @SecureParam
 ~~~~~~~~~~~~
 This annotation lets you define restrictions for parameters which are passed to
-the method. This is only useful if the parameters are domain objects::
+the method. This is only useful if the parameters are domain objects:
+
+.. code-block :: php
 
     <?php
     
@@ -61,7 +67,9 @@ the method. This is only useful if the parameters are domain objects::
 @SecureReturn
 ~~~~~~~~~~~~~
 This annotation lets you define restrictions for the value which is returned by
-the method. This is also only useful if the returned value is a domain object::
+the method. This is also only useful if the returned value is a domain object:
+
+.. code-block :: php
 
     <?php
     
@@ -88,7 +96,9 @@ for before, or after invocation access decisions.
 
 This is typically used to implement a two-tier service layer where you have 
 public and private services, and private services are only to be invoked 
-through a specific public service::
+through a specific public service:
+
+.. code-block :: php
 
     <?php
     
