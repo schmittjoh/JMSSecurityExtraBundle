@@ -4,7 +4,7 @@
 
 	<parameters>
         <parameter key="security.util.secure_random_schema.class">JMS\SecurityExtraBundle\Security\Util\SecureRandomSchema</parameter>
-        <parameter key="security.util.secure_random_schema_listener.class">JMS\SecurityExtraBundle\Security\EventListener\SecureRandomSchemaListener</parameter>
+        <parameter key="security.util.secure_random_schema_listener.class">JMS\SecurityExtraBundle\EventListener\SecureRandomSchemaListener</parameter>
 	</parameters>
 
 	<services>
