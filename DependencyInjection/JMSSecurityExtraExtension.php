@@ -128,4 +128,9 @@ class JMSSecurityExtraExtension extends Extension
             ;
         }
     }
+    
+    private function getDoctrineConnectionId($guess)
+    {
+        return "doctrine.dbal.{$guess}_connection";
+    }
 }
