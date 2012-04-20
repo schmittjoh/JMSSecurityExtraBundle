@@ -179,7 +179,7 @@ class SecureMethodInvocationsPass implements CompilerPassInterface
 
             $this->cacheMetadata = unserialize(file_get_contents($this->cacheDir.'cache.meta'));
         } else {
-            set_time_limit(0);
+            @set_time_limit(0);
             $this->cacheMetadata = array();
         }
     }
