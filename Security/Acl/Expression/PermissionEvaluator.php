@@ -27,6 +27,7 @@ use Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterf
 use Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Acl\Voter\FieldVote;
 
 class PermissionEvaluator
 {
@@ -41,8 +42,8 @@ class PermissionEvaluator
         ObjectIdentityRetrievalStrategyInterface $oidRetrievalStrategy,
         SecurityIdentityRetrievalStrategyInterface $sidRetrievalStrategy,
         PermissionMapInterface $permissionMap,
-        $allowIfObjectIdentityUnavailable = true,
-        LoggerInterface $logger = null)
+        LoggerInterface $logger = null,
+        $allowIfObjectIdentityUnavailable = true)
     {
         $this->aclProvider = $aclProvider;
         $this->oidRetrievalStrategy = $oidRetrievalStrategy;
