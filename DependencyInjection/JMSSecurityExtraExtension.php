@@ -42,7 +42,7 @@ class JMSSecurityExtraExtension extends Extension
             throw new RuntimeException('The JMSSecurityExtraBundle requires the JMSAopBundle, please make sure to enable it in your AppKernel.');
         }
 
-        $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
         $loader->load('services.xml');
