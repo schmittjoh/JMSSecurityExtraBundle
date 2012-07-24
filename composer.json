@@ -11,16 +11,20 @@
             "email": "schmittjoh@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "symfony/framework-bundle": "2.1.*",
         "jms/metadata": "1.1.*",
         "jms/aop-bundle": "1.0.*"
-    },
-    "recommend": {
-        "jms/di-extra-bundle": "1.0.*"
+        "jms/di-extra-bundle": "1.1.*"
     },
     "autoload": {
         "psr-0": { "JMS\\SecurityExtraBundle": "" }
     },
-    "target-dir": "JMS/SecurityExtraBundle"
+    "target-dir": "JMS/SecurityExtraBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2.x-dev"
+        }
+    }
 }
