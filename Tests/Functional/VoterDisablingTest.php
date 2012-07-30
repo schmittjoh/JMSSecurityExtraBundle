@@ -4,6 +4,9 @@ namespace JMS\SecurityExtraBundle\Tests\Functional;
 
 class VoterDisablingTest extends BaseTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testDisableAllVoters()
     {
         $client = $this->createClient(array('config' => 'all_voters_disabled.yml'));
@@ -15,6 +18,9 @@ class VoterDisablingTest extends BaseTestCase
         $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Authorization\Expression\LazyLoadingExpressionVoter', $voters[0]);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testDefault()
     {
         $client = $this->createClient(array('config' => 'default.yml'));
@@ -27,6 +33,9 @@ class VoterDisablingTest extends BaseTestCase
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSomeVotersDisabled()
     {
         $client = $this->createClient(array('config' => 'some_voters_disabled.yml'));

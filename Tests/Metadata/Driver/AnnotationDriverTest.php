@@ -19,13 +19,24 @@
 namespace JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
 require_once __DIR__.'/Fixtures/services.php';
 
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
+    public function testLoadMetadataWithClassPreAuthorize()
+    {
+        $driver = new AnnotationDriver(new AnnotationReader());
+
+        $metadata = $driver->loadMetadataForClass(new \ReflectionClass('JMS\SecurityExtraBundle\Tests\Metadata\Driver\Fixtures\Controller\AllActionsSecuredController'));
+        $this->assertEquals(array('fooAction', 'barAction', 'bazAction'), array_keys($metadata->methodMetadata));
+        $this->assertEquals(array(new Expression("hasRole('foo')")), $metadata->methodMetadata['fooAction']->roles);
+        $this->assertEquals(array(new Expression("hasRole('foo')")), $metadata->methodMetadata['barAction']->roles);
+        $this->assertEquals(array(new Expression("hasRole('bar')")), $metadata->methodMetadata['bazAction']->roles);
+    }
+
     public function testLoadMetadataFromClass()
     {
         $driver = new AnnotationDriver(new AnnotationReader());

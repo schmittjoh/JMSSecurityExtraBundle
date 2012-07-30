@@ -1,4 +1,4 @@
-JMSSecurityExtraBundle
+JMSSecurityExtraBundle [![Build Status](https://secure.travis-ci.org/schmittjoh/JMSSecurityExtraBundle.png?branch=master)](http://travis-ci.org/schmittjoh/JMSSecurityExtraBundle)
 ======================
 
 Documentation: 

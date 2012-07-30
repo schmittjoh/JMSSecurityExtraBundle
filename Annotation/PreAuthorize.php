@@ -24,7 +24,7 @@ use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
  * Annotation for expression-based access control.
  *
  * @Annotation
- * @Target("METHOD")
+ * @Target({"CLASS", "METHOD"})
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -35,4 +35,13 @@ final class PreAuthorize
      * @var string
      */
     public $expr;
+
+    /**
+     * This annotation defines whether only public methods should be considered
+     * when it is applied on a class. If the annotation is declared on a method,
+     * this setting has no effect.
+     *
+     * @var boolean
+     */
+    public $publicOnly = true;
 }

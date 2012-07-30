@@ -51,6 +51,7 @@ class AnnotationDriver implements DriverInterface
     {
         $metadata = new ClassMetadata($reflection->getName());
 
+        $classPreAuthorize = $this->reader->getClassAnnotation($reflection, 'JMS\SecurityExtraBundle\Annotation\PreAuthorize');
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
             // check if the method was defined on this class
             if ($method->getDeclaringClass()->getName() !== $reflection->getName()) {
@@ -59,7 +60,11 @@ class AnnotationDriver implements DriverInterface
 
             $annotations = $this->reader->getMethodAnnotations($method);
 
-            if ($annotations && null !== $methodMetadata = $this->convertMethodAnnotations($method, $annotations)) {
+            if ( ! $annotations && ! $classPreAuthorize) {
+                continue;
+            }
+
+            if (null !== $methodMetadata = $this->convertMethodAnnotations($method, $annotations, $classPreAuthorize)) {
                 $metadata->addMethodMetadata($methodMetadata);
             }
         }
@@ -67,7 +72,7 @@ class AnnotationDriver implements DriverInterface
         return $metadata;
     }
 
-    private function convertMethodAnnotations(\ReflectionMethod $method, array $annotations)
+    private function convertMethodAnnotations(\ReflectionMethod $method, array $annotations, PreAuthorize $classPreAuthorize = null)
     {
         $parameters = array();
         foreach ($method->getParameters() as $index => $parameter) {
@@ -75,21 +80,21 @@ class AnnotationDriver implements DriverInterface
         }
 
         $methodMetadata = new MethodMetadata($method->getDeclaringClass()->getName(), $method->getName());
-        $hasSecurityMetadata = false;
+        $hasSecurityMetadata = $hasPreRestrictions = false;
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
                 $methodMetadata->roles = $annotation->roles;
-                $hasSecurityMetadata = true;
+                $hasSecurityMetadata = $hasPreRestrictions = true;
             } else if ($annotation instanceof PreAuthorize) {
                 $methodMetadata->roles = array(new Expression($annotation->expr));
-                $hasSecurityMetadata = true;
+                $hasSecurityMetadata = $hasPreRestrictions = true;
             } else if ($annotation instanceof SecureParam) {
                 if (!isset($parameters[$annotation->name])) {
                     throw new InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
                 }
 
                 $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
-                $hasSecurityMetadata = true;
+                $hasSecurityMetadata = $hasPreRestrictions = true;
             } else if ($annotation instanceof SecureReturn) {
                 $methodMetadata->returnPermissions = $annotation->permissions;
                 $hasSecurityMetadata = true;
@@ -100,6 +105,21 @@ class AnnotationDriver implements DriverInterface
                 $methodMetadata->runAsRoles = $annotation->roles;
                 $hasSecurityMetadata = true;
             }
+        }
+
+        // We use the following conditions to determine whether we should apply
+        // a class-level @PreAuthorize annotation:
+        //
+        //    - No other authorization that runs before the method invocation
+        //      must be configured. @Secure, @SecureParam, @PreAuthorize must
+        //      not be present; @SecureReturn would be fine though.
+        //
+        //    - The method must be public, or alternatively publicOnly on
+        //      @PreAuthorize must be set to false.
+        if ( ! $hasPreRestrictions && $classPreAuthorize
+                && (!$classPreAuthorize->publicOnly || !$method->isProtected())) {
+            $methodMetadata->roles = array(new Expression($classPreAuthorize->expr));
+            $hasSecurityMetadata = true;
         }
 
         return $hasSecurityMetadata ? $methodMetadata : null;

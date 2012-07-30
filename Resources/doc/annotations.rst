@@ -8,9 +8,9 @@ paragraph) which is executed prior to invoking a method:
 .. code-block :: php
 
     <?php
-    
+
     use JMS\SecurityExtraBundle\Annotation\PreAuthorize;
-    
+
     class MyService
     {
         /** @PreAuthorize("hasRole('A') or (hasRole('B') and hasRole('C'))") */
@@ -20,6 +20,12 @@ paragraph) which is executed prior to invoking a method:
         }
     }
 
+.. tip ::
+
+    If you like to secure all actions of the controller with the same rule, you
+    may also specify @PreAuthorize on the class itself. Caution though, this
+    rule is only applied to the methods which are declared in the class.
+
 @Secure
 ~~~~~~~
 This annotation lets you define who is allowed to invoke a method:
@@ -27,15 +33,15 @@ This annotation lets you define who is allowed to invoke a method:
 .. code-block :: php
 
     <?php
-    
+
     use JMS\SecurityExtraBundle\Annotation\Secure;
-    
+
     class MyService
     {
         /**
          * @Secure(roles="ROLE_USER, ROLE_FOO, ROLE_ADMIN")
          */
-        public function secureMethod() 
+        public function secureMethod()
         {
             // ...
         }
@@ -49,9 +55,9 @@ the method. This is only useful if the parameters are domain objects:
 .. code-block :: php
 
     <?php
-    
+
     use JMS\SecurityExtraBundle\Annotation\SecureParam;
-    
+
     class MyService
     {
         /**
@@ -72,9 +78,9 @@ the method. This is also only useful if the returned value is a domain object:
 .. code-block :: php
 
     <?php
-    
+
     use JMS\SecurityExtraBundle\Annotation\SecureReturn;
-    
+
     class MyService
     {
         /**
@@ -83,28 +89,28 @@ the method. This is also only useful if the returned value is a domain object:
         public function secureMethod()
         {
             // ...
-            
+
             return $domainObject;
         }
     }
-    
+
 @RunAs
 ~~~~~~
-This annotation lets you specifiy roles which are added only for the duration 
-of the method invocation. These roles will not be taken into consideration 
-for before, or after invocation access decisions. 
+This annotation lets you specifiy roles which are added only for the duration
+of the method invocation. These roles will not be taken into consideration
+for before, or after invocation access decisions.
 
-This is typically used to implement a two-tier service layer where you have 
-public and private services, and private services are only to be invoked 
+This is typically used to implement a two-tier service layer where you have
+public and private services, and private services are only to be invoked
 through a specific public service:
 
 .. code-block :: php
 
     <?php
-    
+
     use JMS\SecurityExtraBundle\Annotation\Secure;
     use JMS\SecurityExtraBundle\Annotation\RunAs;
-    
+
     class MyPrivateService
     {
         /**
@@ -115,11 +121,11 @@ through a specific public service:
             // ...
         }
     }
-    
+
     class MyPublicService
     {
         protected $myPrivateService;
-    
+
         /**
          * @Secure(roles="ROLE_USER")
          * @RunAs(roles="ROLE_PRIVATE_SERVICE")

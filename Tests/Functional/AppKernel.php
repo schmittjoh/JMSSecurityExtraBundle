@@ -2,29 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
-// get the autoload file
-$dir = __DIR__;
-$lastDir = null;
-while ($dir !== $lastDir) {
-    $lastDir = $dir;
-
-    if (is_file($dir.'/autoload.php')) {
-        require_once $dir.'/autoload.php';
-        break;
-    }
-
-    if (is_file($dir.'/app/bootstrap.php.cache')) {
-        require_once $dir.'/app/bootstrap.php.cache';
-        break;
-    }
-
-    if (is_file($dir.'/autoload.php.dist')) {
-        require_once $dir.'/autoload.php.dist';
-        break;
-    }
-
-    $dir = dirname($dir);
-}
+require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\FormLoginBundle;
 use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\TestBundle;
