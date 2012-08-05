@@ -46,4 +46,14 @@ The generator is made available with the service id ``security.secure_random``.
     
     $generator = $this->container->get('security.secure_random');
     $bytes = $generator->nextBytes(16); // 128-bit random number
-    
+
+``$bytes`` in the example above contains binary data. You can then convert this
+data to a format that you can print out using one of these functions:
+
+.. code-block :: php
+
+    <?php
+
+    $base64Encoded = base64_encode($bytes); // number in base 64
+    $hexEncoded = bin2hex($bytes); // number in base 16
+    $decEncoded = bindec($bytes); // number in base 10
