@@ -77,36 +77,36 @@ final class ExpressionLexer
             if ("'" === $value[0] || '"' === $value[0]) {
                 $type = self::T_STRING;
                 $value = substr($value, 1, -1);
-            } else if (',' === $value) {
+            } elseif (',' === $value) {
                 $type = self::T_COMMA;
-            } else if ('(' === $value) {
+            } elseif ('(' === $value) {
                 $type = self::T_OPEN_PARENTHESIS;
-            } else if (')' === $value) {
+            } elseif (')' === $value) {
                 $type = self::T_CLOSE_PARENTHESIS;
-            } else if ('[' === $value) {
+            } elseif ('[' === $value) {
                 $type = self::T_OPEN_BRACKET;
-            } else if (']' === $value) {
+            } elseif (']' === $value) {
                 $type = self::T_CLOSE_BRACKET;
-            } else if ('{' === $value) {
+            } elseif ('{' === $value) {
                 $type = self::T_OPEN_BRACE;
-            } else if ('}' === $value) {
+            } elseif ('}' === $value) {
                 $type = self::T_CLOSE_BRACE;
-            } else if ('&&' === $value || 'and' === strtolower($value)) {
+            } elseif ('&&' === $value || 'and' === strtolower($value)) {
                 $type = self::T_AND;
-            } else if ('||' === $value || 'or' === strtolower($value)) {
+            } elseif ('||' === $value || 'or' === strtolower($value)) {
                 $type = self::T_OR;
-            } else if ('!' === $value || 'not' === strtolower($value)) {
+            } elseif ('!' === $value || 'not' === strtolower($value)) {
                 $type = self::T_NOT;
-            } else if (':' === $value) {
+            } elseif (':' === $value) {
                 $type = self::T_COLON;
-            } else if ('.' === $value) {
+            } elseif ('.' === $value) {
                 $type = self::T_OBJECT_OPERATOR;
-            } else if ('==' === $value) {
+            } elseif ('==' === $value) {
                 $type = self::T_IS_EQUAL;
-            } else if ('#' === $value[0]) {
+            } elseif ('#' === $value[0]) {
                 $type = self::T_PARAMETER;
                 $value = substr($value, 1);
-            } else if (ctype_alpha($value)) {
+            } elseif (ctype_alpha($value)) {
                 $type = self::T_IDENTIFIER;
             }
 

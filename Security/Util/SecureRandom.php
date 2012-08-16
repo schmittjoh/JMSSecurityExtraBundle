@@ -29,7 +29,7 @@ final class SecureRandom
         // determine whether to use OpenSSL
         if (0 === stripos(PHP_OS, 'win')) {
             $this->useOpenSsl = false;
-        } else if (!function_exists('openssl_random_pseudo_bytes')) {
+        } elseif (!function_exists('openssl_random_pseudo_bytes')) {
             $this->logger->notice('It is recommended that you enable the "openssl" extension for random number generation.');
             $this->useOpenSsl = false;
         } else {
@@ -41,7 +41,7 @@ final class SecureRandom
      * Sets the Doctrine seed provider.
      *
      * @param Connection $con
-     * @param string $tableName
+     * @param string     $tableName
      */
     public function setConnection(Connection $con, $tableName)
     {
@@ -65,7 +65,7 @@ final class SecureRandom
     /**
      * Generates the specified number of secure random bytes.
      *
-     * @param integer $nbBytes
+     * @param  integer $nbBytes
      * @return string
      */
     public function nextBytes($nbBytes)
@@ -86,7 +86,7 @@ final class SecureRandom
         if (null === $this->seed) {
             if (null !== $this->seedProvider) {
                 list($this->seed, $this->seedLastUpdatedAt) = $this->seedProvider->loadSeed();
-            } else if (null !== $this->con) {
+            } elseif (null !== $this->con) {
                 $this->initializeSeedFromDatabase();
             } else {
                 throw new \RuntimeException('You need to either specify a database connection, or a custom seed provider.');
@@ -102,7 +102,7 @@ final class SecureRandom
             if (!$this->seedUpdated && $this->seedLastUpdatedAt->getTimestamp() < time() - mt_rand(1, 10)) {
                 if (null !== $this->seedProvider) {
                     $this->seedProvider->updateSeed($this->seed);
-                } else if (null !== $this->con) {
+                } elseif (null !== $this->con) {
                     $this->saveSeedToDatabase();
                 }
 

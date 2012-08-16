@@ -22,31 +22,35 @@ use JMS\SecurityExtraBundle\Annotation\SecureReturn;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 
-interface E {
+interface E
+{
     /**
      * @SecureReturn(permissions="VIEW,UNDELETE")
      */
-    function retrieve();
+    public function retrieve();
 }
-interface F {
+interface F
+{
     /**
      * @SecureParam(name="secure", permissions="OWNER")
      * @SecureParam(name="foo", permissions="MASTER, EDIT")
      */
-    function delete($foo, $asdf, $secure);
+    public function delete($foo, $asdf, $secure);
 }
 interface C { }
 interface D extends F {}
 interface B extends C, E { }
-abstract class G implements F, E {
+abstract class G implements F, E
+{
     /**
      * @Secure(roles="ROLE_FOO, IS_AUTHENTICATED_FULLY")
      * @SecureParam(name="secure", permissions="FOO")
      * @SecureReturn(permissions="WOW")
      */
-    abstract function abstractMethod($foo, $secure);
+    abstract public function abstractMethod($foo, $secure);
 }
-class A extends G implements C, B, D {
+class A extends G implements C, B, D
+{
     public function retrieve() { }
     public function delete($one, $two, $three) { }
     public function abstractMethod($asdf, $wohoo) { }

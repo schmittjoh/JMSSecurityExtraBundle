@@ -9,15 +9,15 @@ namespace JMS\SecurityExtraBundle\Security\Util;
  */
 final class String
 {
-    private final function __construct() {}
+    final private function __construct() {}
 
     /**
      * Whether two strings are equal.
      *
      * This function uses a constant-time algorithm to compare the strings.
      *
-     * @param string $str1
-     * @param string $str2
+     * @param  string  $str1
+     * @param  string  $str2
      * @return Boolean
      */
     public static function equals($str1, $str2)

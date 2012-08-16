@@ -19,8 +19,6 @@
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
@@ -39,7 +37,8 @@ class ExpressionVoter implements VoterInterface
     private $cacheDir;
     private $expressionHandler;
 
-    public function __construct(ExpressionHandlerInterface $expressionHandler) {
+    public function __construct(ExpressionHandlerInterface $expressionHandler)
+    {
         $this->expressionHandler = $expressionHandler;
     }
 

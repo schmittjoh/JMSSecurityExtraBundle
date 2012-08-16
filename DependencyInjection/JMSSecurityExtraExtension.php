@@ -23,8 +23,6 @@ use Symfony\Component\DependencyInjection\Reference;
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -111,7 +109,7 @@ class JMSSecurityExtraExtension extends Extension
                 ->addMethodCall('setSeedProvider', array(new Reference($config['seed_provider'])))
             ;
             $container->setAlias('security.util.secure_random_seed_provider', $config['seed_provider']);
-        } else if (isset($config['connection'])) {
+        } elseif (isset($config['connection'])) {
             $container
                 ->getDefinition('security.util.secure_random')
                 ->addMethodCall('setConnection', array(new Reference($this->getDoctrineConnectionId($config['connection'])), $config['table_name']))
@@ -128,7 +126,7 @@ class JMSSecurityExtraExtension extends Extension
             ;
         }
     }
-    
+
     private function getDoctrineConnectionId($guess)
     {
         return "doctrine.dbal.{$guess}_connection";

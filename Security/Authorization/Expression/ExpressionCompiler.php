@@ -20,18 +20,15 @@ namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\TypeCompilerInterface;
-use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\IsEqualExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\Func\FunctionCompilerInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ExpressionInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpression;
-use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\OrExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\MethodCallExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\GetPropertyExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\GetItemExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ConstantExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ArrayExpression;
-use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\AndExpression;
 
 class ExpressionCompiler
 {

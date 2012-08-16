@@ -30,27 +30,27 @@ interface AfterInvocationManagerInterface
     /**
      * Makes an access decision after the invocation of a method
      *
-     * @param TokenInterface $token
-     * @param object $secureObject
-     * @param array $attributes
-     * @param mixed $returnedValue the value that was returned by the method invocation
-     * @return mixed the filter return value
+     * @param  TokenInterface $token
+     * @param  object         $secureObject
+     * @param  array          $attributes
+     * @param  mixed          $returnedValue the value that was returned by the method invocation
+     * @return mixed          the filter return value
      */
-    function decide(TokenInterface $token, $secureObject, array $attributes, $returnedValue);
+    public function decide(TokenInterface $token, $secureObject, array $attributes, $returnedValue);
 
     /**
      * Determines whether the given attribute is supported
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @return Boolean
      */
-    function supportsAttribute($attribute);
+    public function supportsAttribute($attribute);
 
     /**
      * Determines whether the given class is supported
      *
-     * @param string $className the class of the secure object
+     * @param  string  $className the class of the secure object
      * @return Boolean
      */
-    function supportsClass($className);
+    public function supportsClass($className);
 }

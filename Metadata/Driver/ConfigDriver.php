@@ -4,7 +4,6 @@ namespace JMS\SecurityExtraBundle\Metadata\Driver;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
-use Symfony\Component\HttpKernel\Kernel;
 use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
 use Metadata\Driver\DriverInterface;
 

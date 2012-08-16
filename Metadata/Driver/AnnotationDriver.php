@@ -49,18 +49,18 @@ class AnnotationDriver implements DriverInterface
 
     public function loadMetadataForClass(ReflectionClass $reflection)
     {
-        $metadata = new ClassMetadata($reflection->getName());
+        $metadata = new ClassMetadata($reflection->name);
 
         $classPreAuthorize = $this->reader->getClassAnnotation($reflection, 'JMS\SecurityExtraBundle\Annotation\PreAuthorize');
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
             // check if the method was defined on this class
-            if ($method->getDeclaringClass()->getName() !== $reflection->getName()) {
+            if ($method->getDeclaringClass()->name !== $reflection->name) {
                 continue;
             }
 
             $annotations = $this->reader->getMethodAnnotations($method);
 
-            if ( ! $annotations && ! $classPreAuthorize) {
+            if (! $annotations && ! $classPreAuthorize) {
                 continue;
             }
 
@@ -79,29 +79,29 @@ class AnnotationDriver implements DriverInterface
             $parameters[$parameter->getName()] = $index;
         }
 
-        $methodMetadata = new MethodMetadata($method->getDeclaringClass()->getName(), $method->getName());
+        $methodMetadata = new MethodMetadata($method->class, $method->name);
         $hasSecurityMetadata = $hasPreRestrictions = false;
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
                 $methodMetadata->roles = $annotation->roles;
                 $hasSecurityMetadata = $hasPreRestrictions = true;
-            } else if ($annotation instanceof PreAuthorize) {
+            } elseif ($annotation instanceof PreAuthorize) {
                 $methodMetadata->roles = array(new Expression($annotation->expr));
                 $hasSecurityMetadata = $hasPreRestrictions = true;
-            } else if ($annotation instanceof SecureParam) {
+            } elseif ($annotation instanceof SecureParam) {
                 if (!isset($parameters[$annotation->name])) {
-                    throw new InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->getName()));
+                    throw new InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->name));
                 }
 
                 $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
                 $hasSecurityMetadata = $hasPreRestrictions = true;
-            } else if ($annotation instanceof SecureReturn) {
+            } elseif ($annotation instanceof SecureReturn) {
                 $methodMetadata->returnPermissions = $annotation->permissions;
                 $hasSecurityMetadata = true;
-            } else if ($annotation instanceof SatisfiesParentSecurityPolicy) {
+            } elseif ($annotation instanceof SatisfiesParentSecurityPolicy) {
                 $methodMetadata->satisfiesParentSecurityPolicy = true;
                 $hasSecurityMetadata = true;
-            } else if ($annotation instanceof RunAs) {
+            } elseif ($annotation instanceof RunAs) {
                 $methodMetadata->runAsRoles = $annotation->roles;
                 $hasSecurityMetadata = true;
             }

@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BaseTestCase extends WebTestCase
 {
-    static protected function createKernel(array $options = array())
+    protected static function createKernel(array $options = array())
     {
         return new AppKernel(
             isset($options['config']) ? $options['config'] : 'default.yml'
@@ -51,7 +51,7 @@ class BaseTestCase extends WebTestCase
         $this->assertTrue($security->isAuthenticated(), 'Logged in user is not authenticated.');
     }
 
-    protected final function importDatabaseSchema()
+    final protected function importDatabaseSchema()
     {
         $em = self::$kernel->getContainer()->get('em');
 

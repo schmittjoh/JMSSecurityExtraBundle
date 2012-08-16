@@ -65,7 +65,7 @@ class PermissionEvaluator
             }
 
             return $this->allowIfObjectIdentityUnavailable ? true : false;
-        } else if ($object instanceof FieldVote) {
+        } elseif ($object instanceof FieldVote) {
             $field = $object->getField();
             $object = $object->getDomainObject();
         } else {
@@ -74,7 +74,7 @@ class PermissionEvaluator
 
         if ($object instanceof ObjectIdentityInterface) {
             $oid = $object;
-        } else if (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($object)) {
+        } elseif (null === $oid = $this->oidRetrievalStrategy->getObjectIdentity($object)) {
             if (null !== $this->logger) {
                 $this->logger->debug(sprintf('Object identity unavailable. Voting to %s', $this->allowIfObjectIdentityUnavailable? 'grant access' : 'abstain'));
             }
@@ -93,7 +93,7 @@ class PermissionEvaluator
                 }
 
                 return true;
-            } else if (null !== $field && $acl->isFieldGranted($field, $masks, $sids, false)) {
+            } elseif (null !== $field && $acl->isFieldGranted($field, $masks, $sids, false)) {
                 if (null !== $this->logger) {
                     $this->logger->debug('ACL found, permission granted. Voting to grant access');
                 }

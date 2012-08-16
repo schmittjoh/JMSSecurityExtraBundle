@@ -22,5 +22,5 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 interface ExpressionHandlerInterface
 {
-    function createContext(TokenInterface $token, $object);
+    public function createContext(TokenInterface $token, $object);
 }

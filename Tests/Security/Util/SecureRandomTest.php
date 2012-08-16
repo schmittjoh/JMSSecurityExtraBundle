@@ -6,7 +6,6 @@ use JMS\SecurityExtraBundle\Security\Util\NullSeedProvider;
 use Symfony\Component\HttpKernel\Log\NullLogger;
 use JMS\SecurityExtraBundle\Security\Util\SecureRandomSchema;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Connection;
 use JMS\SecurityExtraBundle\Security\Util\SecureRandom;
 
 class SecureRandomTest extends \PHPUnit_Framework_TestCase

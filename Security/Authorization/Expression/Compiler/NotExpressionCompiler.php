@@ -27,12 +27,12 @@ class NotExpressionCompiler implements TypeCompilerInterface
     {
         return 'JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\NotExpression';
     }
-    
+
     public function compilePreconditions(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
         $compiler->compilePreconditions($expr->expr);
     }
-    
+
     public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
         $compiler

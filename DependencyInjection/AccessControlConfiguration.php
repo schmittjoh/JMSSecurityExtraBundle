@@ -20,12 +20,7 @@ namespace JMS\SecurityExtraBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-use Symfony\Component\HttpKernel\Kernel;
-
-use Symfony\Bundle\SecurityBundle\DependencyInjection\MainConfiguration as BaseConfiguration;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 /**
  * Enhances the access_control section configuration.

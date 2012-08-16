@@ -33,7 +33,7 @@ class InitSecureRandomCommand extends ContainerAwareCommand
             $this->getContainer()->get('security.util.secure_random_seed_provider')->updateSeed($seed);
 
             $output->writeln('The CSPRNG has been initialized successfully.');
-        } else if ($this->getContainer()->has('security.util.secure_random_connection')) {
+        } elseif ($this->getContainer()->has('security.util.secure_random_connection')) {
             if ($input->getOption('force') === $input->getOption('dump-sql')) {
                 throw new \InvalidArgumentException('This command needs to be run with one of these options: --force, or --dump-sql');
             }

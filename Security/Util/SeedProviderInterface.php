@@ -17,12 +17,12 @@ interface SeedProviderInterface
      * @return array of the format array(string, DateTime) where string is the
      *               initial seed, and DateTime is the last time it was updated
      */
-    function loadSeed();
+    public function loadSeed();
 
     /**
      * Updates the seed.
      *
      * @param string $seed
      */
-    function updateSeed($seed);
+    public function updateSeed($seed);
 }

@@ -42,5 +42,5 @@ interface FooInterface
      * @SecureParam(name="anotherParam", permissions="EDIT")
      * @SecureReturn(permissions="MASTER")
      */
-    function foo($param, $anotherParam);
+    public function foo($param, $anotherParam);
 }

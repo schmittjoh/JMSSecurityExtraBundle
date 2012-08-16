@@ -36,8 +36,8 @@ class MethodMetadata extends BaseMethodMetadata
     /**
      * Adds a parameter restriction
      *
-     * @param integer $index 0-based
-     * @param array $permissions
+     * @param integer $index       0-based
+     * @param array   $permissions
      */
     public function addParamPermissions($index, array $permissions)
     {
@@ -58,7 +58,7 @@ class MethodMetadata extends BaseMethodMetadata
     /**
      * This allows to merge in metadata from an interface
      *
-     * @param MethodMetadata $method
+     * @param  MethodMetadata $method
      * @return void
      */
     public function merge(MethodMetadata $method)

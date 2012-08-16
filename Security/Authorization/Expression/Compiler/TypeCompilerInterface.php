@@ -23,7 +23,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler
 
 interface TypeCompilerInterface
 {
-    function getType();
-    function compilePreconditions(ExpressionCompiler $compiler, ExpressionInterface $expr);
-    function compile(ExpressionCompiler $compiler, ExpressionInterface $expr);
+    public function getType();
+    public function compilePreconditions(ExpressionCompiler $compiler, ExpressionInterface $expr);
+    public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr);
 }
