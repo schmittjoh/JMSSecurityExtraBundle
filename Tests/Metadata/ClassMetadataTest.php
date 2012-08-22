@@ -107,6 +107,16 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($metadata->isDeclaredOnInterface());
     }
 
+    public function testSerializeUnserialize()
+    {
+        $metadata = $this
+            ->getFactory()
+            ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\ComplexService')
+        ;
+
+        $this->assertEquals($metadata, unserialize(serialize($metadata)));
+    }
+
     private function getFactory()
     {
         $factory = new MetadataFactory(new AnnotationDriver(new AnnotationReader()));

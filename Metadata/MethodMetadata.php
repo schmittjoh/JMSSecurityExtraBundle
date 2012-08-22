@@ -81,4 +81,23 @@ class MethodMetadata extends BaseMethodMetadata
             }
         }
     }
+
+    public function serialize()
+    {
+        return serialize(array(
+            parent::serialize(),
+            $this->roles, $this->paramPermissions, $this->returnPermissions,
+            $this->runAsRoles, $this->satisfiesParentSecurityPolicy,
+        ));
+    }
+
+    public function unserialize($str)
+    {
+        list($parentStr,
+            $this->roles, $this->paramPermissions, $this->returnPermissions,
+            $this->runAsRoles, $this->satisfiesParentSecurityPolicy
+        ) = unserialize($str);
+
+        parent::unserialize($parentStr);
+    }
 }
