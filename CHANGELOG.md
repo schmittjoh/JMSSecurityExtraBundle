@@ -1,9 +1,14 @@
 This document details all changes between different versions of JMSSecurityExtraBundle:
 
+1.3
+---
+- added a reverse interpreter for expressions
+
 1.2
 ---
 
 - added a secure random number generator service
+- several bug fixes
 
 
 1.1
