@@ -14,7 +14,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(1, count($voters = $this->getField($adm, 'voters')));
+        $this->assertEquals(1, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
         $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Authorization\Expression\LazyLoadingExpressionVoter', $voters[0]);
     }
 
@@ -28,7 +28,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(2, count($voters = $this->getField($adm, 'voters')));
+        $this->assertEquals(2, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[0]);
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
     }
@@ -43,7 +43,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(1, count($voters = $this->getField($adm, 'voters')));
+        $this->assertEquals(1, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[0]);
     }
 
