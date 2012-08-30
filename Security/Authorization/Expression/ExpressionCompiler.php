@@ -106,10 +106,10 @@ class ExpressionCompiler
         $this
             ->writeln('return function(array $context) {')
             ->indent()
-            ->compilePreconditions($expr)
-            ->write('return ')
-            ->compileInternal($expr)
-            ->writeln(';')
+                ->compilePreconditions($expr)
+                ->write('return ')
+                ->compileInternal($expr)
+                ->writeln(';')
             ->outdent()
             ->writeln('};')
         ;
@@ -256,7 +256,7 @@ class ExpressionCompiler
             return $name;
         }
     }
-
+    
     public function compilePreconditions(ExpressionInterface $expr)
     {
         if ($typeCompiler = $this->findTypeCompiler(get_class($expr))) {

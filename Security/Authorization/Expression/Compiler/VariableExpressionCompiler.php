@@ -31,14 +31,6 @@ class VariableExpressionCompiler implements TypeCompilerInterface
 
     public function compilePreconditions(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
-        if ('user' === $expr->name) {
-            $compiler
-                ->setAttribute('user_var_name', $name = $compiler->nextName())
-                ->write("\$$name = ")
-                ->compileInternal(new VariableExpression('token'))
-                ->write("->getUser();\n\n")
-            ;
-        }
     }
 
     public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr)
@@ -51,12 +43,6 @@ class VariableExpressionCompiler implements TypeCompilerInterface
 
         if ('denyAll' === $expr->name) {
             $compiler->write('false');
-
-            return;
-        }
-
-        if ('user' === $expr->name) {
-            $compiler->write("\${$compiler->attributes['user_var_name']}");
 
             return;
         }
