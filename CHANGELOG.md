@@ -4,7 +4,8 @@ This document details all changes between different versions of JMSSecurityExtra
 ---
 
 - added a secure random number generator service
-
+- several bug fixes, and forward compatibility for dependencies
+- allow @PreAuthorize on classes
 
 1.1
 ---
