@@ -9,6 +9,8 @@
     
         <parameter key="security.access.method_interceptor.class">JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor</parameter>
         <parameter key="security.access.method_access_control" type="collection" />
+        
+        <parameter key="security.access.remembering_access_decision_manager.class">JMS\SecurityExtraBundle\Security\Authorization\RememberingAccessDecisionManager</parameter>
 
         <parameter key="security.access.run_as_manager.class">JMS\SecurityExtraBundle\Security\Authorization\RunAsManager</parameter>
         <parameter key="security.authentication.provider.run_as.class">JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider</parameter>
