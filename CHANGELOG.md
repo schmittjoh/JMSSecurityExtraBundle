@@ -3,6 +3,7 @@ This document details all changes between different versions of JMSSecurityExtra
 1.3
 ---
 - added a reverse interpreter for expressions
+- added logging of votes for expressions
 
 1.2
 ---
