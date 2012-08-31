@@ -79,6 +79,12 @@ class PostController
         return new Response('list');
     }
 
+    /** @PreAuthorize("alwaysTrue()") */
+    public function fooPostAction()
+    {
+    	return new Response('foo');
+    }
+
     /** @DI\LookupMethod("security.acl.provider") */
     protected function getAclProvider() { }
 }

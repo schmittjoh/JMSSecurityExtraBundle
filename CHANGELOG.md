@@ -4,6 +4,8 @@ This document details all changes between different versions of JMSSecurityExtra
 ---
 - added a reverse interpreter for expressions
 - added logging of votes for expressions
+- added a generic expression function compiler for service callbacks making it
+  easier to create custom expression functions
 
 1.2
 ---

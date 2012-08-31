@@ -51,6 +51,23 @@ class MethodAccessControlTest extends BaseTestCase
     /**
      * @runInSeparateProcess
      */
+    public function testFunctionEvaluator()
+    {
+    	$client = $this->createClient(array('config' => 'method_access_control.yml'));
+
+    	$evaluator = self::$kernel->getContainer()->get('always_true_evaluator');
+    	$this->assertEquals(0, $evaluator->getNbCalls());
+
+    	$client->request('GET', '/post/foo');
+    	$response = $client->getResponse();
+    	$this->assertEquals('foo', $response->getContent());
+
+    	$this->assertEquals(1, $evaluator->getNbCalls());
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testAcl()
     {
         $client = $this->createClient(array('config' => 'acl_enabled.yml'));

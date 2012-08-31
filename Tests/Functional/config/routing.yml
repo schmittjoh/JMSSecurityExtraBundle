@@ -23,5 +23,10 @@ post_controller_list:
     defaults:
         _controller: TestBundle:Post:listPost
         
+post_controller_foo:
+    pattern: /post/foo
+    defaults:
+        _controller: TestBundle:Post:fooPost
+        
 form_login_bundle:
-    resource: @FormLoginBundle/Resources/config/routing.yml
+    resource: "@FormLoginBundle/Resources/config/routing.yml"

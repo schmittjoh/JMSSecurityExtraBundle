@@ -256,7 +256,7 @@ class ExpressionCompiler
             return $name;
         }
     }
-    
+
     public function compilePreconditions(ExpressionInterface $expr)
     {
         if ($typeCompiler = $this->findTypeCompiler(get_class($expr))) {
