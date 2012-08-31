@@ -75,20 +75,20 @@ class ExpressionVoter implements VoterInterface
 
             if (call_user_func($this->evaluators[$attribute->expression],
                     $this->expressionHandler->createContext($token, $object))) {
-            	if (null !== $this->logger) {
-            		$this->logger->info(sprintf('"%s" evaluated to true; voting to grant access.', $attribute->expression));
-            	}
+                if (null !== $this->logger) {
+                    $this->logger->info(sprintf('"%s" evaluated to true; voting to grant access.', $attribute->expression));
+                }
 
                 return VoterInterface::ACCESS_GRANTED;
             }
         }
 
         if (null !== $this->logger) {
-	        if (VoterInterface::ACCESS_DENIED === $result) {
-	        	$this->logger->info(sprintf('"%s" evaluated to false; voting to deny access.', implode('", "', $exprs)));
-	        } else {
-	        	$this->logger->info('No expression found; abstaining from voting.');
-	        }
+            if (VoterInterface::ACCESS_DENIED === $result) {
+                $this->logger->info(sprintf('"%s" evaluated to false; voting to deny access.', implode('", "', $exprs)));
+            } else {
+                $this->logger->info('No expression found; abstaining from voting.');
+            }
         }
 
         return $result;

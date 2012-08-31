@@ -50,8 +50,8 @@
         </service>
         
         <service id="security.expressions.reverse_interpreter" class="%security.expressions.reverse_interpreter.class%">
-        	<argument type="service" id="security.expressions.compiler" />
-        	<argument type="service" id="security.expressions.handler" />
+            <argument type="service" id="security.expressions.compiler" />
+            <argument type="service" id="security.expressions.handler" />
         </service>
     
         <service id="security.expressions.voter" class="%security.expressions.voter.class%" public="false">

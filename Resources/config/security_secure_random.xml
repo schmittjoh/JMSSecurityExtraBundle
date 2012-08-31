@@ -4,12 +4,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-	<parameters>
+    <parameters>
         <parameter key="security.util.secure_random_schema.class">JMS\SecurityExtraBundle\Security\Util\SecureRandomSchema</parameter>
         <parameter key="security.util.secure_random_schema_listener.class">JMS\SecurityExtraBundle\EventListener\SecureRandomSchemaListener</parameter>
-	</parameters>
+    </parameters>
 
-	<services>
+    <services>
         <service id="security.util.secure_random" class="JMS\SecurityExtraBundle\Security\Util\SecureRandom">
             <tag name="monolog.logger" channel="security" />
             <argument type="service" id="logger" />
@@ -20,5 +20,5 @@
         <service id="security.util.secure_random_schema_listener" class="%security.util.secure_random_schema_listener.class%" public="false">
             <argument type="service" id="security.util.secure_random_schema" />
         </service>        
-	</services>
+    </services>
 </container>

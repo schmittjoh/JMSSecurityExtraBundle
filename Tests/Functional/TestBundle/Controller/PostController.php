@@ -82,7 +82,7 @@ class PostController
     /** @PreAuthorize("alwaysTrue()") */
     public function fooPostAction()
     {
-    	return new Response('foo');
+        return new Response('foo');
     }
 
     /** @DI\LookupMethod("security.acl.provider") */
