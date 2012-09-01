@@ -6,7 +6,7 @@ services:
     always_true_evaluator:
         class: JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Security\AlwaysTrueEvaluator
         tags:
-            - { name: "security.expressions.function_evaluator", function: alwaysTrue }
+            - { name: "security.expressions.function_evaluator", function: alwaysTrue, method: hasAccess }
 
 framework:
     secret: test

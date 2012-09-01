@@ -17,7 +17,7 @@
         "symfony/security-bundle": "*",
         "jms/metadata": "1.1.*",
         "jms/aop-bundle": "1.0.*",
-        "jms/di-extra-bundle": "1.1.*"
+        "jms/di-extra-bundle": "1.2.*"
     },
     "require-dev": {
         "sensio/framework-extra-bundle": "*",

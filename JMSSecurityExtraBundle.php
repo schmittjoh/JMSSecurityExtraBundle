@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class JMSSecurityExtraBundle extends Bundle
 {
-    const VERSION = '1.1.1-DEV';
+    const VERSION = '1.3.0-DEV';
 
     public function build(ContainerBuilder $container)
     {
