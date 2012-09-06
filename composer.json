@@ -37,10 +37,5 @@
     "autoload": {
         "psr-0": { "JMS\\SecurityExtraBundle": "" }
     },
-    "target-dir": "JMS/SecurityExtraBundle",
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.2.x-dev"
-        }
-    }
+    "target-dir": "JMS/SecurityExtraBundle"
 }
