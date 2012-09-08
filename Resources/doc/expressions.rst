@@ -6,7 +6,7 @@ Introduction
 The expression language is a very powerful alternative to the simple attributes
 of the security voting system. They allow to perform complex access decision
 checks, and because they are compiled down to raw PHP, they are much faster than
-the built-in voters. Also they are lazy-loading by nature, so you will also 
+the built-in voters. Also they are lazy-loading by nature, so you will also
 save some resources for example by not having to initialize the entire ACL system
 on each request.
 
@@ -22,7 +22,7 @@ of the SecurityContext. Some examples:
     <?php
 
     use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
-    
+
     $securityContext->isGranted(array(new Expression('hasRole("A")')));
     $securityContext->isGranted(array(new Expression('hasRole("A") or (hasRole("B") and hasRole("C"))')));
     $securityContext->isGranted(array(new Expression('hasPermission(object, "VIEW")'), $object));
@@ -51,15 +51,15 @@ You can also use expressions in the ``access_control``:
                 - { path: ^/foo, access: "hasRole('FOO') and hasRole('BAR')" }
 
     .. code-block :: xml
-    
+
         <security>
             <rule path="^/foo" access="hasRole('FOO') and hasRole('BAR')" />
         </security>
 
 Annotation-based Usage
 ~~~~~~~~~~~~~~~~~~~~~~
-See @PreAuthorize in the annotation reference. Please also remember to enable expressions 
-in your config, otherwise you will get an exception upon checking access. 
+See @PreAuthorize in the annotation reference. Please also remember to enable expressions
+in your config, otherwise you will get an exception upon checking access.
 
 Reference
 ---------
@@ -106,3 +106,13 @@ Reference
 +-----------------------------------+--------------------------------------------+
 | not / !                           | Negation operator                          |
 +-----------------------------------+--------------------------------------------+
+
+Further Resources
+-----------------
+
+.. toctree ::
+    :hidden:
+
+    /cookbook/creating_your_own_expression_function
+
+- :doc:`Creating Your Own Expression Function </cookbook/creating_your_own_expression_function>`
