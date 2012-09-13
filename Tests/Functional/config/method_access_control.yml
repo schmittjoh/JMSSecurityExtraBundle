@@ -9,4 +9,6 @@ jms_security_extra:
     expressions: ~
     method_access_control:
         'UserManager::delete$': 'hasRole("FOO")'
-        'TestBundle:Crud:add': 'hasRole("FOO")' 
+        'TestBundle:Crud:add': 'hasRole("FOO")'
+        'TestBundle:Foo:exception': 'permitAll'
+        'TestBundle:Foo:.*': 'hasRole("MOO")'

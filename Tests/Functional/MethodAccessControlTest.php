@@ -2,6 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class MethodAccessControlTest extends BaseTestCase
 {
     /**
@@ -12,10 +14,7 @@ class MethodAccessControlTest extends BaseTestCase
         $client = $this->createClient(array('config' => 'method_access_control.yml'));
 
         $client->request('GET', '/add');
-        $response = $client->getResponse();
-
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://localhost/login', $response->headers->get('Location'));
+        $this->assertRedirectedToLogin($client->getResponse());
     }
 
     /**
@@ -29,6 +28,20 @@ class MethodAccessControlTest extends BaseTestCase
         $response = $client->getResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testWildcardSecured()
+    {
+        $client = $this->createClient(array('config' => 'method_access_control.yml'));
+
+        $client->request('GET', '/foo/foo');
+        $this->assertRedirectedToLogin($client->getResponse());
+
+        $client->request('GET', '/foo/bar');
+        $this->assertRedirectedToLogin($client->getResponse());
+
+        $client->request('GET', '/foo/exception');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -103,5 +116,11 @@ class MethodAccessControlTest extends BaseTestCase
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), substr($response, 0, 2000));
         $this->assertEquals('list', $response->getContent(), substr($response, 0, 2000));
+    }
+
+    private function assertRedirectedToLogin(Response $response)
+    {
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://localhost/login', $response->headers->get('Location'));
     }
 }
