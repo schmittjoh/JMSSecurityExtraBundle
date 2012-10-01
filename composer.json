@@ -16,8 +16,7 @@
         "symfony/framework-bundle": ">=2.1.0,<2.3-dev",
         "symfony/security-bundle": "*",
         "jms/metadata": "1.1.*",
-        "jms/aop-bundle": ">=1.0.0,<1.2-dev",
-        "jms/di-extra-bundle": "1.2.*"
+        "jms/aop-bundle": ">=1.0.0,<1.2-dev"
     },
     "require-dev": {
         "sensio/framework-extra-bundle": "*",
@@ -32,7 +31,8 @@
         "symfony/twig-bundle": "*",
         "doctrine/orm": "*",
         "symfony/form": "*",
-        "symfony/validator": "*"
+        "symfony/validator": "*",
+        "jms/di-extra-bundle": "1.2.*"
     },
     "autoload": {
         "psr-0": { "JMS\\SecurityExtraBundle": "" }
