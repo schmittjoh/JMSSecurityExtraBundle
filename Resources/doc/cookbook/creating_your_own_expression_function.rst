@@ -1,5 +1,9 @@
 Creating Your Own Expression Function
 =====================================
+
+.. versionadded :: 1.3
+    @DI\SecurityFunction was added.
+
 Even though the built-in expressions allow you to do a lot already, there are
 cases where you want to add a custom expression function.
 
