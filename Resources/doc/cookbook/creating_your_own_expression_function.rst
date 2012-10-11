@@ -1,8 +1,9 @@
 Creating Your Own Expression Function
 =====================================
 
-Requires JMSSecurityExtraBundle 1.3.*
-Requires JMSDiExtraBundle 1.2.*
+Requires
+    * JMSSecurityExtraBundle 1.3.*
+    * JMSDiExtraBundle 1.2.*
 
 .. versionadded :: 1.3
     @DI\SecurityFunction was added.
@@ -20,7 +21,7 @@ another function ``isLocalUser()`` which you can use in your expressions.
 You will want to place this file in a folder called Security (as seen in the namespace
 in the example below) in your bundle.
 
-You will also need to add your bundle to the [JMSDiExtraBundle configuration](http://jmsyst.com/bundles/JMSDiExtraBundle/master/configuration#configuration-locations) so the
+You will also need to add your bundle to the `JMSDiExtraBundle configuration <http://jmsyst.com/bundles/JMSDiExtraBundle/master/configuration#configuration-locations>`_ so the
 annotations will know where else to look for processing.
 
 .. code-block :: php
