@@ -1,6 +1,9 @@
 Creating Your Own Expression Function
 =====================================
 
+Requires JMSSecurityExtraBundle 1.3.*
+Requires JMSDiExtraBundle 1.2.*
+
 .. versionadded :: 1.3
     @DI\SecurityFunction was added.
 
@@ -14,12 +17,19 @@ what happens if you want to add another IP? You would have to edit all the place
 where this expression is used. So instead of the above expression, let's add
 another function ``isLocalUser()`` which you can use in your expressions.
 
+You will want to place this file in a folder called Security (as seen in the namespace
+in the example below) in your bundle.
+
+You will also need to add your bundle to the [JMSDiExtraBundle configuration](http://jmsyst.com/bundles/JMSDiExtraBundle/master/configuration#configuration-locations) so the
+annotations will know where else to look for processing.
+
 .. code-block :: php
 
     <?php
 
-    namespace Security;
+    namespace Acme\DemoBundle\Security;
 
+    use Symfony\Component\DependencyInjection\ContainerInterface;
     use JMS\DiExtraBundle\Annotation as DI;
 
     /** @DI\Service */
