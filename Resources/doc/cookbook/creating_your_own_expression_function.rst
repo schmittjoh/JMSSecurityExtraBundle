@@ -1,11 +1,8 @@
 Creating Your Own Expression Function
 =====================================
 
-Requires
-    * JMSSecurityExtraBundle 1.3.*
-    * JMSDiExtraBundle 1.2.*
+.. versionadded:: 1.3
 
-.. versionadded :: 1.3
     @DI\SecurityFunction was added.
 
 Even though the built-in expressions allow you to do a lot already, there are
