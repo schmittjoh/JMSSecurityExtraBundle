@@ -21,8 +21,9 @@ another function ``isLocalUser()`` which you can use in your expressions.
 You will want to place this file in a folder called Security (as seen in the namespace
 in the example below) in your bundle.
 
-You will also need to add your bundle to the `JMSDiExtraBundle configuration <http://jmsyst.com/bundles/JMSDiExtraBundle/master/configuration#configuration-locations>`_ so the
-annotations will know where else to look for processing.
+You will also need to add your bundle to the `JMSDiExtraBundle configuration
+<http://jmsyst.com/bundles/JMSDiExtraBundle/master/configuration#configuration-locations>`_
+so the annotations will know where else to look for processing.
 
 .. code-block :: php
 
