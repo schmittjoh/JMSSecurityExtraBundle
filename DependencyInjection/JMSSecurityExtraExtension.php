@@ -85,6 +85,9 @@ class JMSSecurityExtraExtension extends Extension
             // FIXME: Also add an iddqd after invocation provider
         }
 
+        $container->setParameter('security.iddqd_aliases',
+            isset($config['iddqd_aliases']) ? $config['iddqd_aliases'] : array());
+
         if ($config['method_access_control']) {
             $driverDef = $container->getDefinition('security.extra.driver_chain');
             $args = $driverDef->getArguments();

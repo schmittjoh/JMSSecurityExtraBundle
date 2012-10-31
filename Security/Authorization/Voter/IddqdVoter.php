@@ -33,6 +33,14 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
  */
 class IddqdVoter implements VoterInterface
 {
+    /** @var array */
+    private $iddqdAliases = array('ROLE_IDDQD');
+
+    public function __construct(array $iddqdAliases)
+    {
+        $this->iddqdAliases = array_merge($this->iddqdAliases, $iddqdAliases);
+    }
+
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         return $this->isIddqd($token) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_ABSTAIN;
@@ -41,7 +49,7 @@ class IddqdVoter implements VoterInterface
     protected function isIddqd(TokenInterface $token)
     {
         foreach ($token->getRoles() as $role) {
-            if ('ROLE_IDDQD' === $role->getRole()) {
+            if (in_array($role->getRole(), $this->iddqdAliases, true)) {
                 return true;
             }
         }

@@ -67,6 +67,7 @@
         </service>
         
         <service id="security.extra.iddqd_voter" class="%security.access.iddqd_voter.class%" public="false">
+            <argument>%security.iddqd_aliases%</argument>
         </service>
         
         <service id="security.extra.driver_chain" class="%security.extra.driver_chain.class%" public="false">
