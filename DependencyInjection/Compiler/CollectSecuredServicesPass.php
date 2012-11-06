@@ -30,6 +30,10 @@ class CollectSecuredServicesPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition('security.access.pointcut')) {
+            return;
+        }
+
         $securedClasses = array();
         foreach ($container->findTaggedServiceIds('security.secure_service') as $id => $attr) {
             $securedClasses[] = $container->getDefinition($id)->getClass();

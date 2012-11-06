@@ -11,6 +11,9 @@ class IntegrationPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if ($container->hasParameter('jms_security_extra.disabled')) {
+            return;
+        }
         if (!$container->hasAlias('security.acl.provider')
             && !$container->hasDefinition('security.acl.provider')) {
             $container->removeDefinition('security.acl.permission_evaluator');
