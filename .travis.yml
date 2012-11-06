@@ -4,9 +4,7 @@ php:
   - 5.3
   - 5.4
 
-before_script:
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev
+before_script: php composer install --dev
 
 script: phpunit --coverage-clover clover
 
