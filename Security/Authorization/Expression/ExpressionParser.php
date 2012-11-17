@@ -19,14 +19,9 @@
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\NotExpression;
-
-use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\IsEqualExpression;
-
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ParameterExpression;
-
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpression;
-
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ConstantExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\OrExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\AndExpression;
@@ -37,32 +32,21 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\MethodCallExpr
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ExpressionInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
 
-final class ExpressionParser
+final class ExpressionParser extends \JMS\Parser\AbstractParser
 {
     const PRECEDENCE_OR       = 10;
     const PRECEDENCE_AND      = 15;
     const PRECEDENCE_IS_EQUAL = 20;
     const PRECEDENCE_NOT      = 30;
 
-    private $lexer;
-
     public function __construct()
     {
-        $this->lexer = new ExpressionLexer();
+        parent::__construct(new ExpressionLexer());
     }
 
-    public function parse($str)
+    public function parseInternal()
     {
-        $this->lexer->initialize($str);
-
-        $expr = $this->Expression();
-
-        if (null !== $this->lexer->lookahead) {
-            throw new \RuntimeException(sprintf('Malformed expression. Expected end of expression, but got "%s" (%s).',
-                $this->lexer->lookahead['value'], $this->lexer->getLiteral($this->lexer->lookahead['type'])));
-        }
-
-        return $expr;
+        return $this->Expression();
     }
 
     private function Expression($precedence = 0)
@@ -70,27 +54,24 @@ final class ExpressionParser
         $expr = $this->Primary();
 
         while (true) {
-            if (ExpressionLexer::T_AND === $this->lexer->lookahead['type']
-                    && $precedence <= self::PRECEDENCE_AND) {
-                $this->lexer->next();
+            if ($this->lexer->isNext(ExpressionLexer::T_AND) && $precedence <= self::PRECEDENCE_AND) {
+                $this->lexer->moveNext();
 
                 $expr = new AndExpression($expr, $this->Expression(
                     self::PRECEDENCE_AND + 1));
                 continue;
             }
 
-            if (ExpressionLexer::T_OR === $this->lexer->lookahead['type']
-                    && $precedence <= self::PRECEDENCE_OR) {
-                $this->lexer->next();
+            if ($this->lexer->isNext(ExpressionLexer::T_OR) && $precedence <= self::PRECEDENCE_OR) {
+                $this->lexer->moveNext();
 
                 $expr = new OrExpression($expr, $this->Expression(
                     self::PRECEDENCE_OR + 1));
                 continue;
             }
 
-            if (ExpressionLexer::T_IS_EQUAL === $this->lexer->lookahead['type']
-                    && $precedence <= self::PRECEDENCE_IS_EQUAL) {
-                $this->lexer->next();
+            if ($this->lexer->isNext(ExpressionLexer::T_IS_EQUAL) && $precedence <= self::PRECEDENCE_IS_EQUAL) {
+                $this->lexer->moveNext();
 
                 $expr = new IsEqualExpression($expr, $this->Expression(
                     self::PRECEDENCE_IS_EQUAL + 1));
@@ -105,37 +86,37 @@ final class ExpressionParser
 
     private function Primary()
     {
-        if (ExpressionLexer::T_NOT === $this->lexer->lookahead['type']) {
-            $this->lexer->next();
+        if ($this->lexer->isNext(ExpressionLexer::T_NOT)) {
+            $this->lexer->moveNext();
             $expr = new NotExpression($this->Expression(self::PRECEDENCE_NOT));
 
             return $this->Suffix($expr);
         }
 
-        if (ExpressionLexer::T_OPEN_PARENTHESIS === $this->lexer->lookahead['type']) {
-            $this->lexer->next();
+        if ($this->lexer->isNext(ExpressionLexer::T_OPEN_PARENTHESIS)) {
+            $this->lexer->moveNext();
             $expr = $this->Expression();
             $this->match(ExpressionLexer::T_CLOSE_PARENTHESIS);
 
             return $this->Suffix($expr);
         }
 
-        if (ExpressionLexer::T_STRING === $this->lexer->lookahead['type']) {
+        if ($this->lexer->isNext(ExpressionLexer::T_STRING)) {
             return new ConstantExpression($this->match(ExpressionLexer::T_STRING));
         }
 
-        if (ExpressionLexer::T_OPEN_BRACE === $this->lexer->lookahead['type']) {
+        if ($this->lexer->isNext(ExpressionLexer::T_OPEN_BRACE)) {
             return $this->Suffix($this->MapExpr());
         }
 
-        if (ExpressionLexer::T_OPEN_BRACKET === $this->lexer->lookahead['type']) {
+        if ($this->lexer->isNext(ExpressionLexer::T_OPEN_BRACKET)) {
             return $this->Suffix($this->ListExpr());
         }
 
-        if (ExpressionLexer::T_IDENTIFIER === $this->lexer->lookahead['type']) {
+        if ($this->lexer->isNext(ExpressionLexer::T_IDENTIFIER)) {
             $name = $this->match(ExpressionLexer::T_IDENTIFIER);
 
-            if (ExpressionLexer::T_OPEN_PARENTHESIS === $this->lexer->lookahead['type']) {
+            if ($this->lexer->isNext(ExpressionLexer::T_OPEN_PARENTHESIS)) {
                 $args = $this->Arguments();
 
                 return $this->Suffix(new FunctionExpression($name, $args));
@@ -144,11 +125,11 @@ final class ExpressionParser
             return $this->Suffix(new VariableExpression($name));
         }
 
-        if (ExpressionLexer::T_PARAMETER === $this->lexer->lookahead['type']) {
+        if ($this->lexer->isNext(ExpressionLexer::T_PARAMETER)) {
             return $this->Suffix(new ParameterExpression($this->match(ExpressionLexer::T_PARAMETER)));
         }
 
-        $this->error('primary expression');
+        $this->syntaxError('primary expression');
     }
 
     private function ListExpr()
@@ -156,13 +137,13 @@ final class ExpressionParser
         $this->match(ExpressionLexer::T_OPEN_BRACKET);
 
         $elements = array();
-        while (ExpressionLexer::T_CLOSE_BRACKET !== $this->lexer->lookahead['type']) {
+        while ( ! $this->lexer->isNext(ExpressionLexer::T_CLOSE_BRACKET)) {
             $elements[] = $this->Expression();
 
-            if (ExpressionLexer::T_COMMA !== $this->lexer->lookahead['type']) {
+            if ( ! $this->lexer->isNext(ExpressionLexer::T_COMMA)) {
                 break;
             }
-            $this->lexer->next();
+            $this->lexer->moveNext();
         }
 
         $this->match(ExpressionLexer::T_CLOSE_BRACKET);
@@ -175,16 +156,16 @@ final class ExpressionParser
         $this->match(ExpressionLexer::T_OPEN_BRACE);
 
         $entries = array();
-        while (ExpressionLexer::T_CLOSE_BRACE !== $this->lexer->lookahead['type']) {
+        while ( ! $this->lexer->isNext(ExpressionLexer::T_CLOSE_BRACE)) {
             $key = $this->match(ExpressionLexer::T_STRING);
             $this->match(ExpressionLexer::T_COLON);
             $entries[$key] = $this->Expression();
 
-            if (ExpressionLexer::T_COMMA !== $this->lexer->lookahead['type']) {
+            if ( ! $this->lexer->isNext(ExpressionLexer::T_COMMA)) {
                 break;
             }
 
-            $this->lexer->next();
+            $this->lexer->moveNext();
         }
 
         $this->match(ExpressionLexer::T_CLOSE_BRACE);
@@ -195,11 +176,11 @@ final class ExpressionParser
     private function Suffix(ExpressionInterface $expr)
     {
         while (true) {
-            if (ExpressionLexer::T_OBJECT_OPERATOR === $this->lexer->lookahead['type']) {
-                $this->lexer->next();
+            if ($this->lexer->isNext(ExpressionLexer::T_OBJECT_OPERATOR)) {
+                $this->lexer->moveNext();
                 $name = $this->match(ExpressionLexer::T_IDENTIFIER);
 
-                if (ExpressionLexer::T_OPEN_PARENTHESIS === $this->lexer->lookahead['type']) {
+                if ($this->lexer->isNext(ExpressionLexer::T_OPEN_PARENTHESIS)) {
                     $args = $this->Arguments();
                     $expr = new MethodCallExpression($expr, $name, $args);
                     continue;
@@ -209,8 +190,8 @@ final class ExpressionParser
                 continue;
             }
 
-            if (ExpressionLexer::T_OPEN_BRACKET === $this->lexer->lookahead['type']) {
-                $this->lexer->next();
+            if ($this->lexer->isNext(ExpressionLexer::T_OPEN_BRACKET)) {
+                $this->lexer->moveNext();
                 $key = $this->Expression();
                 $this->match(ExpressionLexer::T_CLOSE_BRACKET);
                 $expr = new GetItemExpression($expr, $key);
@@ -223,23 +204,15 @@ final class ExpressionParser
         return $expr;
     }
 
-    private function FunctionCall()
-    {
-        $name = $this->match(ExpressionLexer::T_IDENTIFIER);
-        $args = $this->Arguments();
-
-        return new FunctionExpression($name, $args);
-    }
-
     private function Arguments()
     {
         $this->match(ExpressionLexer::T_OPEN_PARENTHESIS);
         $args = array();
 
-        while (ExpressionLexer::T_CLOSE_PARENTHESIS !== $this->lexer->lookahead['type']) {
+        while ( ! $this->lexer->isNext(ExpressionLexer::T_CLOSE_PARENTHESIS)) {
             $args[] = $this->Expression();
 
-            if (ExpressionLexer::T_COMMA !== $this->lexer->lookahead['type']) {
+            if ( ! $this->lexer->isNext(ExpressionLexer::T_COMMA)) {
                 break;
             }
 
@@ -248,50 +221,5 @@ final class ExpressionParser
         $this->match(ExpressionLexer::T_CLOSE_PARENTHESIS);
 
         return $args;
-    }
-
-    private function Value()
-    {
-        return $this->matchAny(array(ExpressionLexer::T_STRING));
-    }
-
-    private function matchAny(array $types)
-    {
-        if (null !== $this->lexer->lookahead) {
-            foreach ($types as $type) {
-                if ($type === $this->lexer->lookahead['type']) {
-                    $this->lexer->next();
-
-                    return $this->lexer->token['value'];
-                }
-            }
-        }
-
-        $this->error(sprintf('one of these tokens "%s"',
-            implode('", "', array_map(array('JMS\SecurityExtraBundle\Security\Authorization\Expression\Lexer', 'getLiteral'), $types))
-        ));
-    }
-
-    private function match($type)
-    {
-        if (null === $this->lexer->lookahead
-            || $type !== $this->lexer->lookahead['type']) {
-            $this->error(sprintf('token "%s"', ExpressionLexer::getLiteral($type)));
-        }
-
-        $this->lexer->next();
-
-        return $this->lexer->token['value'];
-    }
-
-    private function error($expected)
-    {
-        $actual = null === $this->lexer->lookahead ? 'end of file'
-            : sprintf('token "%s" with value "%s" at position %d',
-            ExpressionLexer::getLiteral($this->lexer->lookahead['type']),
-            $this->lexer->lookahead['value'],
-            $this->lexer->lookahead['position']);
-
-        throw new RuntimeException(sprintf('Expected %s, but got %s.', $expected, $actual));
     }
 }

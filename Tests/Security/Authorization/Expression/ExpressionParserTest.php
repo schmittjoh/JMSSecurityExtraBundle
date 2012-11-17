@@ -60,8 +60,8 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Malformed expression. Expected end of expression, but got "," (T_COMMA).
+     * @expectedException \JMS\Parser\SyntaxErrorException
+     * @expectedExceptionMessage Expected end of input, but got "," of type T_COMMA at position 6 (0-based).
      */
     public function testInvalidExpression()
     {

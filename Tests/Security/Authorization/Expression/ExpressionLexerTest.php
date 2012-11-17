@@ -10,14 +10,14 @@ class ExpressionLexerTest extends \PHPUnit_Framework_TestCase
 
     public function testParameter()
     {
-        $this->lexer->initialize('#contact');
+        $this->lexer->setInput('#contact');
 
         $this->assertEquals(array(
-            'type' =>  ExpressionLexer::T_PARAMETER,
-            'value' => 'contact',
-            'position' => 0,
-        ), $this->lexer->lookahead);
-        $this->assertFalse($this->lexer->next());
+            'contact',
+            0,
+            ExpressionLexer::T_PARAMETER,
+        ), $this->lexer->next);
+        $this->assertFalse($this->lexer->moveNext());
     }
 
     protected function setUp()
