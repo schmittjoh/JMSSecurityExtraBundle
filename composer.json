@@ -15,7 +15,7 @@
     "require": {
         "symfony/framework-bundle": ">=2.1.0,<2.3-dev",
         "symfony/security-bundle": "*",
-        "jms/metadata": "1.1.*",
+        "jms/metadata": "1.*",
         "jms/parser-lib": "1.*",
         "jms/aop-bundle": ">=1.0.0,<1.2-dev",
         "jms/di-extra-bundle": "1.3.*"
