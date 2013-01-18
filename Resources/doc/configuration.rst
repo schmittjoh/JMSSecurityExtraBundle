@@ -13,7 +13,7 @@ Below, you find the default configuration:
             # services (false); see also below 
             secure_all_services: false
             
-            # Enabling this setting will add an additional special attribute "IS_IDDQD".
+            # Enabling this setting will add an additional special attribute "ROLE_IDDQD".
             # Anybody with this attribute will effectively bypass all security checks.
             enable_iddqd_attribute: false        
             
