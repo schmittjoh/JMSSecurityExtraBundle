@@ -2,7 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Logger;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 
 class FileLogger implements LoggerInterface
 {
@@ -13,47 +13,47 @@ class FileLogger implements LoggerInterface
         $this->dir = $logDir;
     }
 
-    public function emerg($message, array $context = array())
+    public function emergency($message, array $context = array())
     {
-        $this->log('[EMERG] '.$message);
+        $this->log('emerg', '[EMERG] '.$message);
     }
 
     public function alert($message, array $context = array())
     {
-        $this->log('[ALERT] '.$message);
+        $this->log('alert', '[ALERT] '.$message);
     }
 
-    public function crit($message, array $context = array())
+    public function critical($message, array $context = array())
     {
-        $this->log('[CRIT] '.$message);
+        $this->log('crit', '[CRIT] '.$message);
     }
 
-    public function err($message, array $context = array())
+    public function error($message, array $context = array())
     {
-        $this->log('[ERR] '.$message);
+        $this->log('err', '[ERR] '.$message);
     }
 
-    public function warn($message, array $context = array())
+    public function warning($message, array $context = array())
     {
-        $this->log('[WARN] '.$message);
+        $this->log('warn', '[WARN] '.$message);
     }
 
     public function notice($message, array $context = array())
     {
-        $this->log('[NOTICE] '.$message);
+        $this->log('notice', '[NOTICE] '.$message);
     }
 
     public function info($message, array $context = array())
     {
-        $this->log('[INFO] '.$message);
+        $this->log('info', '[INFO] '.$message);
     }
 
     public function debug($message, array $context = array())
     {
-        $this->log('[DEBUG] '.$message);
+        $this->log('debug', '[DEBUG] '.$message);
     }
 
-    private function log($message)
+    public function log($level, $message, array $context = array())
     {
         file_put_contents($this->dir.'/log', $message."\n", FILE_APPEND);
     }

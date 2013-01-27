@@ -18,9 +18,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
