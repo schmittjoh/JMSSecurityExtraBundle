@@ -129,7 +129,7 @@ class ExpressionCompiler
         $this->indentationLevel -= 1;
 
         if ($this->indentationLevel < 0) {
-            throw new RuntimeException('The identation level cannot be less than zero.');
+            throw new RuntimeException('The indentation level cannot be less than zero.');
         }
 
         return $this;
@@ -266,11 +266,11 @@ class ExpressionCompiler
         }
 
         if ($expr instanceof FunctionExpression) {
-            $this->getFunctionCompiler($expr->name)->compilePreconditions($this, $expr);
-
             foreach ($expr->args as $arg) {
                 $this->compilePreconditions($arg);
             }
+
+            $this->getFunctionCompiler($expr->name)->compilePreconditions($this, $expr);
 
             return $this;
         }
