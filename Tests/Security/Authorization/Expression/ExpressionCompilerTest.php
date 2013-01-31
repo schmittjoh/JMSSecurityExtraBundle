@@ -3,6 +3,8 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler;
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
+use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\Func\FunctionCompilerInterface;
 
 use JMS\SecurityExtraBundle\Security\Acl\Expression\HasPermissionFunctionCompiler;
 
@@ -110,6 +112,27 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($evaluator($context));
     }
 
+    public function testCompileInternalInPreconditions()
+    {
+        $this->compiler->addTypeCompiler(new ParameterExpressionCompiler());
+        $this->compiler->addFunctionCompiler(new TestIssue108FunctionCompiler());
+
+        // the first call ensure that state is reset correctly
+        $this->compiler->compileExpression(new Expression(
+            'testIssue(#project)'));
+        $evaluator = eval($this->compiler->compileExpression(
+            new Expression('testIssue(#project)')));
+
+        $secureObject = new SecuredObject();
+        $project = new Project();
+
+        $context = array(
+            'object' => new MethodInvocation(new \ReflectionMethod($secureObject, 'delete'), $secureObject, array($project), array()),
+        );
+
+        $this->assertTrue($evaluator($context));
+    }
+
     /**
      * @dataProvider getUnaryNotTests
      */
@@ -146,5 +169,36 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->compiler = new ExpressionCompiler();
+    }
+}
+
+class TestIssue108FunctionCompiler implements FunctionCompilerInterface
+{
+    public function getName()
+    {
+        return 'testIssue';
+    }
+
+    public function compilePreconditions(ExpressionCompiler $compiler, FunctionExpression $function)
+    {
+        if (1 !== count($function->args)) {
+            throw new \RuntimeException(sprintf('The %s() function expects exactly one argument, but got "%s".', $this->getName(), var_export($function->args, true)));
+        }
+
+        $argName = $compiler->nextName();
+
+        $compiler
+            ->write("\$$argName = ")
+            ->compileInternal($function->args[0])
+            ->writeln(';');
+
+        $compiler->attributes['arg_name'] = $argName;
+    }
+
+    public function compile(ExpressionCompiler $compiler, FunctionExpression $function)
+    {
+        $argName = $compiler->attributes['arg_name'];
+
+        $compiler->write("\$$argName !== null");
     }
 }
