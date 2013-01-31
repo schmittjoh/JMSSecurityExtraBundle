@@ -275,12 +275,6 @@ class ExpressionCompiler
             return $this;
         }
 
-        if ($expr instanceof VariableExpression) {
-            $this->getVariableCompiler($expr->name)->compilePreconditions($this, $expr);
-
-            return $this;
-        }
-
         if ($expr instanceof MethodCallExpression) {
             $this->compilePreconditions($expr->object);
 
