@@ -18,7 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast;
 
-class GetItemExpression
+class GetItemExpression implements ExpressionInterface
 {
     public $array;
     public $key;

@@ -274,6 +274,14 @@ class ExpressionCompiler
             return $this;
         }
 
+        if ($expr instanceof GetItemExpression) {
+            $this
+                ->compilePreconditions($expr->array)
+                ->compilePreconditions($expr->key);
+
+            return $this;
+        }
+
         if ($expr instanceof GetPropertyExpression) {
             $this->compilePreconditions($expr->object);
 
@@ -317,7 +325,9 @@ class ExpressionCompiler
 
         if ($expr instanceof GetItemExpression) {
             $this->compileInternal($expr->array);
-            $this->code .= '['.$expr->key.']';
+            $this->code .= '[';
+            $this->compileInternal($expr->key);
+            $this->code .= ']';
 
             return $this;
         }
