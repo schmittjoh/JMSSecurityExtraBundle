@@ -43,7 +43,6 @@ class ExpressionCompiler
     private $reservedNames = array('context' => true);
 
     private $itemExists = array();
-    private $itemType = array();
     private $rolesName;
 
     private $code;
@@ -96,7 +95,7 @@ class ExpressionCompiler
     {
         $this->nameCount  = 0;
         $this->code       = '';
-        $this->itemExists = $this->itemType = $this->attributes = array();
+        $this->itemExists = $this->attributes = array();
         $this->rolesName  = null;
 
         if ($raw) {
@@ -189,16 +188,6 @@ class ExpressionCompiler
         }
 
         if (null !== $expectedType) {
-            if (isset($this->itemType[$key])) {
-                if ($this->itemType[$key] !== $expectedType) {
-                    throw new RuntimeException(sprintf('Cannot verify that item "%s" is of type "%s" because it is already expected to be of type "%s".',
-                        $key, $expectedType, $this->itemType[$key]
-                    ));
-                }
-
-                return $this;
-            }
-
             $this
                 ->writeln("if (!\$context['$key'] instanceof $expectedType) {")
                 ->indent()
