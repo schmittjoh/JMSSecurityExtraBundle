@@ -31,6 +31,9 @@ class VariableExpressionCompiler implements TypeCompilerInterface
 
     public function compilePreconditions(ExpressionCompiler $compiler, ExpressionInterface $expr)
     {
+        if (!$expr->allowNull && !$this->isKnown($expr->name)) {
+            $compiler->verifyItem($expr->name);
+        }
     }
 
     public function compile(ExpressionCompiler $compiler, ExpressionInterface $expr)
@@ -56,5 +59,10 @@ class VariableExpressionCompiler implements TypeCompilerInterface
         if ($expr->allowNull) {
             $compiler->write(" : null)");
         }
+    }
+
+    protected function isKnown($variable)
+    {
+        return in_array($variable, array('permitAll', 'denyAll'), true);
     }
 }

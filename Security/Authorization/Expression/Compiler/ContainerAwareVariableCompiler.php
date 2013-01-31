@@ -57,4 +57,9 @@ class ContainerAwareVariableCompiler extends VariableExpressionCompiler
 
         parent::compile($compiler, $expr);
     }
+
+    protected function isKnown($variable)
+    {
+        return isset($this->serviceMap[$variable]) || isset($this->parameterMap[$variable]) || parent::isKnown($variable);
+    }
 }
