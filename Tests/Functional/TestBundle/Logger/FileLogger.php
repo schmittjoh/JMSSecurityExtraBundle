@@ -15,45 +15,70 @@ class FileLogger implements LoggerInterface
 
     public function emerg($message, array $context = array())
     {
-        $this->log('[EMERG] '.$message);
+        $this->logMessage('[EMERG] '.$message);
     }
 
     public function alert($message, array $context = array())
     {
-        $this->log('[ALERT] '.$message);
+        $this->logMessage('[ALERT] '.$message);
     }
 
     public function crit($message, array $context = array())
     {
-        $this->log('[CRIT] '.$message);
+        $this->logMessage('[CRIT] '.$message);
     }
 
     public function err($message, array $context = array())
     {
-        $this->log('[ERR] '.$message);
+        $this->logMessage('[ERR] '.$message);
     }
 
     public function warn($message, array $context = array())
     {
-        $this->log('[WARN] '.$message);
+        $this->logMessage('[WARN] '.$message);
     }
 
     public function notice($message, array $context = array())
     {
-        $this->log('[NOTICE] '.$message);
+        $this->logMessage('[NOTICE] '.$message);
     }
 
     public function info($message, array $context = array())
     {
-        $this->log('[INFO] '.$message);
+        $this->logMessage('[INFO] '.$message);
     }
 
     public function debug($message, array $context = array())
     {
-        $this->log('[DEBUG] '.$message);
+        $this->logMessage('[DEBUG] '.$message);
     }
 
-    private function log($message)
+    public function emergency($message, array $context = array())
+    {
+        $this->emerg($message, $context);
+    }
+
+    public function critical($message, array $context = array())
+    {
+        $this->crit($message, $context);
+    }
+
+    public function error($message, array $context = array())
+    {
+        $this->err($message, $context);
+    }
+
+    public function warning($message, array $context = array())
+    {
+        $this->warn($message, $context);
+    }
+
+    public function log($level, $message, array $context = array())
+    {
+        $this->logMessage($message);
+    }
+
+    private function logMessage($message)
     {
         file_put_contents($this->dir.'/log', $message."\n", FILE_APPEND);
     }
