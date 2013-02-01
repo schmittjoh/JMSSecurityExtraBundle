@@ -63,53 +63,56 @@ in your config, otherwise you will get an exception upon checking access.
 
 Reference
 ---------
-+-----------------------------------+--------------------------------------------+
-| Expression                        | Description                                |
-+===================================+============================================+
-| hasRole('ROLE')                   | Checks whether the token has a certain     |
-|                                   | role.                                      |
-+-----------------------------------+--------------------------------------------+
-| hasAnyRole('ROLE1', 'ROLE2', ...) | Checks whether the token has any of the    |
-|                                   | given roles.                               |
-+-----------------------------------+--------------------------------------------+
-| isAnonymous()                     | Checks whether the token is anonymous.     |
-+-----------------------------------+--------------------------------------------+
-| isRememberMe()                    | Checks whether the token is remember me.   |
-+-----------------------------------+--------------------------------------------+
-| isFullyAuthenticated()            | Checks whether the token is fully          |
-|                                   | authenticated.                             |
-+-----------------------------------+--------------------------------------------+
-| isAuthenticated()                 | Checks whether the token is not anonymous. |
-+-----------------------------------+--------------------------------------------+
-| hasPermission(*var*, 'PERMISSION')| Checks whether the token has the given     |
-|                                   | permission for the given object (requires  |
-|                                   | the ACL system).                           |
-+-----------------------------------+--------------------------------------------+
-| token                             | Variable that refers to the token          |
-|                                   | which is currently in the security context.|
-+-----------------------------------+--------------------------------------------+
-| user                              | Variable that refers to the user           |
-|                                   | which is currently in the security context.|
-+-----------------------------------+--------------------------------------------+
-| object                            | Variable that refers to the object for     |
-|                                   | which access is being requested.           |
-+-----------------------------------+--------------------------------------------+
-| denyAll                           | Variable that evaluates to ``false``.      |
-+-----------------------------------+--------------------------------------------+
-| permitAll                         | Variable that evaluates to ``true``.       |
-+-----------------------------------+--------------------------------------------+
-| #*paramName*                      | Any identifier prefixed with # refers to   |
-|                                   | a parameter of the same name that is passed|
-|                                   | to the method where the expression is used.|
-+-----------------------------------+--------------------------------------------+
-| and / &&                          | Binary "and" operator                      |
-+-----------------------------------+--------------------------------------------+
-| or / ||                           | Binary "or" operator                       |
-+-----------------------------------+--------------------------------------------+
-| ==                                | Binary "is equal" operator                 |
-+-----------------------------------+--------------------------------------------+
-| not / !                           | Negation operator                          |
-+-----------------------------------+--------------------------------------------+
++-----------------------------------------+--------------------------------------------+
+| Expression                              | Description                                |
++=========================================+============================================+
+| hasRole('ROLE')                         | Checks whether the token has a certain     |
+|                                         | role.                                      |
++-----------------------------------------+--------------------------------------------+
+| hasAnyRole('ROLE1', 'ROLE2', ...)       | Checks whether the token has any of the    |
+|                                         | given roles.                               |
++-----------------------------------------+--------------------------------------------+
+| isAnonymous()                           | Checks whether the token is anonymous.     |
++-----------------------------------------+--------------------------------------------+
+| isRememberMe()                          | Checks whether the token is remember me.   |
++-----------------------------------------+--------------------------------------------+
+| isFullyAuthenticated()                  | Checks whether the token is fully          |
+|                                         | authenticated.                             |
++-----------------------------------------+--------------------------------------------+
+| isAuthenticated()                       | Checks whether the token is not anonymous. |
++-----------------------------------------+--------------------------------------------+
+| hasPermission(*var*, 'PERMISSION')      | Checks whether the token has the given     |
+|                                         | permission for the given object (requires  |
+|                                         | the ACL system).                           |
++-----------------------------------------+--------------------------------------------+
+| hasClassPermission('MyEntity', 'CREATE')| Checks whether the token has the given     |
+|                                         | permission for the given class name.       |
++-----------------------------------------+--------------------------------------------+
+| token                                   | Variable that refers to the token          |
+|                                         | which is currently in the security context.|
++-----------------------------------------+--------------------------------------------+
+| user                                    | Variable that refers to the user           |
+|                                         | which is currently in the security context.|
++-----------------------------------------+--------------------------------------------+
+| object                                  | Variable that refers to the object for     |
+|                                         | which access is being requested.           |
++-----------------------------------------+--------------------------------------------+
+| denyAll                                 | Variable that evaluates to ``false``.      |
++-----------------------------------------+--------------------------------------------+
+| permitAll                               | Variable that evaluates to ``true``.       |
++-----------------------------------------+--------------------------------------------+
+| #*paramName*                            | Any identifier prefixed with # refers to   |
+|                                         | a parameter of the same name that is passed|
+|                                         | to the method where the expression is used.|
++-----------------------------------------+--------------------------------------------+
+| and / &&                                | Binary "and" operator                      |
++-----------------------------------------+--------------------------------------------+
+| or / ||                                 | Binary "or" operator                       |
++-----------------------------------------+--------------------------------------------+
+| ==                                      | Binary "is equal" operator                 |
++-----------------------------------------+--------------------------------------------+
+| not / !                                 | Negation operator                          |
++-----------------------------------------+--------------------------------------------+
 
 Further Resources
 -----------------
