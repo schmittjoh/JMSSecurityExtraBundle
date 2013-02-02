@@ -85,6 +85,8 @@ class JMSSecurityExtraExtension extends Extension
             // FIXME: Also add an iddqd after invocation provider
         }
 
+        $container->setParameter('security.extra.iddqd_ignore_roles', $config['iddqd_ignore_roles']);
+
         $container->setParameter('security.iddqd_aliases',
             isset($config['iddqd_aliases']) ? $config['iddqd_aliases'] : array());
 
