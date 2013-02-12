@@ -40,6 +40,6 @@ final class Secure
             throw new InvalidArgumentException('You must define a "roles" attribute for each Secure annotation.');
         }
 
-        $this->roles = array_map('trim', explode(',', $values['roles']));
+        $this->roles = is_array($values['roles']) ? $values['roles'] : array_map('trim', explode(',', $values['roles']));
     }
 }

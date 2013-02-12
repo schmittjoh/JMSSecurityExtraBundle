@@ -40,6 +40,6 @@ final class SecureReturn
             throw new InvalidArgumentException('You must define a "permissions" attribute for each SecureReturn annotation.');
         }
 
-        $this->permissions = array_map('trim', explode(',', $values['permissions']));
+        $this->permissions = is_array($values['permissions']) ? $values['permissions'] : array_map('trim', explode(',', $values['permissions']));
     }
 }
