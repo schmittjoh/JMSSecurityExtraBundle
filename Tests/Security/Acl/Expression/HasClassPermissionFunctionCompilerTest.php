@@ -18,7 +18,7 @@ class HasClassPermissionFunctionCompilerTest extends \PHPUnit_Framework_TestCase
             array(new VariableExpression('foo'), new ConstantExpression('VIEW'))));
 
         $this->assertContains(
-            "\$context['security_context']->isGranted('VIEW', \$context['foo']);",
+            "\$context['permission_evaluator']->hasPermission(\$context['token'], new Symfony\\Component\\Security\\Acl\\Domain\\ObjectIdentity(\$context['foo'], -1), 'VIEW');",
             $source);
     }
 
@@ -28,7 +28,7 @@ class HasClassPermissionFunctionCompilerTest extends \PHPUnit_Framework_TestCase
             array(new VariableExpression('foo'), new ConstantExpression('view'))));
 
         $this->assertContains(
-            "\$context['security_context']->isGranted('VIEW', \$context['foo']);",
+            "\$context['permission_evaluator']->hasPermission(\$context['token'], new Symfony\\Component\\Security\\Acl\\Domain\\ObjectIdentity(\$context['foo'], -1), 'VIEW');",
             $source);
     }
 
