@@ -104,6 +104,17 @@ class JMSSecurityExtraExtension extends Extension
             $loader->load('security_secure_random.xml');
             $this->configureSecureRandom($config['util']['secure_random'], $container);
         }
+
+        $this->addClassesToCompile(array(
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Expression\\ContainerAwareExpressionHandler',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Expression\\ExpressionHandlerInterface',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Expression\\ExpressionVoter',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\Expression\\LazyLoadingExpressionVoter',
+            'JMS\\SecurityExtraBundle\\Security\\Authorization\\RememberingAccessDecisionManager',
+            /* This would introduce a hard dependency on Twig
+            'JMS\\SecurityExtraBundle\\Twig\\SecurityExtension',
+            */
+        ));
     }
 
     private function configureSecureRandom(array $config, ContainerBuilder $container)
