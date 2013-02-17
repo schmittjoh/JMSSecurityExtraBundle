@@ -24,7 +24,7 @@ use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
  * Represents a @SecureParam annotation.
  *
  * @Annotation
- * @Target("METHOD")
+ * @Target({"CLASS", "METHOD"})
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 final class SecureParam

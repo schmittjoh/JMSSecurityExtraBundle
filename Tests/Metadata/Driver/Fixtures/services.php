@@ -35,6 +35,26 @@ class FooService implements FooInterface
      */
     public function shortNotation() { }
 }
+/**
+  * @SecureParam(name="param", permissions="VIEW")
+  */
+class FooSecureService implements FooInterface
+{
+    /**
+     * @SecureParam(name="anotherParam", permissions="EDIT")
+     */
+    public function foo($param, $anotherParam) {}
+
+    public function baz($param) {}
+}
+/**
+ * @SecureParam(name="param", permissions="VIEW")
+ * @SecureParam(name="anotherParam", permissions="EDIT")
+ */
+class FooMultipleSecureService implements FooInterface
+{
+    public function foo($param, $anotherParam) {}
+}
 interface FooInterface
 {
     /**
