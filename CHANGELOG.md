@@ -1,11 +1,19 @@
 This document details all changes between different versions of JMSSecurityExtraBundle:
 
+1.4
+---
+- allowed @SecureParam to be used on class-level (similar to @PreAuthorize)
+- added the ability to exclude certain attributes from IDDQD-checks
+- improved error messages for security expressions
+
+
 1.3
 ---
 - added a reverse interpreter for expressions
 - added logging of votes for expressions
 - added a generic expression function compiler for service callbacks making it
   easier to create custom expression functions
+
 
 1.2
 ---
