@@ -37,6 +37,6 @@ final class RunAs
             throw new InvalidArgumentException('"roles" must be defined for RunAs annotation.');
         }
 
-        $this->roles = array_map('trim', explode(',', $values['roles']));
+        $this->roles = is_array($values['roles']) ? $values['roles'] : array_map('trim', explode(',', $values['roles']));
     }
 }
