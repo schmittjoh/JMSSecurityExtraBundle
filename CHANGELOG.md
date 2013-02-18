@@ -5,7 +5,7 @@ This document details all changes between different versions of JMSSecurityExtra
 - allowed @SecureParam to be used on class-level (similar to @PreAuthorize)
 - added the ability to exclude certain attributes from IDDQD-checks
 - improved error messages for security expressions
-- several annotations now also accepts arrays of roles in addition to comma-separated strings
+- several annotations now also accept arrays of roles in addition to comma-separated strings
 
 
 1.3
