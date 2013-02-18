@@ -34,6 +34,13 @@ class FooService implements FooInterface
      * @Secure("ROLE_FOO, ROLE_BAR")
      */
     public function shortNotation() { }
+    
+    /**     
+     * @Secure(roles={"ROLE_FOO", "ROLE_BAR"})
+     * @SecureParam(name="param", permissions={"OWNER"})     
+     * @SecureReturn(permissions={"MASTER"})
+     */
+    public function bar($param) { }
 }
 interface FooInterface
 {
