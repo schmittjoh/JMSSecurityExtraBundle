@@ -66,8 +66,10 @@ Reference
 +-----------------------------------+--------------------------------------------+
 | Expression                        | Description                                |
 +===================================+============================================+
-| permitAll                         | Checks whether the token is authenticated  |
-|                                   | anonymously                                |
+| permitAll                         | *true* - Permit Access - Checks whether    |
+|                                   | the token is authenticated anonymously     |
++-----------------------------------+--------------------------------------------+
+| denyAll                           | *false* - Deny Access                      |
 +-----------------------------------+--------------------------------------------+
 | hasRole('ROLE')                   | Checks whether the token has a certain     |
 |                                   | role.                                      |
