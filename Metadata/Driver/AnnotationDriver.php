@@ -55,7 +55,7 @@ class AnnotationDriver implements DriverInterface
         $classAnnotations = $this->reader->getClassAnnotations($reflection);
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
             // check if the method was defined on this class
-            if ($method->getDeclaringClass()->name !== $reflection->name) {
+            if (($method->getDeclaringClass()->name !== $reflection->name) && (!$reflection->isSubclassOf($method->getDeclaringClass()->name))) {    
                 continue;
             }
 
