@@ -25,22 +25,25 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RequiredRolesMissingException extends AccessDeniedException
 {
-	protected $roles;
-	
-	protected $token;
+    protected $roles;
 
-	public function __construct($message, $roles, $token) {
-		parent::__construct($message);
-		
-		$this->roles = $roles;
-		$this->token = $token;
-	}
-	
-	public function getRoles() {
-		return $this->roles;
-	}
-	
-	public function getToken() {
-		return $this->token;
-	}
+    protected $token;
+
+    public function __construct($message, $roles, $token)
+    {
+        parent::__construct($message);
+
+        $this->roles = $roles;
+        $this->token = $token;
+    }
+
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
 }
