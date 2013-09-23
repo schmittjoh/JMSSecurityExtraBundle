@@ -13,5 +13,5 @@ jms_security_extra:
         'TestBundle:Foo:exception': 'permitAll'
         'TestBundle:Foo:.*': 'hasRole("MOO")'
         AdvancedConfig:
-            pattern: 'TestBundle:Crud:edit$'
+            pattern: 'TestBundle:Crud:delete$'
             pre_authorize: 'hasRole("FOO")'

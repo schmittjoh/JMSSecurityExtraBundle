@@ -64,11 +64,11 @@ class MethodAccessControlTest extends BaseTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testCrudEditIsSecureWithAdvancedConfiguration()
+    public function testCrudDeleteIsSecureWithAdvancedConfiguration()
     {
         $client = $this->createClient(array('config' => 'method_access_control.yml'));
         
-        $client->request('GET', '/edit');
+        $client->request('GET', '/delete');
         $this->assertRedirectedToLogin($client->getResponse());
     }
 
