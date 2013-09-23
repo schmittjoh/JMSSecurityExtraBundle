@@ -6,6 +6,9 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use JMS\SecurityExtraBundle\Metadata\Driver\ConfigDriver;
 
+/**
+ * @group driver
+ */
 class ConfigDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoadMetadata()
@@ -44,6 +47,164 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
     {
         $driver = new ConfigDriver(array(), array());
         $this->assertNull($driver->loadMetadataForClass($this->getClass('Controller\\CrudController')));
+    }
+
+    /**
+     * @dataProvider advancedConfigProvider
+     */
+    public function testLoadAdvancedMetadata($config, $securedClass, $securedMethods)
+    {
+        $driver = new ConfigDriver(array(), $config);
+
+        $reflection = new \ReflectionClass(
+            'JMS\SecurityExtraBundle\Tests\Mapping\Driver\\'.$securedClass
+        );
+
+        $metadata = $driver->loadMetadataForClass($reflection);
+
+        $this->assertEquals(1, count($metadata->methodMetadata));
+
+        foreach ($config as $configEntry) {
+            foreach ($configEntry as $key => $content) {
+                switch ($key) {
+                case 'pattern'      :
+                    break 2;
+                case 'pre_authorize':
+                    $assert = "assertPreAuthorize";
+                    break;
+                case 'secure'       :
+                    $assert = "assertSecure";
+                    break;
+                case 'secure_param' :
+                    $assert ="assertSecureParam";
+                    break;
+                case 'secure_return':
+                    $assert = "assertSecureReturn";
+                    break;
+                case 'run_as'       :
+                    $assert = "assertRunAs";
+                    break;
+                case 'satisfies_parent_security_policy':
+                    $assert = "assertSatisfiesParentSecurity";
+                    break;
+                default             :
+                    $this->fail("Unknown configuration key found: ". $key);
+                    break;
+                }
+    
+                foreach ($metadata->methodMetadata as $name => $metadata) {
+                    $this->assertEquals($name, current($securedMethods));
+                    $this->{$assert}($metadata, current($securedMethods), $content );
+    
+                    next($securedMethods);
+                }
+            }
+        }
+    }
+
+    protected function assertPreAuthorize($loadedMethod, $config)
+    {
+        $expression = new Expression(current($config));
+
+        $this->assertEquals(
+            array($expression), $loadedMethod->roles,
+            sprintf("Expected expression %s got %s", $expression, $loadedMethod->roles)
+        );
+    }
+
+    protected function assertSecure($loadedMethod, $config)
+    {
+        $this->assertPreAuthorize($loadedMethod, $config);
+    }
+
+    protected function assertSecureParam($loadedMethod, $config)
+    {
+        $expectedPermission = $loadedMethod->paramPermissions[$config['name']];
+
+        $this->assertEquals(
+            $expectedPermissions, $config['permission'],
+            sprintf("Expected parameter permission %s got %s", $expectedPermission, $config['permission'])
+        );
+    }
+
+    protected function assertSecureReturn($loadedMethod, $config)
+    {
+        $this->assertEquals(
+            $loadedMethod->returnPermissions, $config,
+            sprintf("Expected return permission %s got %s". $loadedMethod->returnPermission, $config)
+        );
+    }
+
+    protected function assertRunAs($loadedMethods, $expectedMethods, $config)
+    {
+    }
+
+    protected function assertSatisfiesParentSecurity($loadedMethods, $expectedMethods, $config)
+    {
+    }
+
+    public function advancedConfigProvider()
+    {
+        return array(
+            array(
+                'config' => array(array(
+                    'pattern'       => 'FooService::foo',
+                    'secure'        => array(
+                        'roles' => array(
+                            'ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPERADMIN'
+                        ),
+                    ),
+                    'secure_param'   => array('name' => 'param', 'permissions' => array('VIEW')),
+                )),
+                'securedClass' => 'FooService',
+                'securedMethods' => array('foo'),
+            ),
+            array(
+                'config' => array(array(
+                    'pattern'       => 'FooService::shortNotation',
+                    'secure'        => array(
+                        'roles' => array('ROLE_FOO', 'ROLE_BAR')
+                    ),
+                )),
+                'securedClass' => 'FooService',
+                'securedMethods' => array('shortNotation'),
+            ),
+            array(
+                'config' => array(array(
+                    'pattern'       => 'FooService::bar',
+                    'secure'        => array('roles' => 'ROLE_FOO, ROLE_BAR'),
+                    'secure_param'   => array(
+                        'name' => 'param', 'permissions' => array('OWNER')
+                    ),
+                    'secure_return'  => array('permissions' => 'MASTER'),
+                )),
+                'securedClass' => 'FooService',
+                'securedMethods' => array('bar'),
+            ),
+            array(
+                'config' => array(array(
+                    'pattern'       => 'FooSecureService::foo',
+                    'secure_param'   => array(
+                        'name' => 'anotherParam', 'permissions' => array('EDIT')
+                    ),
+                )),
+                'securedClass' => 'FooSecureService',
+                'securedMethods' => array('foo'),
+            ),
+            array(
+                'config' => array(array(
+                    'pattern'       => 'FooMultipleSecureService::foo',
+                    'secure_param'   => array(
+                        'name' => 'param', 'permissions' => array('VIEW')
+                    ),
+                    'secure_param'   => array(
+                        'name' => 'anotherParam', 'permissions' => array('EDIT')
+                    ),
+                )),
+                'securedClass' => 'FooMultipleSecureService',
+                'securedMethods' => array('foo'),
+            ),
+        );
     }
 
     private function getClass($name)

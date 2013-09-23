@@ -24,6 +24,9 @@ use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
 require_once __DIR__.'/Fixtures/services.php';
 
+/**
+ * @group driver
+ */
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoadMetadataWithClassPreAuthorize()
