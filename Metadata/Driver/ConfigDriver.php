@@ -12,15 +12,19 @@ use Metadata\Driver\DriverInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ConfigDriver implements DriverInterface
+class ConfigDriver extends AbstractDriver
 {
     private $bundles;
     private $config;
 
+    /**
+     * @param array $bundles A list of used bundles indexed by name.
+     * @param array $config  Metadata configuration
+     */
     public function __construct(array $bundles, array $config)
     {
-        uasort($bundles, function($a, $b) {
-            return strlen($b) - strlen($a);
+        uasort($bundles, function($operandA, $operandB) {
+            return strlen($operandB) - strlen($operandA);
         });
 
         foreach ($bundles as $name => $namespace) {
@@ -28,51 +32,125 @@ class ConfigDriver implements DriverInterface
         }
 
         $this->bundles = $bundles;
-        $this->config = $config;
+
+        /** This is a BC layer */
+        $this->config = array();
+        foreach ($config as $key => $value) {
+            if (is_string($value)) {
+                $this->config[$key] = array(
+                    'pattern' => $key,
+                    'pre_authorize' => $value
+                );
+            } else {
+                $this->config[$key] = $value;
+            }
+        }
     }
 
-    public function loadMetadataForClass(\ReflectionClass $class)
+    /**
+     * {@inheritDoc}
+     */
+    protected function getMethodScopeMetadata(\ReflectionMethod $method)
     {
-        $metadata = new ClassMetadata($class->name);
+        $configurationFound = null;
 
-        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $method) {
-            if ($method->getDeclaringClass()->name !== $class->name) {
-                continue;
-            }
-
-            $expression = null;
-            if (null !== $notation = $this->getControllerNotation($method)) {
-                $expression = $this->getExpressionForSignature($notation);
-            }
-
-            if (null === $expression && null === $expression =
-                    $this->getExpressionForSignature($method->class.'::'.$method->name)) {
-                continue;
-            }
-
-            $methodMetadata = new MethodMetadata($method->class, $method->name);
-            $methodMetadata->roles = array(new Expression($expression));
-            $metadata->addMethodMetadata($methodMetadata);
+        if (null !== $notation = $this->getControllerNotation($method)) {
+            $configurationFound = $this->getConfigForSignature($notation);
         }
 
+        if (null === $configurationFound) {
+            $configurationFound = $this->getConfigForSignature($method->class.'::'.$method->name);
+        }
+
+        return $configurationFound ? $configurationFound : array();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getClassScopeMetadata(\ReflectionClass $class)
+    {
+        /**
+         * Class configuration metadata is not supported.  Use more general
+         * regex pattern in configuration instead.
+         */
+
+        return array();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function fromMetadataConfig(\ReflectionMethod $method, array $configs)
+    {
+        $parameters = array();
+        foreach ($method->getParameters() as $index => $parameter) {
+            $parameters[$parameter->getName()] = $index;
+        }
+
+        $methodMetadata = new MethodMetadata($method->class, $method->name);
+
+        $hasSecurityMetadata = false;
+
+        foreach ($configs['method'] as $name => $config) {
+            switch ($name) {
+            case "pre_authorize":
+                $methodMetadata->roles = array(new Expression($config));
+                $hasSecurityMetadata = true;
+                break;
+            case "secure":
+                $methodMetadata->roles = $config['roles'];
+                $hasSecurityMetadata =  true;
+                break;
+            case "secure_param":
+                $this->assertParamExistsForMethod($parameters, $config['name'], $method->name);
+                $methodMetadata->addParamPermissions(
+                    $parameters[$config['name']], $config['permissions']
+                );
+                $hasSecurityMetadata = true;
+                break;
+            case "secure_return":
+                $methodMetadata->returnPermissions = $config['permissions'];
+                $hasSecurityMetadata = true;
+                break;
+            case "run_as":
+                $methodMetadata->runAsRoles = $config['roles'];
+                $hasSecurityMetadata = true;
+                break;
+            case "satisfies_parent_security_policy":
+                $methodMetadata->satisfiesParentSecurityPolicy = true;
+                $hasSecurityMetadata = true;
+                break;
+            }
+        }
+
+        return $hasSecurityMetadata ? $methodMetadata : null;
+    }
+
+    protected function getConfigForSignature($signature)
+    {
+        $configurationFound = null;
+
+        foreach ($this->config as $config) {
+            if (!preg_match('#'.$config['pattern'].'#i', $signature)) {
+                continue;
+            }
+
+            $configurationFound = $config;
+
+            break;
+        }
+
+        return $configurationFound;
+    }
+
+    protected function metadataPostTreatment(ClassMetadata $metadata)
+    {
         if (!$metadata->methodMetadata) {
-            return null;
+            $metadata = null;
         }
 
         return $metadata;
-    }
-
-    private function getExpressionForSignature($signature)
-    {
-        foreach ($this->config as $pattern => $expr) {
-            if (!preg_match('#'.$pattern.'#i', $signature)) {
-                continue;
-            }
-
-            return $expr;
-        }
-
-        return null;
     }
 
     // TODO: Is it feasible to reverse-engineer the notation for service controllers?
@@ -81,7 +159,13 @@ class ConfigDriver implements DriverInterface
         $signature = $method->class.'::'.$method->name;
 
         // check if class is a controller
-        if (0 === preg_match('#\\\\Controller\\\\([^\\\\]+)Controller::(.+)Action$#', $signature, $match)) {
+        $matched = preg_match(
+            '#\\\\Controller\\\\([^\\\\]+)Controller::(.+)Action$#',
+            $signature,
+            $match
+        );
+
+        if (!$matched) {
             return null;
         }
 
@@ -95,5 +179,18 @@ class ConfigDriver implements DriverInterface
         }
 
         return null;
+    }
+
+    private function assertParamExistsForMethod(array $params, $name, $method)
+    {
+        if (!isset($params[$name])) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The parameter "%s" does not exist for method "%s".',
+                    $name,
+                    $method
+                )
+            );
+        }
     }
 }

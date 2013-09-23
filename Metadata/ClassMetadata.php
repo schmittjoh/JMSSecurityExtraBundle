@@ -20,7 +20,7 @@ namespace JMS\SecurityExtraBundle\Metadata;
 
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
-use Metadata\MethodMetadata;
+use Metadata\MethodMetadata as PlainMethodMetadata;
 use Metadata\MergeableInterface;
 use Metadata\MergeableClassMetadata;
 
@@ -31,7 +31,7 @@ use Metadata\MergeableClassMetadata;
  */
 class ClassMetadata extends MergeableClassMetadata
 {
-    public function addMethodMetadata(MethodMetadata $metadata)
+    public function addMethodMetadata(PlainMethodMetadata $metadata)
     {
         if ($this->reflection->isFinal()) {
             throw new RuntimeException(sprintf('Class "%s" is declared final, and cannot be secured.', $reflection->name));

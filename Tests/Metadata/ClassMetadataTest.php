@@ -47,14 +47,14 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = $metadata->methodMetadata['abstractMethod'];
         $this->assertEquals(array('VIEW'), $metadata->returnPermissions);
     }
-
+    
     public function testAnalyzeThrowsNoExceptionWhenSatisfiesParentSecurityPolicyIsDefined()
     {
         $metadata = $this
             ->getFactory()
             ->getMetadataForClass('JMS\SecurityExtraBundle\Tests\Fixtures\CorrectSubService')
         ;
-
+        
         $methods = $metadata->methodMetadata;
         $this->assertTrue(isset($methods['differentMethodSignature']));
 
