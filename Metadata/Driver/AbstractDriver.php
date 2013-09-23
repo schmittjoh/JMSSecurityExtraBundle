@@ -59,7 +59,7 @@ abstract class AbstractDriver implements DriverInterface
      * violation of liskov substitution principle implied by the conjunction
      * use of MetadataFactory and DriverChain.
      *
-     * For more information about this bug, see issue #145 at
+     * For more information about this bug, see issue #145 at github (see below)
      *
      * @param ClassMetadata $metadata
      *
