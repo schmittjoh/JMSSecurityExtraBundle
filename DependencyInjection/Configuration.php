@@ -70,16 +70,18 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('method_access_control')
                         ->beforeNormalization()
-                            ->always(function ($node = array()) {
+                            ->always(function ($node) {
                                 /** This is a backward compatibility layer */
-                                foreach ($node as $key => $value) {
-                                    if (is_string($value)) {
-                                        $node[$key] = array(
-                                            'pre_authorize' => $value
-                                        );
+                                if ($node) {
+                                    foreach ($node as $key => $value) {
+                                        if (is_string($value)) {
+                                            $node[$key] = array(
+                                                'pre_authorize' => $value
+                                            );
+                                        }
                                     }
                                 }
-
+ 
                                 return $node;
                             })
                         ->end()
