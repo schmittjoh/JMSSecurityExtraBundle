@@ -63,7 +63,6 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             array(
                 ':login$' => array(
-                    'pattern' => ':login$',
                     'pre_authorize' => 'hasRole("FOO")',
                 )
             ),
