@@ -67,29 +67,29 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
         foreach ($config as $configEntry) {
             foreach ($configEntry as $key => $content) {
                 switch ($key) {
-                case 'pattern'      :
-                    break 2;
-                case 'pre_authorize':
-                    $assert = "assertPreAuthorize";
-                    break;
-                case 'secure'       :
-                    $assert = "assertSecure";
-                    break;
-                case 'secure_param' :
-                    $assert ="assertSecureParam";
-                    break;
-                case 'secure_return':
-                    $assert = "assertSecureReturn";
-                    break;
-                case 'run_as'       :
-                    $assert = "assertRunAs";
-                    break;
-                case 'satisfies_parent_security_policy':
-                    $assert = "assertSatisfiesParentSecurity";
-                    break;
-                default             :
-                    $this->fail("Unknown configuration key found: ". $key);
-                    break;
+                    case 'pattern'      :
+                        break 2;
+                    case 'pre_authorize':
+                        $assert = "assertPreAuthorize";
+                        break;
+                    case 'secure'       :
+                        $assert = "assertSecure";
+                        break;
+                    case 'secure_param' :
+                        $assert ="assertSecureParam";
+                        break;
+                    case 'secure_return':
+                        $assert = "assertSecureReturn";
+                        break;
+                    case 'run_as'       :
+                        $assert = "assertRunAs";
+                        break;
+                    case 'satisfies_parent_security_policy':
+                        $assert = "assertSatisfiesParentSecurity";
+                        break;
+                    default             :
+                        $this->fail("Unknown configuration key found: ". $key);
+                        break;
                 }
     
                 foreach ($metadata->methodMetadata as $name => $metadata) {
@@ -147,7 +147,7 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'config' => array(array(
+                'config' => array('FooService::foo'=> array(
                     'pattern'       => 'FooService::foo',
                     'secure'        => array(
                         'roles' => array(
@@ -160,7 +160,7 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
                 'securedMethods' => array('foo'),
             ),
             array(
-                'config' => array(array(
+                'config' => array('FooService::shortNotation' => array(
                     'pattern'       => 'FooService::shortNotation',
                     'secure'        => array(
                         'roles' => array('ROLE_FOO', 'ROLE_BAR')
@@ -170,7 +170,7 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
                 'securedMethods' => array('shortNotation'),
             ),
             array(
-                'config' => array(array(
+                'config' => array('FooService::bar' => array(
                     'pattern'       => 'FooService::bar',
                     'secure'        => array('roles' => 'ROLE_FOO, ROLE_BAR'),
                     'secure_param'   => array(
@@ -182,7 +182,7 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
                 'securedMethods' => array('bar'),
             ),
             array(
-                'config' => array(array(
+                'config' => array('FooSecureService::foo' => array(
                     'pattern'       => 'FooSecureService::foo',
                     'secure_param'   => array(
                         'name' => 'anotherParam', 'permissions' => array('EDIT')
@@ -192,7 +192,7 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
                 'securedMethods' => array('foo'),
             ),
             array(
-                'config' => array(array(
+                'config' => array('FooMultipleSecureService::foo' => array(
                     'pattern'       => 'FooMultipleSecureService::foo',
                     'secure_param'   => array(
                         'name' => 'param', 'permissions' => array('VIEW')

@@ -38,7 +38,6 @@ class ConfigDriver extends AbstractDriver
         foreach ($config as $key => $value) {
             if (is_string($value)) {
                 $this->config[$key] = array(
-                    'pattern' => $key,
                     'pre_authorize' => $value
                 );
             } else {
@@ -94,33 +93,33 @@ class ConfigDriver extends AbstractDriver
 
         foreach ($configs['method'] as $name => $config) {
             switch ($name) {
-            case "pre_authorize":
-                $methodMetadata->roles = array(new Expression($config));
-                $hasSecurityMetadata = true;
-                break;
-            case "secure":
-                $methodMetadata->roles = $config['roles'];
-                $hasSecurityMetadata =  true;
-                break;
-            case "secure_param":
-                $this->assertParamExistsForMethod($parameters, $config['name'], $method->name);
-                $methodMetadata->addParamPermissions(
-                    $parameters[$config['name']], $config['permissions']
-                );
-                $hasSecurityMetadata = true;
-                break;
-            case "secure_return":
-                $methodMetadata->returnPermissions = $config['permissions'];
-                $hasSecurityMetadata = true;
-                break;
-            case "run_as":
-                $methodMetadata->runAsRoles = $config['roles'];
-                $hasSecurityMetadata = true;
-                break;
-            case "satisfies_parent_security_policy":
-                $methodMetadata->satisfiesParentSecurityPolicy = true;
-                $hasSecurityMetadata = true;
-                break;
+                case "pre_authorize":
+                    $methodMetadata->roles = array(new Expression($config));
+                    $hasSecurityMetadata = true;
+                    break;
+                case "secure":
+                    $methodMetadata->roles = $config['roles'];
+                    $hasSecurityMetadata =  true;
+                    break;
+                case "secure_param":
+                    $this->assertParamExistsForMethod($parameters, $config['name'], $method->name);
+                    $methodMetadata->addParamPermissions(
+                        $parameters[$config['name']], $config['permissions']
+                    );
+                    $hasSecurityMetadata = true;
+                    break;
+                case "secure_return":
+                    $methodMetadata->returnPermissions = $config['permissions'];
+                    $hasSecurityMetadata = true;
+                    break;
+                case "run_as":
+                    $methodMetadata->runAsRoles = $config['roles'];
+                    $hasSecurityMetadata = true;
+                    break;
+                case "satisfies_parent_security_policy":
+                    $methodMetadata->satisfiesParentSecurityPolicy = true;
+                    $hasSecurityMetadata = true;
+                    break;
             }
         }
 
@@ -131,8 +130,8 @@ class ConfigDriver extends AbstractDriver
     {
         $configurationFound = null;
 
-        foreach ($this->config as $config) {
-            if (!preg_match('#'.$config['pattern'].'#i', $signature)) {
+        foreach ($this->config as $pattern => $config) {
+            if (!preg_match('#'.$pattern.'#i', $signature)) {
                 continue;
             }
 
