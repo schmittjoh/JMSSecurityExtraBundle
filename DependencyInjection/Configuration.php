@@ -70,7 +70,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('method_access_control')
                         ->beforeNormalization()
-                            ->always(function ($node) {
+                            ->always(function ($node = array()) {
                                 /** This is a backward compatibility layer */
                                 foreach ($node as $key => $value) {
                                     if (is_string($value)) {
