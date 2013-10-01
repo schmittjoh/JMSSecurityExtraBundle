@@ -32,18 +32,7 @@ class ConfigDriver extends AbstractDriver
         }
 
         $this->bundles = $bundles;
-
-        /** This is a BC layer */
-        $this->config = array();
-        foreach ($config as $key => $value) {
-            if (is_string($value)) {
-                $this->config[$key] = array(
-                    'pre_authorize' => $value
-                );
-            } else {
-                $this->config[$key] = $value;
-            }
-        }
+        $this->setConfigs($config);
     }
 
     /**
@@ -190,6 +179,20 @@ class ConfigDriver extends AbstractDriver
                     $method
                 )
             );
+        }
+    }
+
+    private function setConfigs(array $config)
+    {
+        $this->config = array();
+        foreach ($config as $key => $value) {
+            if (is_string($value)) {
+                $this->config[$key] = array(
+                    'pre_authorize' => $value
+                );
+            } else {
+                $this->config[$key] = $value;
+            }
         }
     }
 }
