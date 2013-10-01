@@ -72,7 +72,7 @@ class Configuration implements ConfigurationInterface
                         ->beforeNormalization()
                             ->always(function ($node) {
                                 /** This is a backward compatibility layer */
-                                if ($node) {
+                                if (is_array($node)) {
                                     foreach ($node as $key => $value) {
                                         if (is_string($value)) {
                                             $node[$key] = array(
