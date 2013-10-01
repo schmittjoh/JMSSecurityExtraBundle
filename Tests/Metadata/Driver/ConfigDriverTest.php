@@ -91,11 +91,11 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
                         $this->fail("Unknown configuration key found: ". $key);
                         break;
                 }
-    
+
                 foreach ($metadata->methodMetadata as $name => $metadata) {
                     $this->assertEquals($name, current($securedMethods));
                     $this->{$assert}($metadata, current($securedMethods), $content );
-    
+
                     next($securedMethods);
                 }
             }
@@ -119,11 +119,13 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
 
     protected function assertSecureParam($loadedMethod, $config)
     {
-        $expectedPermission = $loadedMethod->paramPermissions[$config['name']];
+        $expectedPermissions = $loadedMethod->paramPermissions[$config['name']];
 
         $this->assertEquals(
             $expectedPermissions, $config['permission'],
-            sprintf("Expected parameter permission %s got %s", $expectedPermission, $config['permission'])
+            sprintf(
+                "Expected parameter permission %s got %s", $expectedPermissions, $config['permission']
+            )
         );
     }
 
@@ -131,7 +133,9 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $loadedMethod->returnPermissions, $config,
-            sprintf("Expected return permission %s got %s". $loadedMethod->returnPermission, $config)
+            sprintf(
+                "Expected return permission %s got %s". $loadedMethod->returnPermissions, $config
+            )
         );
     }
 
