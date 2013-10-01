@@ -135,14 +135,6 @@ class ConfigDriverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function assertRunAs($loadedMethods, $expectedMethods, $config)
-    {
-    }
-
-    protected function assertSatisfiesParentSecurity($loadedMethods, $expectedMethods, $config)
-    {
-    }
-
     public function advancedConfigProvider()
     {
         return array(
