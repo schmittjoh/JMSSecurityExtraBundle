@@ -25,7 +25,6 @@
         "symfony/class-loader": "*",
         "symfony/yaml": "*",
         "symfony/browser-kit": "*",
-        "symfony/class-loader": "*",
         "symfony/finder": "*",
         "symfony/css-selector": "*",
         "symfony/process": "*",
