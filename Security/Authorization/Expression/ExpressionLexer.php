@@ -40,7 +40,7 @@ final class ExpressionLexer extends \JMS\Parser\AbstractLexer
 
     protected function getRegex()
     {
-        return '/(#?[a-z][a-z0-9]*|\'(?:[^\']|(?<=\\\\)\')*\'|"(?:[^"]|(?<=\\\\)")*"|&&|\|\||==)|\s+|(.)/i';
+        return '/(#?[a-z][a-z0-9_]*|\'(?:[^\']|(?<=\\\\)\')*\'|"(?:[^"]|(?<=\\\\)")*"|&&|\|\||==)|\s+|(.)/i';
     }
 
     protected function determineTypeAndValue($value)
