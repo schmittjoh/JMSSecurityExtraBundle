@@ -12,7 +12,7 @@ use Metadata\Driver\DriverInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ConfigDriver extends AbstractDriver
+class ConfigDriver implements DriverInterface
 {
     private $bundles;
     private $config;
@@ -38,6 +38,31 @@ class ConfigDriver extends AbstractDriver
     /**
      * {@inheritDoc}
      */
+    public function loadMetadataForClass(\ReflectionClass $class)
+    {
+        $metadata = new ClassMetadata($class->name);
+
+        $methods = $class->getMethods(
+            \ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED
+        );
+
+        foreach ($methods as $method) {
+            if ($method->getDeclaringClass()->name !== $class->name) {
+                continue;
+            }
+
+            $methodMetadataConfig = $this->getMethodScopeMetadata($method);
+
+            $methodMetadata = $this->fromMetadataConfig($method, $methodMetadataConfig);
+
+            if ($methodMetadata) {
+                $metadata->addMethodMetadata($methodMetadata);
+            }
+        }
+
+        return $this->metadataPostTreatment($metadata);
+    }
+
     protected function getMethodScopeMetadata(\ReflectionMethod $method)
     {
         $configurationFound = null;
@@ -53,22 +78,6 @@ class ConfigDriver extends AbstractDriver
         return $configurationFound ? $configurationFound : array();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getClassScopeMetadata(\ReflectionClass $class)
-    {
-        /**
-         * Class configuration metadata is not supported.  Use more general
-         * regex pattern in configuration instead.
-         */
-
-        return array();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected function fromMetadataConfig(\ReflectionMethod $method, array $configs)
     {
         $parameters = array();
@@ -80,7 +89,7 @@ class ConfigDriver extends AbstractDriver
 
         $hasSecurityMetadata = false;
 
-        foreach ($configs['method'] as $name => $config) {
+        foreach ($configs as $name => $config) {
             switch ($name) {
                 case "pre_authorize":
                     $methodMetadata->roles = array(new Expression($config));

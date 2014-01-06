@@ -38,78 +38,58 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class AnnotationDriver extends AbstractDriver
+class AnnotationDriver implements DriverInterface
 {
     private $reader;
 
-    /**
-     * @param Reader $reader Annotation reader
-     */
     public function __construct(Reader $reader)
     {
         $this->reader = $reader;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getClassScopeMetadata(ReflectionClass $class)
+    public function loadMetadataForClass(ReflectionClass $reflection)
     {
-        $metadata[] = $this->reader->getClassAnnotation(
-            $class,
-            'JMS\SecurityExtraBundle\Annotation\PreAuthorize'
-        );
+        $metadata = new ClassMetadata($reflection->name);
+
+        $classPreAuthorize = $this->reader->getClassAnnotation($reflection, 'JMS\SecurityExtraBundle\Annotation\PreAuthorize');
+        $classAnnotations = $this->reader->getClassAnnotations($reflection);
+        foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
+            // check if the method was defined on this class
+            if ($method->getDeclaringClass()->name !== $reflection->name) {
+                continue;
+            }
+
+            $annotations = $this->reader->getMethodAnnotations($method);
+            if ($classAnnotations) {
+                foreach ($classAnnotations as $classAnnotation) {
+                    if ($classAnnotation instanceof SecureParam) {
+                        $annotations[] = $classAnnotation;
+                    }
+                }
+            }
+
+            if (! $annotations && ! $classPreAuthorize) {
+                continue;
+            }
+
+            if (null !== $methodMetadata = $this->convertMethodAnnotations($method, $annotations, $classPreAuthorize)) {
+                $metadata->addMethodMetadata($methodMetadata);
+            }
+        }
 
         return $metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getMethodScopeMetadata(ReflectionMethod $method)
-    {
-        $metadata = $this->reader->getMethodAnnotations($method);
-
-        $class = $method->getDeclaringClass();
-
-        /**
-         * We consider class-scope SecureParam annotations to be method-scope.
-         */
-        foreach ($this->reader->getClassAnnotations($class) as $annotation) {
-            if ($annotation instanceof SecureParam) {
-                $metadata[] = $annotation;
-            }
-        }
-
-        return $metadata ? $metadata : array();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function fromMetadataConfig(\ReflectionMethod $method, array $annotations)
+    private function convertMethodAnnotations(\ReflectionMethod $method, array $annotations, PreAuthorize $classPreAuthorize = null)
     {
         $parameters = array();
         foreach ($method->getParameters() as $index => $parameter) {
             $parameters[$parameter->getName()] = $index;
         }
 
-        $classPreAuthorize = null;
-
-        if (isset($annotations['class'])) {
-            foreach ($annotations['class'] as $annotation) {
-                if ($annotation instanceof PreAuthorize) {
-                    $classPreAuthorize = $annotation;
-                    break;
-                }
-            }
-        }
-
         $methodMetadata = new MethodMetadata($method->class, $method->name);
-
         $hasSecurityMetadata = $hasPreRestrictions = false;
-
-        foreach ($annotations['method'] as $annotation) {
+        foreach ($annotations as $annotation) {
             if ($annotation instanceof Secure) {
                 $methodMetadata->roles = $annotation->roles;
                 $hasSecurityMetadata = $hasPreRestrictions = true;
@@ -117,11 +97,11 @@ class AnnotationDriver extends AbstractDriver
                 $methodMetadata->roles = array(new Expression($annotation->expr));
                 $hasSecurityMetadata = $hasPreRestrictions = true;
             } elseif ($annotation instanceof SecureParam) {
-                $this->assertParamExistsForMethod($parameters, $annotation->name, $method->name);
-                $methodMetadata->addParamPermissions(
-                    $parameters[$annotation->name],
-                    $annotation->permissions
-                );
+                if (!isset($parameters[$annotation->name])) {
+                    throw new InvalidArgumentException(sprintf('The parameter "%s" does not exist for method "%s".', $annotation->name, $method->name));
+                }
+
+                $methodMetadata->addParamPermissions($parameters[$annotation->name], $annotation->permissions);
                 $hasSecurityMetadata = $hasPreRestrictions = true;
             } elseif ($annotation instanceof SecureReturn) {
                 $methodMetadata->returnPermissions = $annotation->permissions;
@@ -151,23 +131,5 @@ class AnnotationDriver extends AbstractDriver
         }
 
         return $hasSecurityMetadata ? $methodMetadata : null;
-    }
-
-    protected function metadataPostTreatment(ClassMetadata $metadata)
-    {
-        return $metadata;
-    }
-
-    private function assertParamExistsForMethod(array $params, $name, $method)
-    {
-        if (!isset($params[$name])) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'The parameter "%s" does not exist for method "%s".',
-                    $name,
-                    $method
-                )
-            );
-        }
     }
 }
