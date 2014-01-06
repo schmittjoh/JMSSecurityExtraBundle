@@ -41,7 +41,7 @@ another function ``isLocalUser()`` which you can use in your expressions.
         /** @DI\SecurityFunction("isLocalUser") */
         public function isLocalUser()
         {
-            return $this->container->get('request')->getIp() === '127.0.0.1';
+            return $this->container->get('request')->getClientIp() === '127.0.0.1';
         }
     }
 
