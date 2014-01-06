@@ -1,3 +1,59 @@
-phpunit.xml
+###
+# .gitignore
+###
+
+###
+# Common pollution
+###
+*~
+*.DS_Store
+*.settings
+*Thumb.db
+
+###
+# Temporary, cache, backup and buffer files
+###
+*.tmp
+*.swp
+*.lock
+~*
+.*.sw[a-z]
+.Trashes
+.sass-cache
+*.swp
+composer.lock
+
+###
+# Development environement common files
+###
+*nbproject
+*.project
+*.idea
+*atlassian-ide-plugin.xml
+*catalog.xml
+*.sublime*
+.Spotlight-V100
+Thumb.db
+Vagrantfile
+.vagrant*
+nbproject/
+
+###
+# Generated files and directories
+###
+coverage/
 vendor/
+cache/
+log/
+app/cache/*
+app/logs/*
+clover.xml
+web/bundles/nelmioapidoc
+
+###
+# Excluded executables
+###
+bin/
+composer.phar
+
 
