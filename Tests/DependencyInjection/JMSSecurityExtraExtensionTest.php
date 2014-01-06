@@ -60,7 +60,12 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
             )
         )), $container = $this->getContainer());
 
-        $this->assertEquals(array(':login$' => 'hasRole("FOO")'),
+        $this->assertEquals(
+            array(
+                ':login$' => array(
+                    'pre_authorize' => 'hasRole("FOO")',
+                )
+            ),
             $container->getParameter('security.access.method_access_control'));
     }
 
@@ -71,7 +76,7 @@ class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->extension->load(array(array(
             'expressions' => false,
-            'method_access_control' => array('foo' => 'bar'),
+            'method_access_control' => array('foo' => 'bar', 'FOO' => 'BAR'),
         )), $this->getContainer());
     }
 

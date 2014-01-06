@@ -64,6 +64,17 @@ class MethodAccessControlTest extends BaseTestCase
     /**
      * @runInSeparateProcess
      */
+    public function testCrudDeleteIsSecureWithAdvancedConfiguration()
+    {
+        $client = $this->createClient(array('config' => 'method_access_control.yml'));
+        
+        $client->request('GET', '/delete');
+        $this->assertRedirectedToLogin($client->getResponse());
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testFunctionEvaluator()
     {
         $client = $this->createClient(array('config' => 'method_access_control.yml'));
@@ -73,6 +84,7 @@ class MethodAccessControlTest extends BaseTestCase
 
         $client->request('GET', '/post/foo');
         $response = $client->getResponse();
+
         $this->assertEquals('foo', $response->getContent());
 
         $this->assertEquals(1, $evaluator->getNbCalls());

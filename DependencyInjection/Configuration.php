@@ -69,9 +69,51 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->arrayNode('method_access_control')
+                        ->beforeNormalization()
+                            ->always(function ($node) {
+                                /** This is a backward compatibility layer */
+                                if (is_array($node)) {
+                                    foreach ($node as $key => $value) {
+                                        if (is_string($value)) {
+                                            $node[$key] = array(
+                                                'pre_authorize' => $value
+                                            );
+                                        }
+                                    }
+                                }
+ 
+                                return $node;
+                            })
+                        ->end()
                         ->useAttributeAsKey('pattern')
-                        ->prototype('scalar')->isRequired()->cannotBeEmpty()->end()
-                    ->end()
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('pattern')->end()
+                                ->scalarNode('pre_authorize')->cannotBeEmpty()->end()
+                                ->arrayNode('secure')
+                                    ->fixXmlConfig('role')
+                                    ->children()
+                                        ->arrayNode('roles')->prototype('scalar')->end()
+                                    ->end()
+                                ->arrayNode('secure_param')
+                                    ->fixXmlConfig('permission')
+                                    ->children()
+                                        ->scalarNode('name')->end()
+                                        ->arrayNode('permissions')->prototype('scalar')->end()
+                                    ->end()
+                                ->arrayNode('secure_return')
+                                    ->fixXmlConfig('permission')
+                                    ->children()
+                                        ->arrayNode('permissions')->prototype('scalar')->end()
+                                    ->end()
+                                ->arrayNode('run_as')
+                                    ->fixXmlConfig('role')
+                                    ->children()
+                                        ->arrayNode('roles')->prototype('scalar')->end()
+                                    ->end()
+                                ->booleanNode('satisfies_parent_security_policy')->end()
+                            ->end()
+                        ->end()
                     ->arrayNode('util')
                         ->addDefaultsIfNotSet()
                         ->children()
