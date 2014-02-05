@@ -39,7 +39,8 @@ class JMSSecurityExtraBundle extends Bundle
 
     public function build(ContainerBuilder $container)
     {
-        if (!$container->hasExtension('security')) {
+        $extensions = array_keys($container->getExtensions());
+        if (!$container->hasExtension('security') || array_search('security', $extensions) > array_search('jms_security_extra', $extensions)) {
             throw new \LogicException('The JMSSecurityExtraBundle must be registered after the SecurityBundle in your AppKernel.php.');
         }
         $container->registerExtension(new SecurityExtension($container->getExtension('security')));
