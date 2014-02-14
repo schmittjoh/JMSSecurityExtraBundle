@@ -74,6 +74,7 @@ class AccessControlConfiguration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->scalarNode('access')->end()
+                            ->scalarNode('allow_if')->defaultNull()->end()
                         ->end()
                     ->end()
                 ->end()
