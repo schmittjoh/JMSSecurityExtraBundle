@@ -8,6 +8,11 @@ crud_controller_edit:
     defaults:
         _controller: TestBundle:Crud:edit
 
+crud_controller_delete:
+    pattern: /delete
+    defaults:
+        _controller: TestBundle:Crud:delete
+
 post_controller_add:
     pattern: /post/add
     defaults:

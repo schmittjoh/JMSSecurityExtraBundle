@@ -15,4 +15,9 @@ class CrudController
     {
         return new Response();
     }
+
+    public function deleteAction()
+    {
+        return new Response();
+    }
 }
