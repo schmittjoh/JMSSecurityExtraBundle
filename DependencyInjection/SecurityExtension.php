@@ -99,7 +99,7 @@ class SecurityExtension extends Extension
                 $access['path'],
                 $access['host'],
                 count($access['methods']) === 0 ? null : $access['methods'],
-                $access['ip']
+                $access['ips']
             ));
 
             if (isset($access['roles'])) {
