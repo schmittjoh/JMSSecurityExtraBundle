@@ -94,6 +94,10 @@ Reference
 | object                            | Variable that refers to the object for     |
 |                                   | which access is being requested.           |
 +-----------------------------------+--------------------------------------------+
+| denyAll                           | Variable that evaluates to ``false``.      |
++-----------------------------------+--------------------------------------------+
+| permitAll                         | Variable that evaluates to ``true``.       |
++-----------------------------------+--------------------------------------------+
 | #*paramName*                      | Any identifier prefixed with # refers to   |
 |                                   | a parameter of the same name that is passed|
 |                                   | to the method where the expression is used.|
