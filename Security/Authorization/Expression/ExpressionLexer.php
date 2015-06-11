@@ -82,6 +82,7 @@ final class ExpressionLexer extends \JMS\Parser\AbstractLexer
             $value = substr($value, 1);
         } elseif (ctype_digit($value)) {
             $type = self::T_INTEGER;
+            $value = (int) $value;
         } elseif (ctype_alpha($value)) {
             $type = self::T_IDENTIFIER;
         }
