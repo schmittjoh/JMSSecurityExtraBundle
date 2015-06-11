@@ -105,6 +105,10 @@ final class ExpressionParser extends \JMS\Parser\AbstractParser
             return new ConstantExpression($this->match(ExpressionLexer::T_STRING));
         }
 
+        if ($this->lexer->isNext(ExpressionLexer::T_INTEGER)) {
+            return new ConstantExpression($this->match(ExpressionLexer::T_INTEGER));
+        }
+
         if ($this->lexer->isNext(ExpressionLexer::T_OPEN_BRACE)) {
             return $this->Suffix($this->MapExpr());
         }
