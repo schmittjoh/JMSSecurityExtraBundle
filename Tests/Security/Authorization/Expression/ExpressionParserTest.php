@@ -59,6 +59,26 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->parser->parse('isAnonymous() and hasRole("FOO")'));
     }
 
+    public function testString()
+    {
+        $expected = new IsEqualExpression(
+            new VariableExpression('name'),
+            new ConstantExpression('ruud')
+        );
+
+        $this->assertEquals($expected, $this->parser->parse('name == "ruud"'));
+    }
+
+    public function testInteger()
+    {
+        $expected = new IsEqualExpression(
+            new VariableExpression('age'),
+            new ConstantExpression(28)
+        );
+
+        $this->assertEquals($expected, $this->parser->parse('age == 28'));
+    }
+
     /**
      * @expectedException \JMS\Parser\SyntaxErrorException
      * @expectedExceptionMessage Expected end of input, but got "," of type T_COMMA at position 6 (0-based).
