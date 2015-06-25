@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="security.acl.permission_evaluator.class">JMS\SecurityExtraBundle\Security\Acl\Expression\PermissionEvaluator</parameter>
         <parameter key="security.acl.has_permission_compiler.class">JMS\SecurityExtraBundle\Security\Acl\Expression\HasPermissionFunctionCompiler</parameter>
+        <parameter key="security.acl.has_class_permission_compiler.class">JMS\SecurityExtraBundle\Security\Acl\Expression\HasClassPermissionFunctionCompiler</parameter>
         
         <parameter key="security.expressions.voter.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\LazyLoadingExpressionVoter</parameter>
         <parameter key="security.expressions.handler.class">JMS\SecurityExtraBundle\Security\Authorization\Expression\ContainerAwareExpressionHandler</parameter>
@@ -88,6 +89,11 @@
         <service id="security.acl.has_permission_compiler" class="%security.acl.has_permission_compiler.class%" public="false">
             <tag name="security.expressions.function_compiler" />
             <tag name="security.expressions.variable" variable="permission_evaluator" service="security.acl.permission_evaluator"/>
-        </service>        
+        </service>
+
+        <service id="security.acl.has_class_permission_compiler" class="%security.acl.has_class_permission_compiler.class%" public="false">
+            <tag name="security.expressions.function_compiler" />
+            <tag name="security.expressions.variable" variable="security_context" service="security.context"/>
+        </service>
     </services>
 </container>
