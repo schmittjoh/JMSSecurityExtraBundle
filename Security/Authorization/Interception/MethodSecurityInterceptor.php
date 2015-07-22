@@ -30,7 +30,7 @@ use Metadata\MetadataFactoryInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -42,7 +42,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
 class MethodSecurityInterceptor implements MethodInterceptorInterface
 {
     private $alwaysAuthenticate;
-    private $securityContext;
+    private $tokenStorage;
     private $metadataFactory;
     private $authenticationManager;
     private $accessDecisionManager;
@@ -50,11 +50,11 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private $runAsManager;
     private $logger;
 
-    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
+    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
                                 AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
     {
         $this->alwaysAuthenticate = false;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->metadataFactory = $metadataFactory;
         $this->authenticationManager = $authenticationManager;
         $this->accessDecisionManager = $accessDecisionManager;
@@ -78,15 +78,15 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
         }
         $metadata = $metadata->methodMetadata[$method->reflection->name];
 
-        if (null === $token = $this->securityContext->getToken()) {
+        if (null === $token = $this->tokenStorage->getToken()) {
             throw new AuthenticationCredentialsNotFoundException(
-                'The security context was not populated with a Token.'
+                'The security token storage was not populated with a Token.'
             );
         }
 
         if ($this->alwaysAuthenticate || !$token->isAuthenticated()) {
             $token = $this->authenticationManager->authenticate($token);
-            $this->securityContext->setToken($token);
+            $this->tokenStorage->setToken($token);
         }
 
         if (!empty($metadata->roles) && false === $this->accessDecisionManager->decide($token, $metadata->roles, $method)) {
@@ -106,14 +106,14 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
             $runAsToken = $this->runAsManager->buildRunAs($token, $method, $metadata->runAsRoles);
 
             if (null !== $this->logger) {
-                $this->logger->debug('Populating security context with RunAsToken');
+                $this->logger->debug('Populating security token storage with RunAsToken');
             }
 
             if (null === $runAsToken) {
                 throw new RuntimeException('RunAsManager must not return null from buildRunAs().');
             }
 
-            $this->securityContext->setToken($runAsToken);
+            $this->tokenStorage->setToken($runAsToken);
         }
 
         try {
@@ -127,7 +127,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
                 return $returnValue;
             }
 
-            return $this->afterInvocationManager->decide($this->securityContext->getToken(), $method, $metadata->returnPermissions, $returnValue);
+            return $this->afterInvocationManager->decide($this->tokenStorage->getToken(), $method, $metadata->returnPermissions, $returnValue);
         } catch (\Exception $failed) {
             if (null !== $runAsToken) {
                 $this->restoreOriginalToken($runAsToken);
@@ -140,9 +140,9 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private function restoreOriginalToken(RunAsUserToken $runAsToken)
     {
         if (null !== $this->logger) {
-            $this->logger->debug('Populating security context with original Token.');
+            $this->logger->debug('Populating security token storage with original Token.');
         }
 
-        $this->securityContext->setToken($runAsToken->getOriginalToken());
+        $this->tokenStorage->setToken($runAsToken->getOriginalToken());
     }
 }
