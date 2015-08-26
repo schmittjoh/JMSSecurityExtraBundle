@@ -17,7 +17,7 @@ class SecurityExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'is_expr_granted' => new \Twig_Function_Method($this, 'isExprGranted'),
+            new \Twig_SimpleFunction('is_expr_granted', array($this, 'isExprGranted')),
         );
     }
 
