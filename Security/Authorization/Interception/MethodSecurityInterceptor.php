@@ -28,7 +28,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocati
 use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
 use Metadata\MetadataFactoryInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -50,7 +50,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private $runAsManager;
     private $logger;
 
-    public function __construct(TokenStorage $tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
+    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
                                 AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
     {
         $this->alwaysAuthenticate = false;
