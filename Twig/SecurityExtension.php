@@ -3,13 +3,13 @@
 namespace JMS\SecurityExtraBundle\Twig;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SecurityExtension extends \Twig_Extension
 {
     private $context;
 
-    public function __construct(SecurityContextInterface $context)
+    public function __construct(AuthorizationCheckerInterface $context)
     {
         $this->context = $context;
     }
