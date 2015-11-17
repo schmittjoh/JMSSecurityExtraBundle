@@ -4,7 +4,7 @@ namespace JMS\SecurityExtraBundle\Security\Util;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * A secure random number generator implementation.
