@@ -37,7 +37,7 @@
     
         <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%">
             <tag name="monolog.logger" channel="security" />
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.authentication.manager" />
             <argument type="service" id="security.access.decision_manager" />
             <argument type="service" id="security.access.after_invocation_manager" />
