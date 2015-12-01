@@ -18,19 +18,17 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Interception;
 
-use JMS\SecurityExtraBundle\Exception\RuntimeException;
-
 use CG\Proxy\MethodInterceptorInterface;
 use CG\Proxy\MethodInvocation;
-use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
+use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
 use Metadata\MetadataFactoryInterface;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -38,23 +36,72 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
  * All invocations of secure methods will go through this class.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  */
 class MethodSecurityInterceptor implements MethodInterceptorInterface
 {
+    /**
+     * @var bool
+     */
     private $alwaysAuthenticate;
-    private $securityContext;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
+     * @var MetadataFactoryInterface
+     */
     private $metadataFactory;
+
+    /**
+     * @var AuthenticationManagerInterface
+     */
     private $authenticationManager;
+
+    /**
+     * @var AccessDecisionManagerInterface
+     */
     private $accessDecisionManager;
+
+    /**
+     * @var AfterInvocationManagerInterface
+     */
     private $afterInvocationManager;
+
+    /**
+     * @var RunAsManagerInterface
+     */
     private $runAsManager;
+
+    /**
+     * @var null|LoggerInterface
+     */
     private $logger;
 
-    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
-                                AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
-    {
+    /**
+     * Constructor.
+     *
+     * @param TokenStorageInterface           $tokenStorage
+     * @param AuthenticationManagerInterface  $authenticationManager
+     * @param AccessDecisionManagerInterface  $accessDecisionManager
+     * @param AfterInvocationManagerInterface $afterInvocationManager
+     * @param RunAsManagerInterface           $runAsManager
+     * @param MetadataFactoryInterface        $metadataFactory
+     * @param LoggerInterface|null            $logger
+     */
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AuthenticationManagerInterface $authenticationManager,
+        AccessDecisionManagerInterface $accessDecisionManager,
+        AfterInvocationManagerInterface $afterInvocationManager,
+        RunAsManagerInterface $runAsManager,
+        MetadataFactoryInterface $metadataFactory,
+        LoggerInterface $logger = null
+    ) {
         $this->alwaysAuthenticate = false;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->metadataFactory = $metadataFactory;
         $this->authenticationManager = $authenticationManager;
         $this->accessDecisionManager = $accessDecisionManager;
@@ -78,7 +125,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
         }
         $metadata = $metadata->methodMetadata[$method->reflection->name];
 
-        if (null === $token = $this->securityContext->getToken()) {
+        if (null === $token = $this->tokenStorage->getToken()) {
             throw new AuthenticationCredentialsNotFoundException(
                 'The security context was not populated with a Token.'
             );
@@ -86,7 +133,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
 
         if ($this->alwaysAuthenticate || !$token->isAuthenticated()) {
             $token = $this->authenticationManager->authenticate($token);
-            $this->securityContext->setToken($token);
+            $this->tokenStorage->setToken($token);
         }
 
         if (!empty($metadata->roles) && false === $this->accessDecisionManager->decide($token, $metadata->roles, $method)) {
@@ -113,7 +160,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
                 throw new RuntimeException('RunAsManager must not return null from buildRunAs().');
             }
 
-            $this->securityContext->setToken($runAsToken);
+            $this->tokenStorage->setToken($runAsToken);
         }
 
         try {
@@ -127,7 +174,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
                 return $returnValue;
             }
 
-            return $this->afterInvocationManager->decide($this->securityContext->getToken(), $method, $metadata->returnPermissions, $returnValue);
+            return $this->afterInvocationManager->decide($this->tokenStorage->getToken(), $method, $metadata->returnPermissions, $returnValue);
         } catch (\Exception $failed) {
             if (null !== $runAsToken) {
                 $this->restoreOriginalToken($runAsToken);
@@ -137,12 +184,17 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
         }
     }
 
+    /**
+     * Restores the original user token.
+     *
+     * @param RunAsUserToken $runAsToken
+     */
     private function restoreOriginalToken(RunAsUserToken $runAsToken)
     {
         if (null !== $this->logger) {
             $this->logger->debug('Populating security context with original Token.');
         }
 
-        $this->securityContext->setToken($runAsToken->getOriginalToken());
+        $this->tokenStorage->setToken($runAsToken->getOriginalToken());
     }
 }
