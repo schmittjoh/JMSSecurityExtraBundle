@@ -5,6 +5,8 @@ namespace JMS\SecurityExtraBundle\Security\Util;
 /**
  * String utility functions.
  *
+ * @deprecated This class will break in PHP 7; use hash_equals() instead
+ *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 final class String
