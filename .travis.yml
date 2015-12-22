@@ -8,7 +8,9 @@ php:
   - 7.0
   - hhvm
 
-before_script: composer install --dev
+before_script:
+ - composer self-update
+ - composer install --dev
 
 script: phpunit --coverage-clover clover
 
