@@ -1,5 +1,5 @@
 services:
-    em: @doctrine.orm.entity_manager
+    em: "@doctrine.orm.entity_manager"
 
 doctrine:
     dbal:

@@ -27,7 +27,7 @@
 
     <services>
         <service id="security.extra.twig_extension" class="%security.extra.twig_extension.class%" public="false">
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.authorization_checker" />
             <tag name="twig.extension" alias="jms_security_extra" />
         </service>
     
@@ -93,7 +93,7 @@
 
         <service id="security.acl.has_class_permission_compiler" class="%security.acl.has_class_permission_compiler.class%" public="false">
             <tag name="security.expressions.function_compiler" />
-            <tag name="security.expressions.variable" variable="security_context" service="security.context"/>
+            <tag name="security.expressions.variable" variable="authorization_checker" service="security.authorization_checker"/>
         </service>
     </services>
 </container>

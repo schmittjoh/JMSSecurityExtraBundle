@@ -3,17 +3,29 @@
 namespace JMS\SecurityExtraBundle\Twig;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Class SecurityExtension
+ * @package JMS\SecurityExtraBundle\Twig
+ */
 class SecurityExtension extends \Twig_Extension
 {
-    private $context;
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
-    public function __construct(SecurityContextInterface $context)
+    /**
+     * SecurityExtension constructor.
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     */
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->context = $context;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
+    /**
+     * @return array
+     */
     public function getFunctions()
     {
         return array(
@@ -21,11 +33,19 @@ class SecurityExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * @param mixed $expr
+     * @param mixed $object
+     * @return bool
+     */
     public function isExprGranted($expr, $object = null)
     {
-        return $this->context->isGranted(array(new Expression($expr)), $object);
+        return $this->authorizationChecker->isGranted(array(new Expression($expr)), $object);
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'jms_security_extra';

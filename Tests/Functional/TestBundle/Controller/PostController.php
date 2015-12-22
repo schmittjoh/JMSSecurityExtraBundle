@@ -22,8 +22,8 @@ class PostController
     /** @DI\Inject */
     private $em;
 
-    /** @DI\Inject("security.context") */
-    private $context;
+    /** @DI\Inject("security.token_storage") */
+    private $tokenStorage;
 
     /** @DI\Inject */
     private $router;
@@ -46,7 +46,7 @@ class PostController
             $oid = ObjectIdentity::fromDomainObject($post);
             $acl = $this->getAclProvider()->createAcl($oid);
 
-            $sid = UserSecurityIdentity::fromToken($this->context->getToken());
+            $sid = UserSecurityIdentity::fromToken($this->tokenStorage->getToken());
             $acl->insertObjectAce($sid, MaskBuilder::MASK_OWNER);
             $this->getAclProvider()->updateAcl($acl);
 
