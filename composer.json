@@ -11,11 +11,11 @@
             "email": "schmittjoh@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "~5.3|~7.0",
-        "symfony/framework-bundle": "~2.1",
-        "symfony/security-bundle": "*",
+        "symfony/framework-bundle": "~2.6|~3.0",
+        "symfony/security-bundle": "~2.6|~3.0",
         "jms/metadata": "~1.0",
         "jms/parser-lib": "~1.0",
         "jms/aop-bundle": "~1.0",
