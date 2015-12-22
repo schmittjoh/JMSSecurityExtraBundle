@@ -13,7 +13,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "~5.3",
+        "php": "~5.3|~7.0",
         "symfony/framework-bundle": "~2.1",
         "symfony/security-bundle": "*",
         "jms/metadata": "~1.0",
