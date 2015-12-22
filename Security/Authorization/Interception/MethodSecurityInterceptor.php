@@ -22,6 +22,7 @@ use JMS\SecurityExtraBundle\Exception\RuntimeException;
 
 use CG\Proxy\MethodInterceptorInterface;
 use CG\Proxy\MethodInvocation;
+use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -50,9 +52,13 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private $runAsManager;
     private $logger;
 
-    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
+    public function __construct($tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
                                 AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
     {
+        if (!$tokenStorage instanceof SecurityContextInterface && !$tokenStorage instanceof TokenStorageInterface) {
+            throw new InvalidArgumentException(sprintf('The first argument should be an instance of TokenStorageInterface or SecurityContextInterface, "%s" given.', is_object($tokenStorage) ? get_class($tokenStorage) : gettype($tokenStorage)));
+        }
+
         $this->alwaysAuthenticate = false;
         $this->tokenStorage = $tokenStorage;
         $this->metadataFactory = $metadataFactory;

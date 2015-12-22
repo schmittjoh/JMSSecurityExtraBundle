@@ -3,22 +3,27 @@
 namespace JMS\SecurityExtraBundle\Twig;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
+use JMS\SecurityExtraBundle\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 class SecurityExtension extends \Twig_Extension
 {
     private $authorizationChecker;
 
-    public function __construct(AuthorizationChecker $authorizationChecker)
+    public function __construct($authorizationChecker)
     {
+        if (!$authorizationChecker instanceof SecurityContextInterface && !$authorizationChecker instanceof AuthorizationChecker) {
+            throw new InvalidArgumentException(sprintf('The first argument should be an instance of AuthorizationChecker or SecurityContextInterface, "%s" given.', is_object($authorizationChecker) ? get_class($authorizationChecker) : gettype($authorizationChecker)));
+        }
+
         $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getFunctions()
     {
         return array(
-            'is_expr_granted' => new \Twig_SimpleFunction('is_expr_granted', [$this, 'isExprGranted']),
+            new \Twig_SimpleFunction('is_expr_granted', array($this, 'isExprGranted')),
         );
     }
 
