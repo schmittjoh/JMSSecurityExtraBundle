@@ -63,16 +63,6 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * MethodSecurityInterceptor constructor.
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthenticationManagerInterface $authenticationManager
-     * @param AccessDecisionManagerInterface $accessDecisionManager
-     * @param AfterInvocationManagerInterface $afterInvocationManager
-     * @param RunAsManagerInterface $runAsManager
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param LoggerInterface|null $logger
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         AuthenticationManagerInterface $authenticationManager,
@@ -97,13 +87,16 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
      */
     public function setAlwaysAuthenticate($boolean)
     {
-        $this->alwaysAuthenticate = ! ! $boolean;
+        $this->alwaysAuthenticate = (bool) $boolean;
     }
 
     /**
      * @param MethodInvocation $method
      * @return mixed
      * @throws \Exception
+     * @throws RuntimeException
+     * @throws AuthenticationCredentialsNotFoundException
+     * @throws AccessDeniedException
      */
     public function intercept(MethodInvocation $method)
     {

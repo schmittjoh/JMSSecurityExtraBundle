@@ -34,8 +34,8 @@ class SecurityExtension extends \Twig_Extension
     }
 
     /**
-     * @param $expr
-     * @param null $object
+     * @param mixed $expr
+     * @param mixed $object
      * @return bool
      */
     public function isExprGranted($expr, $object = null)
