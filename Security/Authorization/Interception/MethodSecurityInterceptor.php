@@ -22,6 +22,7 @@ use JMS\SecurityExtraBundle\Exception\RuntimeException;
 
 use CG\Proxy\MethodInterceptorInterface;
 use CG\Proxy\MethodInvocation;
+use JMS\SecurityExtraBundle\Exception\RequiredRolesMissingException;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
@@ -90,7 +91,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
         }
 
         if (!empty($metadata->roles) && false === $this->accessDecisionManager->decide($token, $metadata->roles, $method)) {
-            throw new AccessDeniedException('Token does not have the required roles.');
+            throw new RequiredRolesMissingException('Token does not have the required roles.', $metadata->roles, $token);
         }
 
         if (!empty($metadata->paramPermissions)) {
