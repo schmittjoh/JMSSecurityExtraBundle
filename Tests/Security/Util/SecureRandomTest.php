@@ -3,7 +3,7 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Util;
 
 use JMS\SecurityExtraBundle\Security\Util\NullSeedProvider;
-use Symfony\Component\HttpKernel\Log\NullLogger;
+use Psr\Log\NullLogger;
 use JMS\SecurityExtraBundle\Security\Util\SecureRandomSchema;
 use Doctrine\DBAL\DriverManager;
 use JMS\SecurityExtraBundle\Security\Util\SecureRandom;

@@ -28,7 +28,7 @@ use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface;
 use Metadata\MetadataFactoryInterface;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;

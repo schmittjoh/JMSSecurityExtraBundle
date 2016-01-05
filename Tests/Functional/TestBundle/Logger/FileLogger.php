@@ -2,7 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Logger;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 
 class FileLogger implements LoggerInterface
 {

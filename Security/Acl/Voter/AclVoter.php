@@ -2,8 +2,8 @@
 
 namespace JMS\SecurityExtraBundle\Security\Acl\Voter;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Acl\Voter\FieldVote;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
