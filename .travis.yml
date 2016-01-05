@@ -15,6 +15,8 @@ php:
 
 matrix:
   include:
+    - php: 5.3
+      env: COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.6
       env: SYMFONY_VERSION="2.3.*"
     - php: 5.6
@@ -30,7 +32,7 @@ matrix:
 
 before_install: if [ "$SYMFONY_VERSION" != "" ]; then composer require --no-update symfony/symfony:${SYMFONY_VERSION}; fi
 
-install: composer update
+install: composer update $COMPOSER_FLAGS
 
 script: phpunit --coverage-clover clover
 
