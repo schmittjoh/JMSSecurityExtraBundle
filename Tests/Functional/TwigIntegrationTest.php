@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 class TwigIntegrationTest extends BaseTestCase
 {
-    private $context;
+    private $tokenStorage;
     private $twig;
 
     /**
@@ -17,7 +17,7 @@ class TwigIntegrationTest extends BaseTestCase
      */
     public function testIsExprGrantedWithSufficientPermissions()
     {
-        $this->context->setToken(new UsernamePasswordToken('foo', 'bar', 'baz', array('FOO')));
+        $this->tokenStorage->setToken(new UsernamePasswordToken('foo', 'bar', 'baz', array('FOO')));
 
         $this->assertEquals('granted',
             $this->twig->render('TestBundle::is_expr_granted.html.twig'));
@@ -28,7 +28,7 @@ class TwigIntegrationTest extends BaseTestCase
      */
     public function testIsExprGranted()
     {
-        $this->context->setToken(new AnonymousToken('foo', 'bar'));
+        $this->tokenStorage->setToken(new AnonymousToken('foo', 'bar'));
 
         $this->assertEquals('denied',
             $this->twig->render('TestBundle::is_expr_granted.html.twig'));
@@ -39,7 +39,8 @@ class TwigIntegrationTest extends BaseTestCase
         parent::setUp();
 
         $this->createClient(array('config' => 'all_voters_disabled.yml'));
-        $this->context = self::$kernel->getContainer()->get('security.context');
-        $this->twig = self::$kernel->getContainer()->get('twig');
+        $container = self::$kernel->getContainer();
+        $this->tokenStorage = $container->has('security.token_storage') ? $container->get('security.token_storage') : $container->get('security.context');
+        $this->twig = $container->get('twig');
     }
 }

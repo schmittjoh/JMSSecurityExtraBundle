@@ -12,7 +12,7 @@
          bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="SecurityExtraBbundle Test Suite">
+        <testsuite name="SecurityExtraBundle Test Suite">
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>

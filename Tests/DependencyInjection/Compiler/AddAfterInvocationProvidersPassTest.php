@@ -86,6 +86,6 @@ class AddAfterInvocationProvidersPassTest extends \PHPUnit_Framework_TestCase
 
     protected function getContainer()
     {
-        return $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        return $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder', array('hasDefinition', 'findTaggedServiceIds'));
     }
 }

@@ -4,11 +4,14 @@ namespace JMS\SecurityExtraBundle\Tests\Functional;
 
 require_once __DIR__.'/../../vendor/autoload.php';
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\FormLoginBundle;
 use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\TestBundle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
+
+AnnotationRegistry::registerLoader('class_exists');
 
 class AppKernel extends Kernel
 {
@@ -53,7 +56,12 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/JMSSecurityExtraBundle/'.sha1($this->config);
+        return sys_get_temp_dir().'/JMSSecurityExtraBundle/'.Kernel::VERSION.'/'.sha1($this->config).'/cache/';
+    }
+
+    public function getLogDir()
+    {
+        return sys_get_temp_dir().'/JMSSecurityExtraBundle/'.Kernel::VERSION.'/'.sha1($this->config).'/logs';
     }
 
     protected function getContainerClass()

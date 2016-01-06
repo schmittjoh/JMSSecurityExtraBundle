@@ -270,7 +270,10 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
             ;
         }
 
-        $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
+        $securityContextClass = class_exists('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage')
+            ? 'Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
+            : 'Symfony\Component\Security\Core\SecurityContext';
+        $securityContext = $this->getMockBuilder($securityContextClass)
                             ->disableOriginalConstructor()
                             ->getMock();
 

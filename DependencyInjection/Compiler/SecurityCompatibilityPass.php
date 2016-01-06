@@ -32,6 +32,11 @@ class SecurityCompatibilityPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        $this->processReferences($container);
+        $this->processTags($container);
+    }
+
+    private function processReferences(ContainerBuilder $container) {
         if (class_exists('Symfony\Component\Security\Core\Authorization\AuthorizationChecker')) {
             // using Symfony 2.6+, the current configuration can be used.
             return;
@@ -47,5 +52,20 @@ class SecurityCompatibilityPass implements CompilerPassInterface
                 ->replaceArgument(0, new Reference('security.context'));
         }
     }
-}
 
+    private function processTags(ContainerBuilder $container) {
+        if (!$container->hasDefinition('security.acl.has_class_permission_compiler')) {
+            return;
+        }
+
+        $definition = $container->getDefinition('security.acl.has_class_permission_compiler');
+
+        if ($container->hasDefinition('security.context')) {
+            $definition->addTag('security.expressions.variable', array('variable' => 'security_context', 'service' => 'security.context'));
+        }
+        if ($container->hasDefinition('security.token_storage')) {
+            $definition->addTag('security.expressions.variable', array('variable' => 'token_storage', 'service' => 'security.token_storage'));
+            $definition->addTag('security.expressions.variable', array('variable' => 'authorization_checker', 'service' => 'security.authorization_checker'));
+        }
+    }
+}

@@ -50,6 +50,10 @@ class RememberingAccessDecisionManager implements AccessDecisionManagerInterface
      */
     public function supportsAttribute($attribute)
     {
+        if (!method_exists('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface', 'supportsAttribute')) {
+            throw new \LogicException('AccessDecisionManagerInterface::supportsAttribute() is not available anymore in symfony 3.0.');
+        }
+
         return $this->delegate->supportsAttribute($attribute);
     }
 
@@ -62,6 +66,10 @@ class RememberingAccessDecisionManager implements AccessDecisionManagerInterface
      */
     public function supportsClass($class)
     {
+        if (!method_exists('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface', 'supportsClass')) {
+            throw new \LogicException('AccessDecisionManagerInterface::supportsClass() is not available anymore in symfony 3.0.');
+        }
+
         return $this->delegate->supportsClass($class);
     }
 }
