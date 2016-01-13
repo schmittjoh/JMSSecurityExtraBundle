@@ -52,8 +52,15 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private $runAsManager;
     private $logger;
 
-    public function __construct($tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager,
-                                AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
+    /**
+     * @param TokenStorageInterface|SecurityContextInterface $tokenStorage
+     * @param AuthenticationManagerInterface                 $authenticationManager
+     * @param AfterInvocationManagerInterface                $afterInvocationManager
+     * @param RunAsManagerInterface                          $runAsManager
+     * @param MetadataFactoryInterface                       $metadataFactory
+     * @param LoggerInterface|null                           $logger
+     */
+    public function __construct($tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager, AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
     {
         if (!$tokenStorage instanceof SecurityContextInterface && !$tokenStorage instanceof TokenStorageInterface) {
             throw new InvalidArgumentException(sprintf('The first argument should be an instance of TokenStorageInterface or SecurityContextInterface, "%s" given.', is_object($tokenStorage) ? get_class($tokenStorage) : gettype($tokenStorage)));

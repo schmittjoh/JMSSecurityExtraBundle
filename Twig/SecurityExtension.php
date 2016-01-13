@@ -11,6 +11,9 @@ class SecurityExtension extends \Twig_Extension
 {
     private $authorizationChecker;
 
+    /**
+     * @param AuthorizationCheckerInterface|SecurityContextInterface $authorizationChecker
+     */
     public function __construct($authorizationChecker)
     {
         if (!$authorizationChecker instanceof SecurityContextInterface && !$authorizationChecker instanceof AuthorizationCheckerInterface) {
