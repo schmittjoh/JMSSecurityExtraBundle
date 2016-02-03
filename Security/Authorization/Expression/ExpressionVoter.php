@@ -18,7 +18,7 @@
 
 namespace JMS\SecurityExtraBundle\Security\Authorization\Expression;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 
 use JMS\SecurityExtraBundle\Exception\RuntimeException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

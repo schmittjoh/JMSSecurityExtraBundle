@@ -2,11 +2,15 @@ services:
     logger:
         class: JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Logger\FileLogger
         arguments: ["%kernel.cache_dir%"]
-        
+
     always_true_evaluator:
         class: JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Security\AlwaysTrueEvaluator
         tags:
             - { name: "security.expressions.function_evaluator", function: alwaysTrue, method: hasAccess }
+
+    # Overwrite the service and its tags
+    security.access.expression_voter:
+        class: Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
 
 framework:
     secret: test
