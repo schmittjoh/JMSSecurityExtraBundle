@@ -8,6 +8,7 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\Entity\Post;
@@ -17,9 +18,6 @@ use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\TokenStorageHelper;
 
 class PostController
 {
-    /** @DI\Inject */
-    private $request;
-
     /** @DI\Inject */
     private $em;
 
@@ -32,9 +30,9 @@ class PostController
     /**
      * @PreAuthorize("isAuthenticated()")
      */
-    public function newPostAction()
+    public function newPostAction(Request $request)
     {
-        if (!$title = $this->request->request->get('title')) {
+        if (!$title = $request->request->get('title')) {
             throw new HttpException(400);
         }
 
