@@ -115,17 +115,59 @@ class ExpressionVoter implements VoterInterface
 
     private function createEvaluator(Expression $expr)
     {
-        if ($this->cacheDir) {
-            if (is_file($file = $this->cacheDir.'/'.sha1($expr->expression).'.php')) {
-                return require $file;
-            }
-
-            $source = $this->getCompiler()->compileExpression($expr);
-            file_put_contents($file, "<?php\n".$source);
-
-            return require $file;
+        if (!$this->cacheDir) {
+            return eval($this->getCompiler()->compileExpression($expr));
         }
 
-        return eval($this->getCompiler()->compileExpression($expr));
+        $hash = $expr->getHashCode();
+        $file = $this->cacheDir . '/' . $hash . '.php';
+
+        if (is_file($file)) {
+            $callback = require $file;
+
+            if ($callback instanceof \Closure) {
+                return $callback;
+            }
+
+            if (null !== $this->logger) {
+                $reason = (1 === $callback) ? 'non-php file / no return' : sprintf('returned type is %s', gettype($callback));
+
+                $this->logger->warning(sprintf('Expression "%s" cache is not valid; hashCode: %s; reason: %s', $expr->expression, $hash, $reason));
+            }
+        }
+
+        if (null !== $this->logger) {
+            $this->logger->info(sprintf('Caching "%s" expression; hashCode: %s', $expr->expression, $hash));
+        }
+
+        $source = $this->getCompiler()->compileExpression($expr);
+        $content = "<?php\n" . $source;
+
+        // avoid blocking I/O
+        $tmpfile = $this->cacheDir . '/' . uniqid($hash, true) . '.tmp';
+
+        $written = file_put_contents($tmpfile, $content);
+
+        if ($written !== strlen($content)) {
+            if (null !== $this->logger) {
+                $this->logger->error(sprintf('Expression "%s" not cached; eval source.', $expr->expression));
+            }
+        }
+
+        if (is_file($file) && sha1_file($tmpfile) === sha1_file($file)) {
+            if (null !== $this->logger) {
+                $this->logger->info(sprintf('"%s" cache updated meanwhile, skip; hashCode: %s', $expr->expression, $hash));
+            }
+        } elseif (!rename($tmpfile, $file)) {
+            if (null !== $this->logger) {
+                $this->logger->error(sprintf('"%s" cache failed to update; hashCode: %s', $expr->expression, $hash));
+            }
+        } else {
+            if (null !== $this->logger) {
+                $this->logger->info(sprintf('"%s" cache updated successfully; hashCode: %s', $expr->expression, $hash));
+            }
+        }
+
+        return eval($source);
     }
 }
