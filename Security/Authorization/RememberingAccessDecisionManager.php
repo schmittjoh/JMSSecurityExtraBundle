@@ -59,7 +59,9 @@ class RememberingAccessDecisionManager implements AccessDecisionManagerInterface
     public function setVoters(array $voters)
     {
         if (!method_exists($this->delegate, 'setVoters')) {
-            throw new \RuntimeException(sprintf('Decorated implementation of "%s", instance of class "%s" does not have "setVoters" which is required for development environment.', AccessDecisionManagerInterface::class, get_class($this->delegate)));
+            $interfaceName = 'Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface';
+
+            throw new \RuntimeException(sprintf('Decorated implementation of "%s", instance of class "%s" does not have "setVoters" which is required for development environment.', $interfaceName, get_class($this->delegate)));
         }
 
         $this->delegate->setVoters($voters);
