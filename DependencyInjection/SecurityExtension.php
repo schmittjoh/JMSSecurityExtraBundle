@@ -19,6 +19,7 @@
 namespace JMS\SecurityExtraBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension as BaseSecurityExtension;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,6 +37,11 @@ class SecurityExtension extends Extension
     public function __construct(BaseSecurityExtension $extension)
     {
         $this->extension = $extension;
+    }
+
+    public function addSecurityListenerFactory(SecurityFactoryInterface $factory)
+    {
+        return $this->extension->addSecurityListenerFactory($factory);
     }
 
     public function getAlias()
