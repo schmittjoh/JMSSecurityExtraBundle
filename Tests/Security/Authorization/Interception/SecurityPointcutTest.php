@@ -29,6 +29,6 @@ class SecurityPointcutTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->metadataFactory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $this->metadataFactory = $this->getMockBuilder('Metadata\MetadataFactoryInterface')->getMock();
     }
 }

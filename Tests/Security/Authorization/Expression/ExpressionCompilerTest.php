@@ -24,9 +24,9 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $evaluator = eval($this->compiler->compileExpression(new Expression('isAnonymous()')));
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
-        $trustResolver = $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface');
+        $trustResolver = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface')->getMock();
         $trustResolver->expects($this->once())
             ->method('isAnonymous')
             ->with($token)
@@ -45,13 +45,13 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
         $evaluator = eval($this->compiler->compileExpression(
             new Expression('hasRole("ADMIN") or hasAnyRole("FOO", "BAR")')));
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token->expects($this->once())
             ->method('getRoles')
             ->will($this->returnValue(array(new Role('FOO'))));
         $this->assertTrue($evaluator(array('token' => $token)));
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token->expects($this->once())
             ->method('getRoles')
             ->will($this->returnValue(array(new Role('BAZ'))));
@@ -104,7 +104,7 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
 
         $context = array(
-            'token'  => $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'),
+            'token'  => $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock(),
             'object' => new MethodInvocation(new \ReflectionMethod($secureObject, 'delete'), $secureObject, array($project), array()),
             'permission_evaluator' => $permissionEvaluator,
         );
@@ -145,7 +145,7 @@ class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
             return new Role($v);
         }, $roles);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token->expects($this->once())
             ->method('getRoles')
             ->will($this->returnValue($roles));

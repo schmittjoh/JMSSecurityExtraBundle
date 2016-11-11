@@ -104,8 +104,8 @@ class ReverseInterpreterTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->compiler = new ExpressionCompiler();
-        $this->handler = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionHandlerInterface');
+        $this->handler = $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionHandlerInterface')->getMock();
         $this->reverseInterpreter = new ReverseInterpreter($this->compiler, $this->handler);
-        $this->token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
     }
 }

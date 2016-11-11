@@ -55,7 +55,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     {
         list($interceptor, $securityContext, $authManager,,,) = $this->getInterceptor();
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -84,7 +84,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     {
         list($interceptor, $securityContext, $authManager,,,) = $this->getInterceptor();
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $securityContext
             ->expects($this->once())
@@ -109,7 +109,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeCallsADMForRolesAndThrowsExceptionWhenInsufficientPriviledges()
     {
-        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $factory = $this->getMockBuilder('Metadata\MetadataFactoryInterface')->getMock();
         $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
         $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
         $metadata->methodMetadata['foo']->roles = array('ROLE_FOO');
@@ -122,7 +122,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 
         list($interceptor, $context, $authManager, $adm,,) = $this->getInterceptor($factory);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -162,7 +162,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeCallsADMForEachParamPermissionsAndThrowsExceptionOnInsufficientPermissions()
     {
-        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $factory = $this->getMockBuilder('Metadata\MetadataFactoryInterface')->getMock();
         $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
         $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
         $metadata->methodMetadata['foo']->paramPermissions = array(
@@ -206,7 +206,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokehandlesExceptionsFromWithintheInvokedMethodGracefully()
     {
-        $factory = $this->getMock('Metadata\MetadataFactoryInterface');
+        $factory = $this->getMockBuilder('Metadata\MetadataFactoryInterface')->getMock();
         $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
         $metadata->methodMetadata['throwException'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
         $metadata->methodMetadata['throwException']->runAsRoles = array('ROLE_FOO');
@@ -244,7 +244,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
 
     protected function getToken($isAuthenticated = true)
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token
             ->expects($this->once())
             ->method('isAuthenticated')
@@ -257,7 +257,7 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
     protected function getInterceptor(MetadataFactoryInterface $metadataFactory = null)
     {
         if (null === $metadataFactory) {
-            $metadataFactory = $this->getMock('Metadata\MetadataFactoryInterface');
+            $metadataFactory = $this->getMockBuilder('Metadata\MetadataFactoryInterface')->getMock();
 
             $metadata = new ClassMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService');
             $metadata->methodMetadata['foo'] = new MethodMetadata('JMS\SecurityExtraBundle\Tests\Security\Authorization\Interception\SecureService', 'foo');
@@ -277,10 +277,10 @@ class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
                             ->disableOriginalConstructor()
                             ->getMock();
 
-        $authenticationManager = $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface');
-        $accessDecisionManager = $this->getMock('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface');
-        $afterInvocationManager = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface');
-        $runAsManager = $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface');
+        $authenticationManager = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface')->getMock();
+        $accessDecisionManager = $this->getMockBuilder('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface')->getMock();
+        $afterInvocationManager = $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationManagerInterface')->getMock();
+        $runAsManager = $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Authorization\RunAsManagerInterface')->getMock();
 
         return array(
             new MethodSecurityInterceptor($securityContext, $authenticationManager, $accessDecisionManager, $afterInvocationManager, $runAsManager, $metadataFactory),

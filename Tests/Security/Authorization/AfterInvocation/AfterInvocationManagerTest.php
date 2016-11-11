@@ -52,7 +52,7 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('moo'))
         ;
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $manager = new AfterInvocationManager(array($provider1, $provider2));
         $this->assertEquals('moo', $manager->decide($token, 'sth', $attributes, 'foo'));
@@ -102,6 +102,6 @@ class AfterInvocationManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function getProvider()
     {
-        return $this->getMock('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationProviderInterface');
+        return $this->getMockBuilder('JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AfterInvocationProviderInterface')->getMock();
     }
 }

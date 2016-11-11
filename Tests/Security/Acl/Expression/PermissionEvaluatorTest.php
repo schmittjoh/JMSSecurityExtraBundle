@@ -127,15 +127,15 @@ class PermissionEvaluatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $this->oid = $this->getMock('Symfony\Component\Security\Acl\Model\ObjectIdentityInterface');
-        $this->sid = $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface');
-        $this->acl = $this->getMock('Symfony\Component\Security\Acl\Model\AclInterface');
+        $this->token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
+        $this->oid = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\ObjectIdentityInterface')->getMock();
+        $this->sid = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface')->getMock();
+        $this->acl = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclInterface')->getMock();
         $this->object = new \stdClass;
-        $this->provider = $this->getMock('Symfony\Component\Security\Acl\Model\AclProviderInterface');
-        $this->oidStrategy = $this->getMock('Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface');
-        $this->sidStrategy = $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface');
-        $this->permissionMap = $this->getMock('Symfony\Component\Security\Acl\Permission\PermissionMapInterface');
+        $this->provider = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclProviderInterface')->getMock();
+        $this->oidStrategy = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface')->getMock();
+        $this->sidStrategy = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface')->getMock();
+        $this->permissionMap = $this->getMockBuilder('Symfony\Component\Security\Acl\Permission\PermissionMapInterface')->getMock();
         $this->evaluator = new PermissionEvaluator($this->provider, $this->oidStrategy, $this->sidStrategy, $this->permissionMap);
     }
 }

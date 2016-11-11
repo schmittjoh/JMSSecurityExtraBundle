@@ -14,7 +14,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(1, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
+        $this->assertEquals(1, count($voters = $this->getVoters($adm)));
         $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Authorization\Expression\LazyLoadingExpressionVoter', $voters[0]);
     }
 
@@ -28,7 +28,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(2, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
+        $this->assertEquals(2, count($voters = $this->getVoters($adm)));
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[0]);
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
     }
@@ -43,15 +43,23 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(1, count($voters = $this->getField($this->getField($adm, 'delegate'), 'voters')));
+        $this->assertEquals(1, count($voters = $this->getVoters($adm)));
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[0]);
     }
 
-    private function getField($obj, $field)
+    private function getVoters($manager)
     {
-        $ref = new \ReflectionProperty($obj, $field);
+        if (method_exists($manager, 'getVoters')) {
+            return $manager->getVoters();
+        }
+
+        $ref = new \ReflectionProperty($manager, 'delegate');
+        $ref->setAccessible(true);
+        $delegate = $ref->getValue($manager);
+
+        $ref = new \ReflectionProperty($delegate, 'voters');
         $ref->setAccessible(true);
 
-        return $ref->getValue($obj);
+        return $ref->getValue($delegate);
     }
 }

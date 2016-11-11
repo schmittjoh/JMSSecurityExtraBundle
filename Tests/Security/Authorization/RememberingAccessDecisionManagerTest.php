@@ -11,7 +11,7 @@ class RememberingAccessDecisionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRemembersTheLastCall()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $this->assertNull($this->adm->getLastDecisionCall());
         $this->delegate->expects($this->once())
@@ -53,7 +53,7 @@ class RememberingAccessDecisionManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->delegate = $this->getMock('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface');
+        $this->delegate = $this->getMockBuilder('Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface')->getMock();
         $this->adm = new RememberingAccessDecisionManager($this->delegate);
     }
 }
