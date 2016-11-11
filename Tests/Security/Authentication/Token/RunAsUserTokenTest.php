@@ -27,8 +27,8 @@ class RunAsUserTokenTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $user = $this->getMock('Symfony\Component\Security\Core\User\UserInterface');
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $user = $this->getMockBuilder('Symfony\Component\Security\Core\User\UserInterface')->getMock();
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $runAsToken = new RunAsUserToken('foo', $user, 'secret', array('ROLE_FOO'), $token);
         $this->assertSame($user, $runAsToken->getUser());
@@ -40,7 +40,7 @@ class RunAsUserTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testEraseCredentials()
     {
-        $token = new RunAsUserToken('foo', 'foo', 'secret', array(), $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'));
+        $token = new RunAsUserToken('foo', 'foo', 'secret', array(), $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock());
         $this->assertEquals('secret', $token->getCredentials());
         $token->eraseCredentials();
         $this->assertNull($token->getCredentials());

@@ -27,7 +27,7 @@ class RunAsAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateReturnsNullIfTokenISUnsupported()
     {
         $provider = new RunAsAuthenticationProvider('foo');
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $this->assertNull($provider->authenticate($token));
     }
@@ -64,7 +64,7 @@ class RunAsAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function testSupportsDoesNotAcceptInvalidToken()
     {
         $provider = new RunAsAuthenticationProvider('foo');
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
 
         $this->assertFalse($provider->supports($token));
     }

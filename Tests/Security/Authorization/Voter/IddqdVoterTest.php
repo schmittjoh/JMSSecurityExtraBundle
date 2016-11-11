@@ -39,7 +39,7 @@ class IddqdVoterTest extends \PHPUnit_Framework_TestCase
     {
         $tokenRoles = array();
         foreach ($roles as $value) {
-            $role = $this->getMock('Symfony\Component\Security\Core\Role\RoleInterface');
+            $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
             $role
                 ->expects($this->once())
                 ->method('getRole')
@@ -48,7 +48,7 @@ class IddqdVoterTest extends \PHPUnit_Framework_TestCase
             $tokenRoles[] = $role;
         }
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token
             ->expects($this->once())
             ->method('getRoles')

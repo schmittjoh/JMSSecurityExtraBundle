@@ -117,7 +117,7 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($masks))
         ;
 
-        $acl = $this->getMock('Symfony\Component\Security\Acl\Model\AclInterface');
+        $acl = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclInterface')->getMock();
         $acl
             ->expects($this->once())
             ->method('isGranted')
@@ -164,7 +164,7 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($masks))
         ;
 
-        $acl = $this->getMock('Symfony\Component\Security\Acl\Model\AclInterface');
+        $acl = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclInterface')->getMock();
         $acl
             ->expects($this->once())
             ->method('isGranted')
@@ -223,26 +223,26 @@ class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function getToken()
     {
-        return $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        return $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
     }
 
     protected function getPermissionMap()
     {
-        return $this->getMock('Symfony\Component\Security\Acl\Permission\PermissionMapInterface');
+        return $this->getMockBuilder('Symfony\Component\Security\Acl\Permission\PermissionMapInterface')->getMock();
     }
 
     protected function getAclProvider()
     {
-        return $this->getMock('Symfony\Component\Security\Acl\Model\AclProviderInterface');
+        return $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclProviderInterface')->getMock();
     }
 
     protected function getOidStrategy()
     {
-        return $this->getMock('Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface');
+        return $this->getMockBuilder('Symfony\Component\Security\Acl\Model\ObjectIdentityRetrievalStrategyInterface')->getMock();
     }
 
     protected function getSidStrategy()
     {
-        return $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface');
+        return $this->getMockBuilder('Symfony\Component\Security\Acl\Model\SecurityIdentityRetrievalStrategyInterface')->getMock();
     }
 }

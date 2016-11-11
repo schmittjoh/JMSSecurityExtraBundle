@@ -21,7 +21,7 @@ class ExpressionVoterTest extends \PHPUnit_Framework_TestCase
     {
         $this->voter->setCacheDir(null);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token->expects($this->once())
         ->method('getRoles')
         ->will($this->returnValue(array(new Role('ROLE_FOO'))));
@@ -43,7 +43,7 @@ class ExpressionVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->voter->setCacheDir($this->cacheDir);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();
         $token->expects($this->once())
             ->method('getRoles')
             ->will($this->returnValue(array(new Role($role))));
@@ -76,7 +76,7 @@ class ExpressionVoterTest extends \PHPUnit_Framework_TestCase
         $tests = array();
 
         $tests[] = array(
-        $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface'),
+        $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock(),
         new \stdClass(),
         array('ROLE_FOO'),
         VoterInterface::ACCESS_ABSTAIN,
