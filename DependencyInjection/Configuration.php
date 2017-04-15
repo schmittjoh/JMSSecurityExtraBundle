@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
         $tb = new TreeBuilder();
         $tb
             ->root('jms_security_extra')
+            ->canBeDisabled()
                 ->validate()
                     ->always(function($v) {
                         if ($v['method_access_control'] && !$v['expressions']) {

@@ -25,6 +25,9 @@ class DisableVotersPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if ($container->hasParameter('jms_security_extra.disabled')) {
+            return;
+        }
         if ($container->getParameter('security.role_voter.disabled')) {
             $container->removeDefinition('security.access.role_hierarchy_voter');
             $container->removeDefinition('security.access.simple_role_voter');

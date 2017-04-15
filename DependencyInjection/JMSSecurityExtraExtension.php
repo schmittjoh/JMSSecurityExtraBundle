@@ -41,6 +41,11 @@ class JMSSecurityExtraExtension extends Extension
         }
 
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
+        if (!$config['enabled']) {
+            $container->setParameter('jms_security_extra.disabled', true);
+
+            return;
+        }
 
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
         $loader->load('services.xml');
