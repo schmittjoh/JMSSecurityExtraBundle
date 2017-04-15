@@ -43,7 +43,7 @@ class PermissionEvaluator
         SecurityIdentityRetrievalStrategyInterface $sidRetrievalStrategy,
         PermissionMapInterface $permissionMap,
         LoggerInterface $logger = null,
-        $allowIfObjectIdentityUnavailable = true)
+        $allowIfObjectIdentityUnavailable = false)
     {
         $this->aclProvider = $aclProvider;
         $this->oidRetrievalStrategy = $oidRetrievalStrategy;
