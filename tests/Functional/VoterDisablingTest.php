@@ -36,7 +36,7 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        if (Kernel::VERSION_ID >= 40000) {
+        if (Kernel::VERSION_ID >= 30400) {
             $this->assertEquals(3, count($voters = $this->getVoters($adm)));
 
             $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Acl\Voter\AclVoter', $voters[0]); // @todo ?? REMOVE ??
@@ -44,8 +44,8 @@ class VoterDisablingTest extends BaseTestCase
             $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[2]);
         } else {
             $this->assertEquals(2, count($voters = $this->getVoters($adm)));
-            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[0]);
-            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[0]);
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[1]);
         }
         
         // @todo
