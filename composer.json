@@ -52,8 +52,7 @@
         "doctrine/common": "~2.3",
         "symfony/form": "~2.7|~3.4|~4.0",
         "symfony/validator": "~2.7|~3.4|~4.0",
-        "symfony/phpunit-bridge": "~2.7|~3.4|~4.0",
-        "symfony/acl-bundle": "^1.0"
+        "symfony/phpunit-bridge": "~2.7|~3.4|~4.0"
     },
     "autoload": {
         "psr-4": { "JMS\\SecurityExtraBundle\\": "src/" }
