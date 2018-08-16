@@ -4,6 +4,7 @@ namespace JMS\SecurityExtraBundle\Tests\Functional;
 
 use JMS\SecurityExtraBundle\Security\Authorization\RememberingAccessDecisionManager;
 use Symfony\Bundle\AclBundle\AclBundle;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authorization\TraceableAccessDecisionManager;
 
 class VoterDisablingTest extends BaseTestCase
@@ -35,12 +36,18 @@ class VoterDisablingTest extends BaseTestCase
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');
 
-        $this->assertEquals(3, count($voters = $this->getVoters($adm)));
+        if (Kernel::VERSION_ID >= 40000) {
+            $this->assertEquals(3, count($voters = $this->getVoters($adm)));
 
-        $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Acl\Voter\AclVoter', $voters[0]); // @todo ?? REMOVE ??
-        $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
-        $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[2]);
-
+            $this->assertInstanceOf('JMS\SecurityExtraBundle\Security\Acl\Voter\AclVoter', $voters[0]); // @todo ?? REMOVE ??
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[2]);
+        } else {
+            $this->assertEquals(2, count($voters = $this->getVoters($adm)));
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\RoleVoter', $voters[0]);
+            $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[1]);
+        }
+        
         // @todo
         $this->markTestIncomplete('The ACLBundle is now always loaded, causing a AclVoter to be present as well... need fixing');
     }
