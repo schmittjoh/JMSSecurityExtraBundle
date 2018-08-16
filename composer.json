@@ -11,6 +11,12 @@
             "email": "schmittjoh@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ruudk/JMSDiExtraBundle"
+        }
+    ],
     "require": {
         "php": "~5.6|~7.0",
         "symfony/framework-bundle": "~2.7|~3.0|~4.0",
@@ -21,7 +27,7 @@
         "jms/metadata": "~1.0",
         "jms/parser-lib": "~1.0",
         "jms/aop-bundle": "~1.0",
-        "jms/di-extra-bundle": "~1.4"
+        "jms/di-extra-bundle": "dev-symfony-4",
         "symfony/symfony": "4.0.*"
     },
     "require-dev": {
