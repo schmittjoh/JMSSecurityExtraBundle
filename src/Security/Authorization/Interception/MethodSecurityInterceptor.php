@@ -32,7 +32,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
@@ -53,7 +52,7 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
     private $logger;
 
     /**
-     * @param TokenStorageInterface|SecurityContextInterface $tokenStorage
+     * @param TokenStorageInterface                          $tokenStorage
      * @param AuthenticationManagerInterface                 $authenticationManager
      * @param AfterInvocationManagerInterface                $afterInvocationManager
      * @param RunAsManagerInterface                          $runAsManager
@@ -62,8 +61,8 @@ class MethodSecurityInterceptor implements MethodInterceptorInterface
      */
     public function __construct($tokenStorage, AuthenticationManagerInterface $authenticationManager, AccessDecisionManagerInterface $accessDecisionManager, AfterInvocationManagerInterface $afterInvocationManager, RunAsManagerInterface $runAsManager, MetadataFactoryInterface $metadataFactory, LoggerInterface $logger = null)
     {
-        if (!$tokenStorage instanceof SecurityContextInterface && !$tokenStorage instanceof TokenStorageInterface) {
-            throw new InvalidArgumentException(sprintf('The first argument should be an instance of TokenStorageInterface or SecurityContextInterface, "%s" given.', is_object($tokenStorage) ? get_class($tokenStorage) : gettype($tokenStorage)));
+        if (!$tokenStorage instanceof TokenStorageInterface) {
+            throw new InvalidArgumentException(sprintf('The first argument should be an instance of TokenStorageInterface, "%s" given.', is_object($tokenStorage) ? get_class($tokenStorage) : gettype($tokenStorage)));
         }
 
         $this->alwaysAuthenticate = false;
