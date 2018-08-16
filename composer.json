@@ -36,7 +36,7 @@
         "jms/di-extra-bundle": "dev-symfony-4"
     },
     "require-dev": {
-        "sensio/framework-extra-bundle": "~2.7|~3.4|~4.0|~5.0",
+        "sensio/framework-extra-bundle": "~2.0|~3.0|~4.0|~5.0",
         "symfony/class-loader": "~2.7|~3.4|~4.0",
         "symfony/yaml": "~2.7|~3.4|~4.0",
         "symfony/browser-kit": "~2.7|~3.4|~4.0",
