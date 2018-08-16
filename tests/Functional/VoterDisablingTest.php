@@ -3,6 +3,7 @@
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
 use JMS\SecurityExtraBundle\Security\Authorization\RememberingAccessDecisionManager;
+use Symfony\Bundle\AclBundle\AclBundle;
 use Symfony\Component\Security\Core\Authorization\TraceableAccessDecisionManager;
 
 class VoterDisablingTest extends BaseTestCase
@@ -49,7 +50,11 @@ class VoterDisablingTest extends BaseTestCase
      */
     public function testSomeVotersDisabled()
     {
-        $client = $this->createClient(array('config' => 'some_voters_disabled.yml'));
+        if (class_exists(AclBundle::class)) {
+            $client = $this->createClient(array('config' => 'some_voters_disabled.yml'));
+        } else {
+            $client = $this->createClient(array('config' => 'some_voters_disabled_below_symfony_4.yml'));
+        }
         $client->insulate();
 
         $adm = self::$kernel->getContainer()->get('security.access.decision_manager');

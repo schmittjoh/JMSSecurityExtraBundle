@@ -5,6 +5,7 @@ namespace JMS\SecurityExtraBundle\Tests\Functional;
 require_once __DIR__.'/../../vendor/autoload.php';
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Bundle\AclBundle\AclBundle;
 use Symfony\Bundle\SecurityBundle\Tests\Functional\Bundle\FormLoginBundle\FormLoginBundle;
 use JMS\SecurityExtraBundle\Tests\Functional\TestBundle\TestBundle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -35,7 +36,7 @@ class AppKernel extends Kernel
 
     public function registerBundles()
     {
-        return array(
+        $bundles = array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
@@ -46,8 +47,13 @@ class AppKernel extends Kernel
             new \JMS\AopBundle\JMSAopBundle(),
             new \JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new \JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
-            new \Symfony\Bundle\AclBundle\AclBundle(),
         );
+
+        if (class_exists(AclBundle::class)) {
+            $bundles[] = new AclBundle();
+        }
+
+        return $bundles;
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)

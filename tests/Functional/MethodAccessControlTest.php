@@ -2,6 +2,7 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Functional;
 
+use Symfony\Bundle\AclBundle\AclBundle;
 use Symfony\Component\HttpFoundation\Response;
 
 class MethodAccessControlTest extends BaseTestCase
@@ -84,7 +85,11 @@ class MethodAccessControlTest extends BaseTestCase
      */
     public function testAcl()
     {
-        $client = $this->createClient(array('config' => 'acl_enabled.yml'));
+        if (class_exists(AclBundle::class)) {
+            $client = $this->createClient(array('config' => 'acl_enabled.yml'));
+        } else {
+            $client = $this->createClient(array('config' => 'acl_enabled_below_symfony_4.yml'));
+        }
         //$client->insulate();
 
         $this->importDatabaseSchema();
