@@ -30,7 +30,9 @@ before_install:
     - if [[ "$SYMFONY_VERSION" != "" ]]; then export SYMFONY_DEPRECATIONS_HELPER=weak && composer require --no-update symfony/symfony:${SYMFONY_VERSION}; fi
     - if [[ "$INSTALL_ACL_BUNDLE" == "true" ]]; then composer require --no-update symfony/acl-bundle; fi
 
-install: composer update $COMPOSER_FLAGS
+install:
+    - composer update $COMPOSER_FLAGS
+    - composer show
 
 script: phpunit --coverage-clover clover
 
