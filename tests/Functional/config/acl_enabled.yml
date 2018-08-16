@@ -3,7 +3,8 @@ imports:
 
 security: ~
 
-acl: ~
+acl:
+    connection: default
 
 jms_security_extra:
     expressions: true

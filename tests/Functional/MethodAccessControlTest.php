@@ -14,6 +14,7 @@ class MethodAccessControlTest extends BaseTestCase
         $client = $this->createClient(array('config' => 'method_access_control.yml'));
 
         $client->request('GET', '/add');
+
         $this->assertRedirectedToLogin($client->getResponse());
     }
 
@@ -84,7 +85,7 @@ class MethodAccessControlTest extends BaseTestCase
     public function testAcl()
     {
         $client = $this->createClient(array('config' => 'acl_enabled.yml'));
-        $client->insulate();
+        //$client->insulate();
 
         $this->importDatabaseSchema();
         $this->login($client);
@@ -107,7 +108,7 @@ class MethodAccessControlTest extends BaseTestCase
     public function testRoleHierarchyIsRespected()
     {
         $client = $this->createClient(array('config' => 'all_voters_disabled.yml'));
-        $client->insulate();
+        //$client->insulate();
 
         $this->login($client);
 

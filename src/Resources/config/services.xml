@@ -35,7 +35,7 @@
             <argument>%security.run_as.role_prefix%</argument>
         </service>
     
-        <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%">
+        <service id="security.access.method_interceptor" class="%security.access.method_interceptor.class%" public="true">
             <tag name="monolog.logger" channel="security" />
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.authentication.manager" />
@@ -46,7 +46,7 @@
             <argument type="service" id="logger" on-invalid="null" />
         </service>
         
-        <service id="security.access.pointcut" class="JMS\SecurityExtraBundle\Security\Authorization\Interception\SecurityPointcut">
+        <service id="security.access.pointcut" class="JMS\SecurityExtraBundle\Security\Authorization\Interception\SecurityPointcut" public="true">
             <argument type="service" id="security.extra.metadata_factory" />
             <argument>%security.access.secure_all_services%</argument>
             <argument>%security.access.method_access_control%</argument>
@@ -76,7 +76,7 @@
                 <argument type="service" id="security.extra.annotation_driver" />
             </argument>
         </service>
-        <service id="security.extra.metadata_driver" alias="security.extra.driver_chain"></service>
+        <service id="security.extra.metadata_driver" alias="security.extra.driver_chain" public="true"></service>
         
         <service id="security.extra.lazy_loading_driver" class="%security.extra.lazy_loading_driver.class%" public="false">
             <argument type="service" id="service_container" />
