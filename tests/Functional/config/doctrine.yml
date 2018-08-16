@@ -1,0 +1,15 @@
+services:
+    em:
+        alias: "doctrine.orm.entity_manager"
+        public: true
+
+doctrine:
+    dbal:
+        driver:   pdo_sqlite
+        path:     "%kernel.cache_dir%/sqlite.db"
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                auto_mapping: true

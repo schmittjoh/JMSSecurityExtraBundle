@@ -1,0 +1,12 @@
+imports:
+    - { resource: default.yml }
+
+security: ~
+
+acl:
+    connection: default
+
+jms_security_extra:
+    voters:
+        disable_role: true
+        disable_acl:  true
