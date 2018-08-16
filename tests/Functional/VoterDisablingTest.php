@@ -63,7 +63,7 @@ class VoterDisablingTest extends BaseTestCase
         $this->assertInstanceOf('Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter', $voters[0]);
     }
 
-    private function getVoters(TraceableAccessDecisionManager $manager)
+    private function getVoters($manager)
     {
         //if (method_exists($manager, 'getVoters')) {
         //    return $manager->getVoters();
