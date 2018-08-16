@@ -4,6 +4,7 @@ imports:
 services:
     user_manager:
         class: JMS\SecurityExtraBundle\Tests\Functional\TestBundle\User\UserManager
+        public: true
 
 jms_security_extra:
     expressions: ~

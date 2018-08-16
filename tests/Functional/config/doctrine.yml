@@ -1,5 +1,7 @@
 services:
-    em: "@doctrine.orm.entity_manager"
+    em:
+        alias: "doctrine.orm.entity_manager"
+        public: true
 
 doctrine:
     dbal:

@@ -4,6 +4,7 @@ namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Voter;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Symfony\Component\Security\Core\Role\Role;
 
 class IddqdVoterTest extends \PHPUnit\Framework\TestCase
 {
@@ -39,13 +40,18 @@ class IddqdVoterTest extends \PHPUnit\Framework\TestCase
     {
         $tokenRoles = array();
         foreach ($roles as $value) {
-            $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
-            $role
-                ->expects($this->once())
-                ->method('getRole')
-                ->will($this->returnValue($value))
-            ;
-            $tokenRoles[] = $role;
+            if (false === class_exists(RoleInterface::class)) {
+                $tokenRoles[] = new Role($value);
+            } else {
+                $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+                $role
+                    ->expects($this->once())
+                    ->method('getRole')
+                    ->will($this->returnValue($value))
+                ;
+                $tokenRoles[] = $role;
+            }
+
         }
 
         $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')->getMock();

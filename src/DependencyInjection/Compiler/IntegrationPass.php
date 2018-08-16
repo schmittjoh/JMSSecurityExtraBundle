@@ -24,6 +24,7 @@ class IntegrationPass implements CompilerPassInterface
         $container->setDefinition('security.access.decision_manager.delegate',
             $container->getDefinition('security.access.decision_manager'));
         $container->register('security.access.decision_manager', '%security.access.remembering_access_decision_manager.class%')
+            ->setPublic(true)
             ->addArgument(new Reference('security.access.decision_manager.delegate'));
     }
 }

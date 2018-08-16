@@ -72,7 +72,7 @@
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="security.expressions.compiler" class="%security.expressions.compiler.class%" />
+        <service id="security.expressions.compiler" class="%security.expressions.compiler.class%" public="true" />
 
         <service id="security.expressions.expression" class="%security.expressions.expression.class%" public="false" abstract="true" />
 
