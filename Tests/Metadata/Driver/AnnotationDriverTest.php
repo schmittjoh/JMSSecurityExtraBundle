@@ -21,10 +21,11 @@ namespace JMS\SecurityExtraBundle\Tests\Mapping\Driver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
+use PHPUnit\Framework\TestCase;
 
 require_once __DIR__.'/Fixtures/services.php';
 
-class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
+class AnnotationDriverTest extends TestCase
 {
     public function testLoadMetadataWithClassPreAuthorize()
     {

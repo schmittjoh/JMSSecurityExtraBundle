@@ -21,8 +21,9 @@ namespace JMS\SecurityExtraBundle\Tests\Security\Authentication\Provider;
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
 
 use JMS\SecurityExtraBundle\Security\Authentication\Provider\RunAsAuthenticationProvider;
+use PHPUnit\Framework\TestCase;
 
-class RunAsAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
+class RunAsAuthenticationProviderTest extends TestCase
 {
     public function testAuthenticateReturnsNullIfTokenISUnsupported()
     {

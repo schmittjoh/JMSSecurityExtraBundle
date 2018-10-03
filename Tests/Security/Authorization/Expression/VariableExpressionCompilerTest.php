@@ -20,8 +20,9 @@ namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
+use PHPUnit\Framework\TestCase;
 
-class VariableExpressionCompilerTest extends \PHPUnit_Framework_TestCase
+class VariableExpressionCompilerTest extends TestCase
 {
     private $compiler;
 

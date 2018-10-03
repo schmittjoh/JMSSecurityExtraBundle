@@ -5,12 +5,13 @@ namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\OrExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ReverseInterpreter;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
 
-class ReverseInterpreterTest extends \PHPUnit_Framework_TestCase
+class ReverseInterpreterTest extends TestCase
 {
     private $compiler;
     private $reverseInterpreter;

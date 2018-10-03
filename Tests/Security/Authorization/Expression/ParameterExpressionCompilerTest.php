@@ -22,8 +22,9 @@ use CG\Proxy\MethodInvocation;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Compiler\ParameterExpressionCompiler;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
+use PHPUnit\Framework\TestCase;
 
-class ParameterExpressionCompilerTest extends \PHPUnit_Framework_TestCase
+class ParameterExpressionCompilerTest extends TestCase
 {
     private $compiler;
 
