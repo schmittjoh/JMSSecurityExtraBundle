@@ -20,7 +20,9 @@
         "symfony/routing": "~2.3|~3.0",
         "jms/metadata": "~1.0",
         "jms/parser-lib": "~1.0",
-        "jms/aop-bundle": "~1.0",
+        "jms/aop-bundle": "~1.0"
+    },
+    "recommend": {
         "jms/di-extra-bundle": "~1.4"
     },
     "require-dev": {
@@ -39,7 +41,8 @@
         "doctrine/common": "~2.3",
         "symfony/form": "~2.2|~3.0",
         "symfony/validator": "~2.2|~3.0",
-        "symfony/phpunit-bridge": "~2.7|~3.0"
+        "symfony/phpunit-bridge": "~2.7|~3.0",
+        "jms/di-extra-bundle": "~1.4"
     },
     "autoload": {
         "psr-4": { "JMS\\SecurityExtraBundle\\": "" }
