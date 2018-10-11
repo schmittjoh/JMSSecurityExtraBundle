@@ -23,10 +23,13 @@ of the SecurityContext. Some examples:
 
     use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 
-    $securityContext->isGranted(array(new Expression('hasRole("A")')));
-    $securityContext->isGranted(array(new Expression('hasRole("A") or (hasRole("B") and hasRole("C"))')));
-    $securityContext->isGranted(array(new Expression('hasPermission(object, "VIEW")')), $object);
-    $securityContext->isGranted(array(new Expression('token.getUsername() == "Johannes"')));
+    $authorizationChecker = $this->get('security.authorization_checker');
+    // Prior to Symfony 2.6 use 'security.context' instead of 'security.authorization_checker'
+
+    $authorizationChecker->isGranted(array(new Expression('hasRole("A")')));
+    $authorizationChecker->isGranted(array(new Expression('hasRole("A") or (hasRole("B") and hasRole("C"))')));
+    $authorizationChecker->isGranted(array(new Expression('hasPermission(object, "VIEW")')), $object);
+    $authorizationChecker->isGranted(array(new Expression('token.getUsername() == "Johannes"')));
 
 Twig Usage
 ~~~~~~~~~~
