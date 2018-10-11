@@ -44,6 +44,11 @@
     "autoload": {
         "psr-4": { "JMS\\SecurityExtraBundle\\": "" }
     },
+    "autoload-dev": {
+        "files": [
+            "tests/alias.php"
+        ]
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.6-dev"
