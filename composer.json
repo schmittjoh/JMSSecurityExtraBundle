@@ -46,7 +46,7 @@
     },
     "autoload-dev": {
         "files": [
-            "tests/alias.php"
+            "Tests/alias.php"
         ]
     },
     "extra": {
