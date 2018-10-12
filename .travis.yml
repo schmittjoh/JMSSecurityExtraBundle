@@ -29,7 +29,10 @@ before_install:
     - if [[ "$SYMFONY_VERSION" != "" ]]; then export SYMFONY_DEPRECATIONS_HELPER=weak && composer require --no-update symfony/symfony:${SYMFONY_VERSION}; fi
     - phpenv config-rm xdebug.ini || return 0
 
-install: composer update $COMPOSER_FLAGS
+install:
+    - composer update $COMPOSER_FLAGS
+    - cat composer.lock
+    - phpunit --version
 
 script: phpunit --coverage-clover clover
 
