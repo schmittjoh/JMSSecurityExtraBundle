@@ -3,8 +3,9 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionLexer;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionLexerTest extends \PHPUnit_Framework_TestCase
+class ExpressionLexerTest extends TestCase
 {
     private $lexer;
 

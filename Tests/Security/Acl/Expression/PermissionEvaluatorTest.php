@@ -2,13 +2,14 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Security\Acl\Expression;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 
 use JMS\SecurityExtraBundle\Security\Acl\Expression\PermissionEvaluator;
 
-class PermissionEvaluatorTest extends \PHPUnit_Framework_TestCase
+class PermissionEvaluatorTest extends TestCase
 {
     private $token;
     private $object;

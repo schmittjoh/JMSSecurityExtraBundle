@@ -7,8 +7,9 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\VariableExpres
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\ConstantExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
+use PHPUnit\Framework\TestCase;
 
-class HasClassPermissionFunctionCompilerTest extends \PHPUnit_Framework_TestCase
+class HasClassPermissionFunctionCompilerTest extends TestCase
 {
     private $compiler;
 

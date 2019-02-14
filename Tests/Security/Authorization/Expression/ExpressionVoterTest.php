@@ -3,6 +3,7 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\DefaultExpressionHandler;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Role\Role;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver;
@@ -11,7 +12,7 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionVoter;
 
-class ExpressionVoterTest extends \PHPUnit_Framework_TestCase
+class ExpressionVoterTest extends TestCase
 {
     private $voter;
     private $cacheDir;

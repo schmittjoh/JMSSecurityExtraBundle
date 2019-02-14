@@ -14,8 +14,9 @@ use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\OrExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\AndExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Ast\FunctionExpression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionParser;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionParserTest extends \PHPUnit_Framework_TestCase
+class ExpressionParserTest extends TestCase
 {
     private $parser;
 
