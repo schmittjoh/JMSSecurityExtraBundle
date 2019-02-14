@@ -3,9 +3,10 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Voter;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class IddqdVoterTest extends \PHPUnit_Framework_TestCase
+class IddqdVoterTest extends TestCase
 {
     public function testRoleIddqd()
     {

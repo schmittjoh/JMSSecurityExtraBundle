@@ -18,13 +18,14 @@
 
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\AfterInvocation;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use JMS\SecurityExtraBundle\Security\Authorization\AfterInvocation\AclAfterInvocationProvider;
 
-class AclAfterInvocationProviderTest extends \PHPUnit_Framework_TestCase
+class AclAfterInvocationProviderTest extends TestCase
 {
     public function testDecideReturnsNullWhenObjectIsNull()
     {

@@ -12,11 +12,12 @@ use JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression\Fixture\Issu
 
 use JMS\SecurityExtraBundle\Tests\Security\Authorization\Expression\Fixture\Issue22\SecuredObject;
 use CG\Proxy\MethodInvocation;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Role\Role;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\ExpressionCompiler;
 
-class ExpressionCompilerTest extends \PHPUnit_Framework_TestCase
+class ExpressionCompilerTest extends TestCase
 {
     private $compiler;
 

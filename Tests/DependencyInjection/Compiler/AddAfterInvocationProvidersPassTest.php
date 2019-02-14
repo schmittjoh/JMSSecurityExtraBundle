@@ -18,11 +18,12 @@
 
 namespace JMS\SecurityExtraBundle\Tests\DependencyInjection\Compiler;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Definition;
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\AddAfterInvocationProvidersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class AddAfterInvocationProvidersPassTest extends \PHPUnit_Framework_TestCase
+class AddAfterInvocationProvidersPassTest extends TestCase
 {
     public function testProcessStopsWhenNoAfterInvocationManager()
     {

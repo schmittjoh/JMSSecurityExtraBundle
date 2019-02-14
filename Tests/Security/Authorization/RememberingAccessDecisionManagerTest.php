@@ -3,8 +3,9 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Authorization;
 
 use JMS\SecurityExtraBundle\Security\Authorization\RememberingAccessDecisionManager;
+use PHPUnit\Framework\TestCase;
 
-class RememberingAccessDecisionManagerTest extends \PHPUnit_Framework_TestCase
+class RememberingAccessDecisionManagerTest extends TestCase
 {
     private $adm;
     private $delegate;

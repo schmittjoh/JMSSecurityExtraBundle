@@ -18,11 +18,12 @@
 
 namespace JMS\SecurityExtraBundle\Tests\DependencyInjection\Compiler;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use JMS\SecurityExtraBundle\DependencyInjection\Compiler\CollectSecuredServicesPass;
 
-class CollectSecuredServicesPassTest extends \PHPUnit_Framework_TestCase
+class CollectSecuredServicesPassTest extends TestCase
 {
     public function testProcess()
     {

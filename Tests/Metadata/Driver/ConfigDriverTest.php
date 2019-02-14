@@ -5,8 +5,9 @@ namespace JMS\SecurityExtraBundle\Tests\Metadata\Driver;
 use JMS\SecurityExtraBundle\Security\Authorization\Expression\Expression;
 use JMS\SecurityExtraBundle\Metadata\MethodMetadata;
 use JMS\SecurityExtraBundle\Metadata\Driver\ConfigDriver;
+use PHPUnit\Framework\TestCase;
 
-class ConfigDriverTest extends \PHPUnit_Framework_TestCase
+class ConfigDriverTest extends TestCase
 {
     public function testLoadMetadata()
     {

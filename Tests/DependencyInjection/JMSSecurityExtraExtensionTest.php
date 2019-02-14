@@ -18,10 +18,11 @@
 
 namespace JMS\SecurityExtraBundle\Tests\DependencyInjection;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use JMS\SecurityExtraBundle\DependencyInjection\JMSSecurityExtraExtension;
 
-class JMSSecurityExtraExtensionTest extends \PHPUnit_Framework_TestCase
+class JMSSecurityExtraExtensionTest extends TestCase
 {
     private $extension;
 

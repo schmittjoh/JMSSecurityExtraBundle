@@ -23,8 +23,9 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use JMS\SecurityExtraBundle\Metadata\Driver\AnnotationDriver;
 
 use Metadata\MetadataFactory;
+use PHPUnit\Framework\TestCase;
 
-class ClassMetadataTest extends \PHPUnit_Framework_TestCase
+class ClassMetadataTest extends TestCase
 {
     /**
     * @expectedException \RuntimeException
