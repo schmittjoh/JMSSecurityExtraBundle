@@ -4,6 +4,7 @@ namespace JMS\SecurityExtraBundle\Tests\Security\Authorization\Voter;
 
 use JMS\SecurityExtraBundle\Security\Authorization\Voter\IddqdVoter;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class IddqdVoterTest extends TestCase
@@ -40,7 +41,11 @@ class IddqdVoterTest extends TestCase
     {
         $tokenRoles = array();
         foreach ($roles as $value) {
-            $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+            if(Kernel::MAJOR_VERSION >= 3) {
+                $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\Role')->disableOriginalConstructor()->getMock();
+            } else {
+                $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+            }
             $role
                 ->expects($this->once())
                 ->method('getRole')
