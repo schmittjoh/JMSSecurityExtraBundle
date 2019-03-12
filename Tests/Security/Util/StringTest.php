@@ -3,8 +3,9 @@
 namespace JMS\SecurityExtraBundle\Tests\Security\Util;
 
 use JMS\SecurityExtraBundle\Security\Util\String as StringUtil;
+use PHPUnit\Framework\TestCase;
 
-class StringTest extends \PHPUnit_Framework_TestCase
+class StringTest extends TestCase
 {
     public function testEquals()
     {

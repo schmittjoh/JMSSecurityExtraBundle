@@ -6,6 +6,9 @@ cache:
   directories:
     - "$HOME/.composer/cache/files"
 
+env:
+  - SYMFONY_DEPRECATIONS_HELPER=weak
+
 php:
   - 5.6
   - 7.0
@@ -14,13 +17,16 @@ php:
 matrix:
   include:
     - php: 5.3
-      env: COMPOSER_FLAGS="--prefer-lowest"
+      dist: precise
+      env:
+        - COMPOSER_FLAGS="--prefer-lowest"
+        - SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.1
       env: SYMFONY_VERSION="2.7.*"
     - php: 7.1
       env: SYMFONY_VERSION="2.8.*"
     - php: 7.1
-      env: SYMFONY_VERSION="3.1.*"
+      env: SYMFONY_VERSION="3.4.*"
 
 before_install:
     - if [[ ! $TRAVIS_PHP_VERSION = hhvm* ]]; then INI_FILE=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; else INI_FILE=/etc/hhvm/php.ini; fi

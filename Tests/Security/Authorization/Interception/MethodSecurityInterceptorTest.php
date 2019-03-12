@@ -26,11 +26,12 @@ use JMS\SecurityExtraBundle\Metadata\ClassMetadata;
 use Metadata\MetadataFactoryInterface;
 
 use JMS\SecurityExtraBundle\Security\Authentication\Token\RunAsUserToken;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use JMS\SecurityExtraBundle\Security\Authorization\Interception\MethodSecurityInterceptor;
 use CG\Proxy\MethodInvocation;
 
-class MethodSecurityInterceptorTest extends \PHPUnit_Framework_TestCase
+class MethodSecurityInterceptorTest extends TestCase
 {
     /**
      * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException
