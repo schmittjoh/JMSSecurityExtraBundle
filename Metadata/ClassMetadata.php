@@ -34,7 +34,7 @@ class ClassMetadata extends MergeableClassMetadata
     public function addMethodMetadata(BaseMethodMetadata $metadata)
     {
         if ($this->reflection->isFinal()) {
-            throw new RuntimeException(sprintf('Class "%s" is declared final, and cannot be secured.', $reflection->name));
+            throw new RuntimeException(sprintf('Class "%s" is declared final, and cannot be secured.', $this->reflection->name));
         }
 
         if ($metadata->reflection->isStatic()) {
